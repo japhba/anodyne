@@ -1,8 +1,8 @@
 # Anodyne
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="images/specimen-dark.png"><img alt="Anodyne at weights 100 to 900, at grades −100, 0 and 150, with small capitals, italics and maths alphabets" src="images/specimen.png"></picture>
+<picture><source media="(prefers-color-scheme: dark)" srcset="images/specimen-dark.png"><img alt="Anodyne at weights 100 to 900, widths 87.5 to 62.5, grades −100, 0 and 150, with small capitals, old-style figures, italics and maths alphabets" src="images/specimen.png"></picture>
 
-**[Try it in your browser](https://japhba.github.io/anodyne/)**: weight, grade and features on your own text (`index.html`).
+**[Try it in your browser](https://japhba.github.io/anodyne/)**: weight, width, grade and features on your own text (`index.html`).
 
 **Anodyne** is the sans-serif of [OverLyX](https://overlyx.app), a collaborative LaTeX editor: its
 interface font, an editor and slide font, and a font documents can be typeset in, formulas
@@ -18,13 +18,20 @@ work; Anodyne adds:
   Lisnoti Bold, made point-compatible with the Regular, with Thin and Black extrapolated at Noto's
   stem ratios. About 5 % of glyphs (rare symbols whose Bold has other contours) are emboldened
   point by point instead.
+- **Width, 62.5 to 100** (`wdth`). Glyphs Lisnoti kept from Noto Sans use Noto Sans's own condensed
+  designs at every weight; Lisnoti's redrawn and added glyphs (l, 0, brackets, operators, maths
+  alphabets) have no condensed drawing anywhere, so they are squeezed to Noto's width at each weight
+  and their stems brought back to Noto's condensed stems.
 - **Grade, −100 to 150** (`GRAD`). Grade gives the stems of a lighter or heavier weight at the widths
   of the current one, so text darkens or lightens without reflowing: for light text on dark
   backgrounds (OverLyX takes 25 off in its dark theme), for screens and projectors that wash text
   out, for emphasis that must not move a line. Grade 100 is roughly the stem of weight 500 at the
   widths of 400.
-- **Small capitals** (`smcp`, `c2sc`), which Lisnoti dropped, back from Noto Sans, so `\textsc` and
-  small-caps headings have real ones.
+- **The features Lisnoti dropped** while keeping their glyphs: small capitals (`smcp`, `c2sc`), so
+  `\textsc` and small-caps headings have real ones; old-style, proportional, tabular and lining
+  figures (`onum`, `pnum`, `tnum`, `lnum`; the zero stays slashed); case forms (`case`, not for figures
+  and the maths-axis brackets); the Greek alternates (`ss06`, `ss07`); and Noto Sans Math's dotless
+  i and j for accents (`dtls`).
 
 It keeps Lisnoti's `ss01` (chancery script capitals for `\mathcal`), fractions, super- and
 subscripts, and Unicode's maths alphanumerics.
@@ -35,15 +42,15 @@ subscripts, and Unicode's maths alphanumerics.
 
 | Folder | What |
 |:--|:--|
-| `fonts/variable/` | `Anodyne[GRAD,wght].ttf` and `Anodyne-Italic[GRAD,wght].ttf`: every weight and grade |
-| `fonts/static/` | Regular, Bold, Italic and Bold Italic at grade 0, each with the `MATH` table: for desktop apps and LuaLaTeX |
+| `fonts/variable/` | `Anodyne[GRAD,wdth,wght].ttf` and `Anodyne-Italic[GRAD,wdth,wght].ttf`: every weight, width and grade |
+| `fonts/static/` | Regular, Bold, Italic and Bold Italic at normal width and grade 0, each with the `MATH` table: for desktop apps and LuaLaTeX |
 | `fonts/webfonts/` | the variable fonts as woff2 by Unicode range (Latin, Latin extended, Greek, Cyrillic, symbols, maths, maths alphabets) and `anodyne.css` |
 | `sources/` | the build: `build.py` and `fetch-sources.sh` |
 
 ## Use it
 
 **On the web**, copy `fonts/webfonts/` to your site and link its stylesheet. A page fetches only the
-ranges its text uses (about 125 kB for Latin).
+ranges its text uses (about 195 kB for Latin, every weight, width and grade).
 
 ```html
 <link rel="stylesheet" href="/webfonts/anodyne.css">
@@ -53,7 +60,8 @@ body { font-family: Anodyne, sans-serif; }
 @media (prefers-color-scheme: dark) { body { font-variation-settings: "GRAD" -25; } }
 ```
 
-Any weight from 100 to 900 works with `font-weight`; grade with `font-variation-settings: "GRAD" <n>`.
+Any weight from 100 to 900 works with `font-weight`, any width from 62.5 % to 100 % with `font-stretch`;
+grade with `font-variation-settings: "GRAD" <n>`.
 
 **On a computer**, install the four files in `fonts/static/` (or the two variable ones, if your
 apps handle variable fonts).
@@ -70,10 +78,14 @@ apps handle variable fonts).
 ```
 
 As with Lisnoti: load `amsmath` before these lines, and keep the `\mathcal` line after the bold one.
+LuaLaTeX also sets the variable font by axis, for any weight, width and grade, e.g.
+`\fontspec{Anodyne}[RawFeature={axis={wght=550,wdth=75,GRAD=50}}]` with the variable file installed
+under its own name. Anodyne is a large font for LuaTeX: caching each face the first time takes about
+0.8 GB, so a first run that loads all of them at once needs a few GB.
 
 ## How it is built
 
-`sources/build.py` (Python with fontTools and brotli; about 11 minutes) reads Lisnoti 2.006 and
+`sources/build.py` (Python with fontTools and brotli; about 15 minutes and 3 GB per style) reads Lisnoti 2.006 and
 Google's variable Noto Sans and writes the variable fonts, the statics and the license. Regular and
 Bold of Lisnoti's own glyphs come from separately converted TrueType files, so their points rarely
 correspond; the build matches each glyph's contours, aligns their on-curve points along each
@@ -85,7 +97,8 @@ change and widths do not.
 
 ```sh
 sh sources/fetch-sources.sh            # Lisnoti and Noto Sans into ./src
-python3 sources/build.py --lisnoti src/lisnoti/font-Lisnoti/Lisnoti-ttf --noto src/noto --out build
+python3 sources/build.py --lisnoti src/lisnoti/font-Lisnoti/Lisnoti-ttf --noto src/noto --out build --only roman
+python3 sources/build.py --lisnoti src/lisnoti/font-Lisnoti/Lisnoti-ttf --noto src/noto --out build --only italic
 ```
 
 The build is maintained in the OverLyX repository (`scripts/anodyne/build.py`); its `--repo` option
@@ -97,4 +110,4 @@ SIL Open Font License 1.1 ([OFL.txt](OFL.txt)), with the copyright notices of No
 Symbols, Noto Sans Math, Lisnoti and Anodyne. "Lisnoti" is a Reserved Font Name of Lisnoti, which is
 why this changed version has a name of its own. Anodyne reserves no name.
 
-Built from Lisnoti 2.006 (commit `6642e5b`, 3 Nov 2026) and Noto Sans 2.015.
+Version 0.200, built from Lisnoti 2.006 (commit `6642e5b`, 3 Nov 2026), Noto Sans 2.015 and Noto Sans Math 3.000.

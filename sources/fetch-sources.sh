@@ -1,6 +1,6 @@
 #!/bin/sh
 # The fonts Anodyne is built from, into ./src: Lisnoti (the commit Anodyne's files were built from)
-# and Google's variable Noto Sans.
+# and Google's variable Noto Sans and Noto Sans Math.
 set -e
 mkdir -p src/noto
 if [ ! -d src/lisnoti ]; then
@@ -11,4 +11,6 @@ for f in 'NotoSans[wdth,wght].ttf' 'NotoSans-Italic[wdth,wght].ttf'; do
   url=$(printf '%s' "$f" | sed 's/\[/%5B/; s/\]/%5D/')
   curl -fsSL -o "src/noto/$f" "https://raw.githubusercontent.com/google/fonts/main/ofl/notosans/$url"
 done
+# (its dotless i and j for accents, dtls)
+curl -fsSL -o src/noto/NotoSansMath-Regular.ttf https://raw.githubusercontent.com/google/fonts/main/ofl/notosansmath/NotoSansMath-Regular.ttf
 echo "sources in ./src"

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Anodyne</title>
-<meta name="description" content="Anodyne: a sans-serif for text, maths and code, with weight 100–900 and a grade axis that darkens text without moving it.">
+<meta name="description" content="Anodyne: a sans-serif for text, maths and code, with weight 100–900, width 62.5–100 and a grade axis that darkens text without moving it.">
 <link rel="stylesheet" href="fonts/webfonts/anodyne.css">
 <style>
 /* layout: one column of specimen panels; the playground first, everything set in Anodyne itself */
@@ -136,7 +136,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
   <header>
     <span class="label">A sans-serif for text, maths and code</span>
     <h1 class="mark">Anodyne</h1>
-    <p class="lede">Noto Sans, by way of Lisnoti, with I l 1 and O 0 told apart, operators on one maths axis and an OpenType MATH table for formulas. Anodyne adds every weight from 100 to 900 and a grade axis that makes text darker or lighter without moving a letter.</p>
+    <p class="lede">Noto Sans, by way of Lisnoti, with I l 1 and O 0 told apart, operators on one maths axis and an OpenType MATH table for formulas. Anodyne adds every weight from 100 to 900, every width down to extra-condensed, and a grade axis that makes text darker or lighter without moving a letter.</p>
     <div class="links">
       <a class="btn primary" href="https://github.com/japhba/anodyne/archive/refs/heads/main.zip">Download</a>
       <a class="btn" href="https://github.com/japhba/anodyne">Source on GitHub</a>
@@ -158,6 +158,11 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
           <div class="rungs" data-for="wght"><button type="button" data-v="100" style="left:0%">Thin</button><button type="button" data-v="400" style="left:37.5%">Regular</button><button type="button" data-v="700" style="left:75%">Bold</button><button type="button" data-v="900" style="left:100%">Black</button></div>
         </div>
         <div class="axis">
+          <div class="head"><label for="wdth">Width</label><output id="wdth-out">100</output></div>
+          <input id="wdth" type="range" min="62.5" max="100" step="0.5" value="100">
+          <div class="rungs" data-for="wdth"><button type="button" data-v="62.5" style="left:0%">Extra cond.</button><button type="button" data-v="75" style="left:33.3%">Condensed</button><button type="button" data-v="100" style="left:100%">Normal</button></div>
+        </div>
+        <div class="axis">
           <div class="head"><label for="grad">Grade</label><output id="grad-out">0</output></div>
           <input id="grad" type="range" min="-100" max="150" step="1" value="0">
           <div class="rungs" data-for="grad"><button type="button" data-v="-50" style="left:20%">Lighter</button><button type="button" data-v="0" style="left:40%">Normal</button><button type="button" data-v="50" style="left:60%">Darker</button><button type="button" data-v="100" style="left:80%">Darkest</button></div>
@@ -172,6 +177,8 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
           <button type="button" id="t-smcp" aria-pressed="false" data-feature="smcp">Small caps</button>
           <button type="button" id="t-frac" aria-pressed="false" data-feature="frac">Fractions</button>
           <button type="button" id="t-ss01" aria-pressed="false" data-feature="ss01">Chancery 𝒜</button>
+          <button type="button" id="t-onum" aria-pressed="false" data-feature="onum">Old-style 1984</button>
+          <button type="button" id="t-pnum" aria-pressed="false" data-feature="pnum">Proportional</button>
         </div>
       </div>
     </div>
@@ -229,6 +236,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 
 body { font-family: Anodyne, sans-serif; }
 strong { font-weight: 650; }
+.tight { font-stretch: 75%; }
 /* light text on dark: a little lighter */
 .dark { font-variation-settings: "GRAD" -25; }</pre></div>
       <div class="panel"><span class="label">In LaTeX (LuaLaTeX)</span><pre>\usepackage{unicode-math}
@@ -252,14 +260,14 @@ strong { font-weight: 650; }
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var sample = $('sample'), stage = $('stage'), readout = $('readout');
-  var state = { wght: 400, grad: 0, size: 44, italic: false, dark: false, features: {} };
+  var state = { wght: 400, wdth: 100, grad: 0, size: 44, italic: false, dark: false, features: {} };
   var probe = document.createElement('span');
   probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;left:-9999px;top:0';
   document.body.appendChild(probe);
 
   function apply() {
     var grad = state.grad - (state.dark ? 25 : 0);
-    var fvs = '"wght" ' + state.wght + ', "GRAD" ' + grad;
+    var fvs = '"wght" ' + state.wght + ', "wdth" ' + state.wdth + ', "GRAD" ' + grad;
     var ffs = Object.keys(state.features).filter(function (k) { return state.features[k]; }).map(function (k) { return '"' + k + '" 1'; }).join(', ') || 'normal';
     [sample, probe].forEach(function (el) {
       el.style.fontVariationSettings = fvs;
@@ -269,13 +277,14 @@ strong { font-weight: 650; }
     });
     stage.classList.toggle('dark', state.dark);
     $('wght-out').textContent = state.wght;
+    $('wdth-out').textContent = state.wdth;
     $('grad-out').textContent = state.dark ? state.grad + ' − 25' : String(state.grad);
     $('size-out').textContent = state.size + ' px';
     probe.textContent = sample.textContent;
-    readout.textContent = 'On one line this text is ' + probe.getBoundingClientRect().width.toFixed(1) + ' px wide at weight ' + state.wght + ', grade ' + grad + '. Grade leaves it the same; weight does not.';
+    readout.textContent = 'On one line this text is ' + probe.getBoundingClientRect().width.toFixed(1) + ' px wide at weight ' + state.wght + ', width ' + state.wdth + ', grade ' + grad + '. Grade leaves it the same; weight and width do not.';
   }
 
-  [['wght', 'wght'], ['grad', 'grad'], ['size', 'size']].forEach(function (p) {
+  [['wght', 'wght'], ['wdth', 'wdth'], ['grad', 'grad'], ['size', 'size']].forEach(function (p) {
     $(p[0]).addEventListener('input', function (e) { state[p[1]] = Number(e.target.value); apply(); });
   });
   document.querySelectorAll('.rungs').forEach(function (r) {
@@ -290,7 +299,7 @@ strong { font-weight: 650; }
   }
   toggle('t-italic', function (on) { state.italic = on; });
   toggle('t-dark', function (on) { state.dark = on; });
-  ['t-smcp', 't-frac', 't-ss01'].forEach(function (id) { toggle(id, function (on, b) { state.features[b.dataset.feature] = on; }); });
+  ['t-smcp', 't-frac', 't-ss01', 't-onum', 't-pnum'].forEach(function (id) { toggle(id, function (on, b) { state.features[b.dataset.feature] = on; }); });
   sample.addEventListener('input', apply);
 
   // weight against grade: count each paragraph's lines once the transition has settled
