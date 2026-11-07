@@ -1,0 +1,232 @@
+{
+  "schema": 1,
+  "source": "Lisnoti 2.006 compatible bootstrap, Anodyne 0.400",
+  "reason": "Some reconstructed optical script drawings grow triangular spikes at axis extremes despite matching point counts. Select a clean existing script level, or the normal drawing when both optical levels are unstable; preserve every outline and its variable metrics.",
+  "selection": "All 924/926 script alternates were checked at weights 100, 400 and 900. Affected script glyph endpoints move more than 100 units relative to the matching normal glyph after subtracting legitimate weight growth. Chosen replacements are existing clean outlines. This affects optical script design selection, not script scaling or Unicode semantics.",
+  "fixes": [
+    {
+      "feature": "ssty",
+      "base": "W",
+      "level": 1,
+      "expected": "W.ssty1",
+      "replacement": "W.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "eta",
+      "level": 2,
+      "expected": "eta.ssty2",
+      "replacement": "eta.ssty1"
+    },
+    {
+      "feature": "ssty",
+      "base": "f",
+      "level": 1,
+      "expected": "f.ssty1",
+      "replacement": "f.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "l",
+      "level": 1,
+      "expected": "l.ssty1",
+      "replacement": "l"
+    },
+    {
+      "feature": "ssty",
+      "base": "l",
+      "level": 2,
+      "expected": "l.ssty2",
+      "replacement": "l"
+    },
+    {
+      "feature": "ssty",
+      "base": "n",
+      "level": 1,
+      "expected": "n.ssty1",
+      "replacement": "n.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "u",
+      "level": 1,
+      "expected": "u.ssty1",
+      "replacement": "u"
+    },
+    {
+      "feature": "ssty",
+      "base": "u",
+      "level": 2,
+      "expected": "u.ssty2",
+      "replacement": "u"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4B6",
+      "level": 2,
+      "expected": "u1D4B6.ssty2",
+      "replacement": "u1D4B6.ssty1"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4BB",
+      "level": 1,
+      "expected": "u1D4BB.ssty1",
+      "replacement": "u1D4BB"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4BB",
+      "level": 2,
+      "expected": "u1D4BB.ssty2",
+      "replacement": "u1D4BB"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4C5",
+      "level": 1,
+      "expected": "u1D4C5.ssty1",
+      "replacement": "u1D4C5"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4C5",
+      "level": 2,
+      "expected": "u1D4C5.ssty2",
+      "replacement": "u1D4C5"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4CA",
+      "level": 1,
+      "expected": "u1D4CA.ssty1",
+      "replacement": "u1D4CA"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4CA",
+      "level": 2,
+      "expected": "u1D4CA.ssty2",
+      "replacement": "u1D4CA"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4CD",
+      "level": 1,
+      "expected": "u1D4CD.ssty1",
+      "replacement": "u1D4CD.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D4CE",
+      "level": 1,
+      "expected": "u1D4CE.ssty1",
+      "replacement": "u1D4CE.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D523",
+      "level": 1,
+      "expected": "u1D523.ssty1",
+      "replacement": "u1D523"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D523",
+      "level": 2,
+      "expected": "u1D523.ssty2",
+      "replacement": "u1D523"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D527",
+      "level": 2,
+      "expected": "u1D527.ssty2",
+      "replacement": "u1D527.ssty1"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D52F",
+      "level": 1,
+      "expected": "u1D52F.ssty1",
+      "replacement": "u1D52F"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D52F",
+      "level": 2,
+      "expected": "u1D52F.ssty2",
+      "replacement": "u1D52F"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D532",
+      "level": 1,
+      "expected": "u1D532.ssty1",
+      "replacement": "u1D532.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D535",
+      "level": 1,
+      "expected": "u1D535.ssty1",
+      "replacement": "u1D535.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D61E",
+      "level": 2,
+      "expected": "u1D61E.ssty2",
+      "replacement": "u1D61E.ssty1"
+    },
+    {
+      "feature": "ssty",
+      "base": "u1D62F",
+      "level": 1,
+      "expected": "u1D62F.ssty1",
+      "replacement": "u1D62F.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "uni03A9",
+      "level": 2,
+      "expected": "uni03A9.ssty2",
+      "replacement": "uni03A9.ssty1"
+    },
+    {
+      "feature": "ssty",
+      "base": "uni03C2",
+      "level": 1,
+      "expected": "uni03C2.ssty1",
+      "replacement": "uni03C2"
+    },
+    {
+      "feature": "ssty",
+      "base": "uni03C2",
+      "level": 2,
+      "expected": "uni03C2.ssty2",
+      "replacement": "uni03C2"
+    },
+    {
+      "feature": "ssty",
+      "base": "uni210E",
+      "level": 1,
+      "expected": "uni210E.ssty1",
+      "replacement": "uni210E.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "uni210F",
+      "level": 1,
+      "expected": "uni210F.ssty1",
+      "replacement": "uni210F.ssty2"
+    },
+    {
+      "feature": "ssty",
+      "base": "uni2133",
+      "level": 2,
+      "expected": "uni2133.ssty2",
+      "replacement": "uni2133.ssty1"
+    }
+  ]
+}

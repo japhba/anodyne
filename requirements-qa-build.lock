@@ -1,0 +1,7 @@
+# Pin the sanitizer's build tools. Newer setuptools removed copy_file(dry_run),
+# which opentype-sanitizer 9.2.0's wheel builder still uses on aarch64.
+setuptools==75.8.2
+setuptools_scm==8.3.1
+wheel==0.45.1
+meson==1.8.2
+ninja==1.11.1.4

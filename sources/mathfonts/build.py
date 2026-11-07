@@ -32,6 +32,7 @@ whole build takes about three minutes.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import html
 import json
@@ -41,12 +42,13 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 import unicodedata
 import urllib.request
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-SCRATCH = Path('/mnt/HC_Volume_107166861/jan/anodyne-mathfonts')
+SCRATCH = REPO / 'build' / 'mathfonts'
 CACHE = Path(os.environ.get('MATHFONTS_CACHE', SCRATCH / 'cache'))
 TEXMFVAR = Path(os.environ.get('MATHFONTS_TEXMFVAR', SCRATCH / 'texmfvar'))
 WORK = CACHE / 'work'
@@ -871,15 +873,27 @@ def render(font, info):
 
 
 def to_svg(font, info, pdf):
-    for old in OUT.glob(f'{font["id"]}-*.svg'):
-        old.unlink()
+    # Keep the last good sample and strips if Ghostscript/pdftocairo fails. A
+    # font's complete new set is converted before any published SVG is touched.
+    with tempfile.TemporaryDirectory(prefix=f'.{font["id"]}-', dir=OUT) as temporary:
+        stage = Path(temporary)
+        _to_svg(font, info, pdf, stage)
+        generated = {path.name for path in stage.iterdir()}
+        for path in stage.iterdir():
+            path.replace(OUT / path.name)
+        for old in OUT.glob(f'{font["id"]}-*.svg'):
+            if old.name not in generated:
+                old.unlink()
+
+
+def _to_svg(font, info, pdf, destination):
     boxes = bboxes(pdf)
     sizes = page_size(pdf)
     border = 8
     # sample: keep the minipage's width (every font at the same scale), crop height to ink
     bx = boxes[0]
     w, h = pdf_page_svg(pdf, 1, (border, bx[1], sizes[0][0] - border, bx[3]), sizes[0], (2, 2.5),
-                        f'{font["name"]}: sample', OUT / f'{font["id"]}.svg')
+                        f'{font["name"]}: sample', destination / f'{font["id"]}.svg')
     info['image'] = dict(file=f'images/mathfonts/{font["id"]}.svg', w=round(w * 4 / 3), h=round(h * 4 / 3))
     page = 2
     for s in info['sets']:
@@ -887,7 +901,7 @@ def to_svg(font, info, pdf):
             continue
         name = f'{font["id"]}-{s["tag"]}.svg'
         w, h = pdf_page_svg(pdf, page, boxes[page - 1], sizes[page - 1], (2, 2),
-                            f'{font["name"]} {s["tag"]}: default above, alternate below', OUT / name)
+                            f'{font["name"]} {s["tag"]}: default above, alternate below', destination / name)
         s['image'] = dict(file=f'images/mathfonts/{name}', w=round(w), h=round(h))  # 1 px per pt: 20 px glyphs
         page += 1
 
@@ -929,6 +943,88 @@ def features_line(font, info):
     return bits
 
 
+def capabilities(font, info):
+    """Useful comparison filters, grounded in the inspected font's actual data."""
+    found = set()
+    if info.get('math'):
+        found.add('math-table')
+    if font.get('bold'):
+        found.add('bold')
+    if info.get('ssty'):
+        found.add('script-forms')
+    for feature in info.get('sets', []):
+        if not feature.get('changes'):
+            continue
+        text = ' '.join(str(feature.get(k, '')) for k in ('name', 'kinds')).lower()
+        shown = feature.get('shown', [])
+        glyphs = ' '.join(x.get('alt', '') if isinstance(x, dict) else x[2] for x in shown).lower()
+        if 'integral' in text:
+            found.add('integral-styles')
+            if any(x in text for x in ('upright', 'straight', 'upint')) or '.up' in glyphs:
+                found.add('upright-integrals')
+        if any(x in text for x in ('script', 'mathcal', 'mathscr', 'chancery')):
+            found.add('script-alternates')
+        if 'double-struck' in text:
+            found.add('double-struck')
+        if 'leqslant' in text or 'slanted inequalities' in text:
+            found.add('slanted-inequalities')
+        if 'vertical stroke' in text or 'vertical negation' in text:
+            found.add('vertical-negations')
+        if 'empty set' in text:
+            found.add('empty-set')
+        if feature['tag'].startswith('cv'):
+            found.add('character-variants')
+    return sorted(found)
+
+
+COMPARISON_FILTERS = [
+    ('upright-integrals', 'Upright integral alternates'),
+    ('integral-styles', 'Any integral alternates'),
+    ('script-alternates', 'Script / calligraphic alternates'),
+    ('double-struck', 'Double-struck alternates'),
+    ('slanted-inequalities', 'Slanted inequalities'),
+    ('vertical-negations', 'Vertical negations'),
+    ('empty-set', 'Empty-set alternates'),
+    ('character-variants', 'Character variants'),
+    ('script-forms', 'Optical script forms (ssty)'),
+    ('bold', 'Companion bold maths'),
+    ('math-table', 'OpenType MATH table'),
+]
+
+
+def comparison_controls(fonts, infos):
+    options = ''.join(f'<option value="{key}">{esc(label)}</option>' for key, label in COMPARISON_FILTERS)
+    choices = []
+    defaults = {'anodyne', 'lisnoti', 'notosansmath'}
+    for font in fonts:
+        fid = font['id']
+        group = 'Sans-serif' if font['group'] == 'sans' else 'Serif'
+        checked = ' checked' if fid in defaults else ''
+        choices.append(f'<label class="mf-pick" data-font="{fid}"><input type="checkbox" value="{fid}"{checked}>'
+                       f'<span>{esc(font["name"])}</span><small>{group}</small></label>')
+    return '\n'.join([
+        '<div class="panel mf-tools" id="mf-tools" hidden>',
+        '<div class="mf-filter-row">',
+        '<label class="mf-search">Find a font<input id="mf-search" type="search" placeholder="Name, feature or symbol…" autocomplete="off"></label>',
+        '<label>Style<select id="mf-group"><option value="all">All styles</option><option value="sans">Sans-serif</option><option value="serif">Serif</option></select></label>',
+        f'<label>Must have<select id="mf-feature"><option value="all">Any features</option>{options}</select></label>',
+        '</div>',
+        '<div class="mf-toolbar"><label class="mf-zoom">Shared sample size <output id="mf-zoom-out" for="mf-zoom">100%</output>'
+        '<input id="mf-zoom" type="range" min="80" max="160" step="10" value="100"></label>'
+        '<button class="btn" type="button" id="mf-reset">Reset comparison</button>'
+        '<button class="btn" type="button" id="mf-clear-selection">Clear selection</button></div>',
+        f'<p class="mf-status" id="mf-results" role="status" aria-live="polite">{len(fonts)} fonts available. Choose up to four.</p>',
+        '<fieldset class="mf-picker"><legend>Choose up to four fonts</legend><div class="mf-pick-list" id="mf-pick-list">',
+        *choices,
+        '</div><p id="mf-empty" hidden>No fonts match. Try a different name or clear the filters.</p></fieldset>',
+        '</div>',
+        '<div class="mf-focus" id="mf-focus" hidden><h3 id="mf-selection-heading">Your comparison</h3>'
+        '<p class="mf-note">Every sample is set at the same point size. Increase the shared size to inspect details; swipe a sample if it is wider than its panel.</p>'
+        '<div class="mf-comparisons" id="mf-comparisons" aria-labelledby="mf-selection-heading"></div>'
+        '<p id="mf-no-selection" hidden>Choose a font above to start comparing.</p></div>',
+    ])
+
+
 def panel(font, info):
     sets = [s for s in info['sets'] if s.get('image')]
     first = font['id'] == 'anodyne'
@@ -936,7 +1032,13 @@ def panel(font, info):
     origin = ('this repository' if not re.match('https?://', src) else 'CTAN' if src.startswith(CTAN)
               else 'GitHub' if 'github' in src else 'Arkandis' if 'arkandis' in src else re.sub(r'^https?://([^/]+)/.*$', r'\1', src))
     lic = info['licence'] or 'see the font'
-    out = [f'<article class="panel mf-font{" mf-ours" if first else ""}" id="mf-{font["id"]}">',
+    filters = ' '.join(capabilities(font, info))
+    search = ' '.join([font['name'], font['text_name']] +
+                      [' '.join(str(s.get(k, '')) for k in ('tag', 'name', 'kinds')) + ' ' +
+                       ''.join(x.get('char', '') if isinstance(x, dict) else x[0] for x in s.get('shown', []))
+                       for s in info.get('sets', [])])
+    out = [f'<article class="panel mf-font{" mf-ours" if first else ""}" id="mf-{font["id"]}" '
+           f'data-font="{font["id"]}" data-group="{font["group"]}" data-capabilities="{filters}" data-search="{esc(search)}">',
            f'<div class="mf-head"><h3>{esc(font["name"])}</h3><span class="mf-lic">{esc(lic)}</span></div>',
            f'<img class="mf-sample" src="{info["image"]["file"]}" width="{info["image"]["w"]}" height="{info["image"]["h"]}" loading="lazy" '
            f'alt="{esc(font["name"])}{"" if font["text_name"] == font["name"] else " with " + esc(font["text_name"])}: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, '
@@ -984,12 +1086,15 @@ def section(fonts, infos):
              'The facts come from the font files: stretchy glyphs from the MATH table, script forms from the ssty feature, '
              'maths alphabets out of the Unicode block. Under each font, every stylistic set and character variant that '
              'changes characters, with the usual glyphs in grey above and the alternates below.</p>',
-             '<p class="mf-jump">' + ' '.join(f'<a href="#mf-{f["id"]}">{esc(f["name"])}</a>' for f in fonts) + '</p>']
+             comparison_controls(fonts, infos),
+             '<details class="mf-catalog" id="mf-catalog" open><summary>Browse all font details and alternates</summary>',
+             '<nav class="mf-jump" aria-label="Jump to a font">' + ' '.join(f'<a href="#mf-{f["id"]}">{esc(f["name"])}</a>' for f in fonts) + '</nav>']
     parts.append('<h3 class="mf-group">Sans-serif</h3><div class="mf-grid">')
     parts += [panel(f, infos[f['id']]) for f in [by['anodyne']] + sans]
     parts.append('</div><h3 class="mf-group">Serif</h3><div class="mf-grid">')
     parts += [panel(f, infos[f['id']]) for f in serif]
     parts.append('</div>')
+    parts.append('</details>')
     rows = ''.join(f'<li><strong>{esc(x["name"])}</strong>: {esc(x["licence"])}.</li>' for x in NOT_SHOWN)
     parts.append('<div class="panel mf-absent"><span class="label">Not shown</span>'
                  '<p>These fonts from the same answers are not free to obtain and use, so this page leaves them out:</p>'
@@ -999,13 +1104,45 @@ def section(fonts, infos):
     return '\n'.join(parts)
 
 
-def write_page(fonts, infos):
+def page_text(fonts, infos):
     s = INDEX.read_text()
     a, b = '<!-- mathfonts:start', '<!-- mathfonts:end -->'
     if a not in s or b not in s:
         raise SystemExit('index.html has no <!-- mathfonts:start --> … <!-- mathfonts:end --> markers')
     i, j = s.index(a), s.index(b) + len(b)
-    INDEX.write_text(s[:i] + section(fonts, infos) + s[j:])
+    return s[:i] + section(fonts, infos) + s[j:]
+
+
+def write_page(fonts, infos):
+    atomic_text(INDEX, page_text(fonts, infos))
+
+
+def atomic_text(path, text):
+    with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=path.parent, delete=False) as handle:
+        handle.write(text)
+        temporary = Path(handle.name)
+    try:
+        temporary.chmod(path.stat().st_mode & 0o777 if path.exists() else 0o644)
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def publish_catalog(fonts, infos, text):
+    """Validate both outputs before replacing either checked-in artifact."""
+    identifiers = [font['id'] for font in fonts]
+    if 'anodyne' not in identifiers:
+        raise RuntimeError('The comparison catalog must retain Anodyne; no files were published')
+    if len(set(identifiers)) != len(identifiers):
+        raise RuntimeError('The comparison catalog has duplicate font IDs; no files were published')
+    if JSON_OUT.exists():
+        previous = {font['id'] for font in json.loads(JSON_OUT.read_text()).get('fonts', [])}
+        missing = previous - set(identifiers)
+        if missing:
+            raise RuntimeError('Refusing to remove existing comparison fonts: ' + ', '.join(sorted(missing)))
+    page = page_text(fonts, infos)
+    atomic_text(JSON_OUT, text)
+    atomic_text(INDEX, page)
 
 
 # ---------------------------------------------------------------------------
@@ -1028,6 +1165,19 @@ def main():
     lm = next(f for f in FONTS if f['id'] == 'latinmodern')
     state = CACHE / 'state.json'
     infos = json.loads(state.read_text()) if state.exists() else {}
+    # The checked-in comparison is also the cache for fonts outside --only.
+    # A fresh machine can update Anodyne without fetching and rendering 34
+    # unrelated families, or deleting their panels from the published page.
+    if JSON_OUT.exists():
+        for existing in json.loads(JSON_OUT.read_text()).get('fonts', []):
+            fid = existing['id']
+            if fid in infos:
+                continue
+            info = dict(existing)
+            info['sets'] = [dict(s, shown=[
+                dict(char=x[0], glyph=x[1], alt=x[2]) if isinstance(x, list) else x
+                for x in s.get('shown', [])]) for s in existing.get('sets', [])]
+            infos[fid] = info
     if 'fetch' in args.steps:
         for f in [lm] + fonts:
             fetch(f)
@@ -1046,18 +1196,17 @@ def main():
         from fontTools.ttLib import TTFont
         for f in fonts:
             print(f'render {f["id"]}', flush=True)
-            info = infos[f['id']]
+            info = copy.deepcopy(infos[f['id']])
             t = TTFont(local_or_cached(f['math'], f['id']), lazy=True)
             info['cmap'] = set(t.getBestCmap())
             t.close()
-            for old in OUT.glob(f'{f["id"]}-*.svg'):
-                old.unlink()
             try:
                 render(f, info)
-            except Exception as e:  # keep going; the page leaves out fonts without an image
+            except Exception as e:
                 print(f'  FAILED {f["id"]}: {e}', flush=True)
-                info.pop('image', None)
                 failed.append(f['id'])
+            else:
+                infos[f['id']] = info
             info.pop('cmap', None)
             state.write_text(json.dumps(infos, ensure_ascii=False, indent=1))
     if 'svg' in args.steps:  # convert the PDFs of the last render again
@@ -1067,17 +1216,19 @@ def main():
                 print(f'svg {f["id"]}', flush=True)
                 to_svg(f, infos[f['id']], pdf)
         state.write_text(json.dumps(infos, ensure_ascii=False, indent=1))
+    if failed:
+        raise SystemExit('failed: ' + ', '.join(failed) + '; published catalog and page were preserved')
     if 'page' in args.steps:
         allf = [f for f in FONTS if f['id'] in infos and infos[f['id']].get('image')]
         data = dict(
             source='https://tex.stackexchange.com/questions/425098',
             generator='sources/mathfonts/build.py',
             sample=dict(text=SAMPLE_TEXT, math=SAMPLE_MATH, size_pt=SAMPLE_PT, width_pt=SAMPLE_WIDTH_PT),
-            fonts=[dict(id=f['id'], name=f['name'], group=f['group'], text_font=f['text_name'],
+            fonts=[dict(infos[f['id']], id=f['id'], name=f['name'], group=f['group'], text_font=f['text_name'],
                         math_url=f['math'] if re.match('https?://', f['math']) else f['math'],
                         text_url=f['text'], home=f['home'], answer=(SE + f['answer']) if f.get('answer') else None,
-                        bold_maths=f['bold'], note=f.get('note', ''), setup=dict(opts=f.get('opts', ''), unimath=f.get('unimath', '')),
-                        **infos[f['id']]) for f in allf],
+                        bold_maths=f['bold'], note=f.get('note', ''), setup=dict(opts=f.get('opts', ''), unimath=f.get('unimath', '')))
+                   for f in allf],
             not_shown=[dict(x, answer=SE + x['answer']) for x in NOT_SHOWN],
         )
         for f in data['fonts']:
@@ -1086,10 +1237,7 @@ def main():
         # one font per line: small, and still readable in a diff
         head = json.dumps({k: v for k, v in data.items() if k not in ('fonts', 'not_shown')}, ensure_ascii=False)[:-1]
         rows = lambda xs: ',\n'.join('  ' + json.dumps(x, ensure_ascii=False, separators=(',', ':')) for x in xs)
-        JSON_OUT.write_text(f'{head},\n"fonts": [\n{rows(data["fonts"])}\n],\n"not_shown": [\n{rows(data["not_shown"])}\n]}}\n')
-        write_page(allf, infos)
-    if failed:
-        raise SystemExit('failed: ' + ', '.join(failed))
+        publish_catalog(allf, infos, f'{head},\n"fonts": [\n{rows(data["fonts"])}\n],\n"not_shown": [\n{rows(data["not_shown"])}\n]}}\n')
 
 
 if __name__ == '__main__':

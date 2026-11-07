@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "family": "Anodyne",
+  "styles": ["Roman", "Italic"],
+  "axes": {
+    "wght": {"minimum": 100, "default": 400, "maximum": 900},
+    "wdth": {"minimum": 62.5, "default": 100, "maximum": 100},
+    "GRAD": {"minimum": -100, "default": 0, "maximum": 150}
+  },
+  "source_document": "build/masters/{style}/Anodyne-{style}.designspace",
+  "format": "Standard UFO 3, packaged as UFOZ until make edit unpacks it",
+  "outline_compiler": "ufo2ft (fontmake's compiler); no contour optimization or point removal",
+  "layout_source": "Each UFO's data/com.overlyx.anodyne/tables.ttx contains editable GSUB, GPOS, GDEF, MATH and font metadata",
+  "tracked_overrides": "sources/overrides/{style}/{master-name}.ufo",
+  "bootstrap_repairs": {
+    "glyphs": ["uni093F0930094D0902.01", "uni0919094D092F", "uni2638"],
+    "scope": "All 24 weight/width/grade corners of both styles",
+    "reason": "An early bootstrap retained a refitted Regular even when its Bold correspondence failed the interpolation guard. Equal point counts hid different on/off-curve flags, so varLib skipped these glyph variations.",
+    "method": "Retain the original Lisnoti Regular topology, use the canonical bounded outline-emboldening fallback, then regenerate condensed and grade drawings. Each repaired GLIF records the reason in its glyph lib.",
+    "canonical_generator": "build.py now replaces Regular only after accepting a compatible fit; master compatibility is validated before varLib. Fresh preparation produces the same fallback construction. The tracked partial UFOs repair already prepared sources without repeating all contour matching."
+  },
+  "provenance": "source-lock.json pins every upstream binary and license. Noto native source locations are pinned there as design references.",
+  "design_status": "Prepared Thin, Black and condensed Lisnoti additions are compatible bootstrap drawings derived by the generator. They are editable starting points, not a claim that every glyph has been independently redrawn or optically reviewed. Intentional reviewed drawings belong in tracked partial UFO overrides."
+}

@@ -1,6 +1,6 @@
 # Anodyne
 
-<picture><source media="(prefers-color-scheme: dark)" srcset="images/specimen-dark.png"><img alt="Anodyne at weights 100 to 900, widths 87.5 to 62.5, grades −100, 0 and 150, with small capitals, old-style figures, italics and maths alphabets" src="images/specimen.png"></picture>
+<img alt="Anodyne at weights 100 to 900, widths 87.5 to 62.5, grades −100, 0 and 150, with small capitals, old-style figures, italics and maths alphabets" src="images/specimen.png">
 
 **[Try it in your browser](https://japhba.github.io/anodyne/)**: weight, width, grade and features on your own text (`index.html`).
 
@@ -26,7 +26,8 @@ work; Anodyne adds:
   of the current one, so text darkens or lightens without reflowing: for light text on dark
   backgrounds (OverLyX takes 25 off in its dark theme), for screens and projectors that wash text
   out, for emphasis that must not move a line. Grade 100 is roughly the stem of weight 500 at the
-  widths of 400.
+  widths of 400. Grade masters cover every weight/width corner; the effect saturates at Thin and
+  Black so negative grade cannot erase Thin’s strokes. Kerning stays fixed across grade too.
 - **The features Lisnoti dropped** while keeping their glyphs: small capitals (`smcp`, `c2sc`), so
   `\textsc` and small-caps headings have real ones; old-style, proportional, tabular and lining
   figures (`onum`, `pnum`, `tnum`, `lnum`; the zero stays slashed); case forms (`case`, not for figures
@@ -48,6 +49,25 @@ work; Anodyne adds:
 It keeps Lisnoti's `ss01` (chancery script capitals for `\mathcal`), fractions, super- and
 subscripts, and Unicode's maths alphanumerics.
 
+Version 0.400 adds six named mathematical choices. Their feature conventions are inspired by
+the comparison fonts; the drawings use Anodyne’s own glyphs, with no imported donor outlines.
+
+| Feature | Choice | Example |
+|:--|:--|:--|
+| `ss02` | Upright integrals, including display sizes and mirrored forms | ∫ ∮ ∭ |
+| `ss03` | Slanted inequalities | ≤ ≥ |
+| `ss04` | Compact set symbols | ∈ ∉ ∋ ∖ ∣ ∥ |
+| `ss05` | Vertical negation strokes | ≠ ∉ ⊄ |
+| `cv01` | Oval empty set instead of the circular default | ∅ |
+| `cv02` | Lowered bar on the reduced Planck constant | ℏ |
+
+All six choices participate in weight, width and grade. Stylistic sets can be combined.
+For small scripts, a tracked layout policy selects clean optical alternates or the normal
+drawing for 24 families whose reconstructed script forms developed spikes at extreme weights.
+Script scaling and Unicode semantics stay the same; `sources/layout-fixes.json` records each choice.
+
+![Default and alternate mathematical glyphs](images/math-features.svg)
+
 <img alt="Formulas set by LuaLaTeX in Anodyne's MATH table" src="images/math.png">
 
 ## Files
@@ -57,12 +77,13 @@ subscripts, and Unicode's maths alphanumerics.
 | `fonts/variable/` | `Anodyne[GRAD,wdth,wght].ttf` and `Anodyne-Italic[GRAD,wdth,wght].ttf`: every weight, width and grade |
 | `fonts/static/` | Regular, Bold, Italic and Bold Italic at normal width and grade 0, each with the `MATH` table: for desktop apps and LuaLaTeX |
 | `fonts/webfonts/` | the variable fonts as woff2 by Unicode range (Latin, Latin extended, Greek, Cyrillic, symbols, maths, maths alphabets) and `anodyne.css` |
-| `sources/` | the build: `build.py` (with `delimgen.py`, the delimiters, and `mathtune.py`, the maths spacing) and `fetch-sources.sh` |
+| `fonts/mathwebfonts/` | complete variable WOFF2 fonts retaining MATH and variable positioning, with `anodyne-math.css`, for MathML |
+| `sources/` | pinned inputs, compatible source preparation, editable master compiler, math features, instance export and release checks |
 
 ## Use it
 
 **On the web**, copy `fonts/webfonts/` to your site and link its stylesheet. A page fetches only the
-ranges its text uses (about 195 kB for Latin, every weight, width and grade).
+ranges its text uses, with every weight, width and grade in each subset.
 
 ```html
 <link rel="stylesheet" href="/webfonts/anodyne.css">
@@ -74,6 +95,27 @@ body { font-family: Anodyne, sans-serif; }
 
 Any weight from 100 to 900 works with `font-weight`, any width from 62.5 % to 100 % with `font-stretch`;
 grade with `font-variation-settings: "GRAD" <n>`.
+
+For browser formulas, also copy `fonts/mathwebfonts/` and link its stylesheet. The regular text
+subsets omit the MATH table; use the dedicated math family for actual MathML layout:
+
+```html
+<link rel="stylesheet" href="/mathwebfonts/anodyne-math.css">
+```
+```css
+math {
+  font-family: "Anodyne Math";
+  font-variation-settings: "wght" 550, "wdth" 75, "GRAD" 50;
+  font-feature-settings: "ss03" 1;
+}
+math mo.upright-integral { font-family: "Anodyne Math Upright"; }
+math mi.chancery { font-family: "Anodyne Math Chancery"; }
+```
+
+Browser math engines can select enlarged integrals and script letters before applying GSUB.
+The stylesheet includes small variable adapter fonts for those two cases; apply the corresponding
+family to the integral `mo` or script `mi` token. Unicode characters and mathematical size variants
+are preserved. The demo applies these families automatically when their feature switches are on.
 
 **On a computer**, install the four files in `fonts/static/` (or the two variable ones, if your
 apps handle variable fonts).
@@ -95,26 +137,108 @@ LuaLaTeX also sets the variable font by axis, for any weight, width and grade, e
 under its own name. Anodyne is a large font for LuaTeX: caching each face the first time takes about
 0.8 GB, so a first run that loads all of them at once needs a few GB.
 
-## How it is built
+For upright integrals and slanted inequalities together:
 
-`sources/build.py` (Python with fontTools and brotli; about 15 minutes and 3 GB per style) reads Lisnoti 2.006 and
-Google's variable Noto Sans and writes the variable fonts, the statics and the license. Regular and
-Bold of Lisnoti's own glyphs come from separately converted TrueType files, so their points rarely
-correspond; the build matches each glyph's contours, aligns their on-curve points along each
-contour, inserts the points one master has and the other lacks at the same arc-length fraction,
-refits each run as a cubic and converts both with cu2qu's multi-master conversion, as fontmake does,
-then checks that the half-way outline lies between the masters. Grade masters are the weight
-masters with the advance growth spread back across each glyph by its points' positions, so stems
-change and widths do not.
-
-```sh
-sh sources/fetch-sources.sh            # Lisnoti and Noto Sans into ./src
-python3 sources/build.py --lisnoti src/lisnoti/font-Lisnoti/Lisnoti-ttf --noto src/noto --out build --only roman
-python3 sources/build.py --lisnoti src/lisnoti/font-Lisnoti/Lisnoti-ttf --noto src/noto --out build --only italic
+```latex
+\setmathfont{Anodyne}[StylisticSet={2,3}]
 ```
 
-The build is maintained in the OverLyX repository (`scripts/anodyne/build.py`); its `--repo` option
-writes the web and TeX files OverLyX serves.
+### Weight, width and grade in maths
+
+The mathematical alphabets, operators, radicals, accents, delimiter variants and assembly glyphs
+all vary. Accent attachments, italic corrections and mathematical rule thicknesses carry variable
+MATH records. Positioning follows weight and width; grade preserves shaped text advances.
+An engine can still adjust a formula’s layout when its math corrections or ink bounds change.
+
+![Mathematical outlines at different weights, widths and grades](images/math-variations.svg)
+
+Some MATH fields, including stretchy-glyph variant measurements and assembly advances, are plain
+integers without variation records. Direct variable math therefore depends on the layout engine,
+especially for very large constructions. For reliable final geometry in TeX and desktop apps,
+export a static math face at any supported axis location:
+
+```sh
+make instance AXES='--weight 550 --width 75 --grade 50'
+# Prints the output path and unique font family name.
+```
+
+This resolves variable layout values and recalculates variant and assembly measurements from
+the final outlines. It preserves MATH and all stylistic choices. Pass `--italic` for an italic
+face, or `--output path/to/font.ttf` for a chosen destination. In LaTeX, load the resulting file
+with `\setmathfont{path/to/font.ttf}`.
+
+## How it is built
+
+The canonical build lives in this repository. `sources/source-lock.json` pins upstream commits,
+font files, licenses and SHA-256 hashes; `requirements.lock` pins the compiler dependencies.
+Downloads use atomic writes and cached files are verified. `SOURCE_DATE_EPOCH` controls timestamps.
+
+Preparation normalizes Lisnoti Regular/Bold into compatible drawings once, combines them with
+Noto’s weight/width designs and positioning, and writes 24 standard UFO 3 masters per style with
+a designspace. UFOZ archives keep the complete source set compact. Layout and MATH tables are
+editable TTX sidecars inside each master. Compilation reads these saved sources through ufo2ft,
+the compiler used by fontmake, and varLib; it does not repeat contour matching.
+
+The Thin, Black and condensed Lisnoti additions are **compatible bootstrap drawings**, with
+bounded extrapolation and synthetic condensed forms. They are editable starting points, not a
+claim that every symbol has been independently drawn and optically reviewed. Reviewed source
+replacements belong in `sources/overrides/`; `sources/master-plan.json` documents the source layout.
+
+```sh
+make setup                          # Python 3.12+ and python3-venv required
+make prepare                        # verify inputs; prepare compatible sources once
+make build                          # compile sources into build/dist/
+make release                        # also update this checkout’s fonts/ distribution
+make check                          # regression tests and OpenType sanitizer
+make qa                             # also run the FontBakery release policy
+make sources                        # archive the complete editable sources
+make package                        # build and zip the font distribution
+```
+
+`make check` requires the system `opentype-sanitizer` package. FontBakery checks static and variable
+installation cohorts separately; its release policy and the two inherited Italic diagnostics are
+recorded in `sources/qa-policy.json`, with unfiltered reports retained in `build/fontbakery/`.
+Formula proofs additionally require
+LuaLaTeX, unicode-math, standalone and Poppler (Ubuntu packages `texlive-luatex`,
+`texlive-latex-extra`, `texlive-fonts-recommended`, `poppler-utils`):
+
+```sh
+build/venv/bin/python sources/proof.py
+```
+
+The proof command produces six PDFs and PNGs spanning the axes, plus outline comparisons of the
+new features. It fails on missing formula glyphs. `sources/check.py` checks all packaged fonts,
+grade invariance of glyph and shaped-text advances, representative outline winding at axis
+corners, variable math measurements and construction references.
+
+To edit masters, run `make edit`, open the unpacked UFOs/designspaces in a font editor, then
+`make build`. Unpacked sources take precedence over their UFOZ archives. Preparation preserves
+current source edits and refuses to overwrite unpacked UFOs when generator inputs change. Keep
+intentional replacement glyphs in tracked override UFOs so they survive future preparation.
+Compiled styles are cached by source, override, compiler and dependency hashes; a changed or
+corrupted output is rebuilt. `make sources` includes the complete prepared masters, tests and
+demo assets so the source release can be rebuilt and checked independently.
+
+OverLyX should consume release artifacts from this repository. The legacy `build.py --repo`
+adapter still emits the web/TeX layout it expects, using the same canonical subset definitions.
+
+## Demo development
+
+The demo compares up to four fonts at a shared sample size, with search and filters for script,
+integral and other mathematical capabilities. Its Anodyne playground accepts editable TeX and
+renders native MathML, with live weight, width, grade and stylistic choices. A self-hosted,
+input-only MathJax bundle parses TeX; Anodyne supplies the displayed glyphs and MATH layout data.
+
+```sh
+npm ci
+npm run build:tex                   # rebuild the pinned TeX input bundle
+npx playwright install chromium
+npm run test:browser                # comparison controls and mobile layout
+npm run test:math-browser           # actual rendered feature changes and TeX editing
+```
+
+Browser QA serves the checkout locally. The parser and its license notices are committed, so
+the published demo needs no third-party runtime script or font service.
 
 ## Licence
 
@@ -122,4 +246,4 @@ SIL Open Font License 1.1 ([OFL.txt](OFL.txt)), with the copyright notices of No
 Symbols, Noto Sans Math, Lisnoti and Anodyne. "Lisnoti" is a Reserved Font Name of Lisnoti, which is
 why this changed version has a name of its own. Anodyne reserves no name.
 
-Version 0.300, built from Lisnoti 2.006 (commit `6642e5b`, 3 Nov 2026), Noto Sans 2.015 and Noto Sans Math 3.000.
+Version 0.400, built from Lisnoti 2.006 (commit `6642e5b`, 3 Nov 2026), Noto Sans 2.015 and Noto Sans Math 3.000.

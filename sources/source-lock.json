@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "source_date_epoch": 1794050400,
+  "origins": {
+    "lisnoti": {
+      "repository": "https://github.com/Lisnoti/Lisnoti",
+      "revision": "6642e5b5783d4e42eb6f447e6215138662b8e53d",
+      "version": "2.006",
+      "editable_sources_published": false
+    },
+    "google-fonts": {
+      "repository": "https://github.com/google/fonts",
+      "revision": "86aced91de05cd4f96a06838124cca45be337b2b",
+      "versions": {
+        "NotoSans": "2.015",
+        "NotoSansMath": "3.000"
+      }
+    },
+    "noto-editable": {
+      "repository": "https://github.com/notofonts/latin-greek-cyrillic",
+      "revision": "c4a321e123e4d4ff315f57f4e0adf294fe3a95be",
+      "release": "NotoSans-v2.015",
+      "paths": [
+        "sources/NotoSans.glyphspackage",
+        "sources/NotoSans-Italic.glyphspackage"
+      ],
+      "purpose": "upstream editable design reference; normalized compatible release masters are exported by make prepare"
+    }
+  },
+  "files": [
+    {
+      "path": "lisnoti/font-Lisnoti/Lisnoti-ttf/Lisnoti-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/Lisnoti/Lisnoti/6642e5b5783d4e42eb6f447e6215138662b8e53d/font-Lisnoti/Lisnoti-ttf/Lisnoti-Regular.ttf",
+      "origin": "lisnoti",
+      "sha256": "a290e0ac9f22a5cfcab14740b63e2dc8abe5e35917f2d103217c3bae37409af1",
+      "bytes": 1609268
+    },
+    {
+      "path": "lisnoti/font-Lisnoti/Lisnoti-ttf/Lisnoti-Bold.ttf",
+      "url": "https://raw.githubusercontent.com/Lisnoti/Lisnoti/6642e5b5783d4e42eb6f447e6215138662b8e53d/font-Lisnoti/Lisnoti-ttf/Lisnoti-Bold.ttf",
+      "origin": "lisnoti",
+      "sha256": "71ac5370bfdc0599165163e352d57780597922f95d99d26d006c8b9d81830ad3",
+      "bytes": 1850356
+    },
+    {
+      "path": "lisnoti/font-Lisnoti/Lisnoti-ttf/Lisnoti-Italic.ttf",
+      "url": "https://raw.githubusercontent.com/Lisnoti/Lisnoti/6642e5b5783d4e42eb6f447e6215138662b8e53d/font-Lisnoti/Lisnoti-ttf/Lisnoti-Italic.ttf",
+      "origin": "lisnoti",
+      "sha256": "63adae9b14e49a68f6607814385459d443fc9c90dc4cde984f900b1394374a06",
+      "bytes": 1615660
+    },
+    {
+      "path": "lisnoti/font-Lisnoti/Lisnoti-ttf/Lisnoti-BoldItalic.ttf",
+      "url": "https://raw.githubusercontent.com/Lisnoti/Lisnoti/6642e5b5783d4e42eb6f447e6215138662b8e53d/font-Lisnoti/Lisnoti-ttf/Lisnoti-BoldItalic.ttf",
+      "origin": "lisnoti",
+      "sha256": "f8a6446d2640548bc491049a0b8c45548616500465e8e4221e83aaf7a3ba5706",
+      "bytes": 1806656
+    },
+    {
+      "path": "noto/NotoSans[wdth,wght].ttf",
+      "url": "https://raw.githubusercontent.com/google/fonts/86aced91de05cd4f96a06838124cca45be337b2b/ofl/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf",
+      "origin": "google-fonts",
+      "sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+      "bytes": 2049096
+    },
+    {
+      "path": "noto/NotoSans-Italic[wdth,wght].ttf",
+      "url": "https://raw.githubusercontent.com/google/fonts/86aced91de05cd4f96a06838124cca45be337b2b/ofl/notosans/NotoSans-Italic%5Bwdth%2Cwght%5D.ttf",
+      "origin": "google-fonts",
+      "sha256": "58e6e0ebd1931b29a365aa2d3e2ee9a9e831a3af7cf3ad1462d4e72154f0b291",
+      "bytes": 2322640
+    },
+    {
+      "path": "noto/NotoSansMath-Regular.ttf",
+      "url": "https://raw.githubusercontent.com/google/fonts/86aced91de05cd4f96a06838124cca45be337b2b/ofl/notosansmath/NotoSansMath-Regular.ttf",
+      "origin": "google-fonts",
+      "sha256": "3f495fe933c06786e4d5f6d86b8ee70b6753a68ee3b9d87528726de0f6e2c47d",
+      "bytes": 1015396
+    },
+    {
+      "path": "lisnoti/Licence.txt",
+      "url": "https://raw.githubusercontent.com/Lisnoti/Lisnoti/6642e5b5783d4e42eb6f447e6215138662b8e53d/Licence.txt",
+      "origin": "lisnoti",
+      "sha256": "f9f703ca93caa51c5d2d0c6f6cadb6a9d3c18c04eedf864a19caa614a25ca064",
+      "bytes": 4997
+    },
+    {
+      "path": "noto/OFL.txt",
+      "url": "https://raw.githubusercontent.com/google/fonts/86aced91de05cd4f96a06838124cca45be337b2b/ofl/notosans/OFL.txt",
+      "origin": "google-fonts",
+      "sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+      "bytes": 4396
+    },
+    {
+      "path": "noto/OFL-Math.txt",
+      "url": "https://raw.githubusercontent.com/google/fonts/86aced91de05cd4f96a06838124cca45be337b2b/ofl/notosansmath/OFL.txt",
+      "origin": "google-fonts",
+      "sha256": "403a95275b469061b7d4371c328e0ada3bc7d63328abe2e88aad5cd243b2fe21",
+      "bytes": 4380
+    }
+  ]
+}

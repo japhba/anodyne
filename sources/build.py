@@ -40,6 +40,7 @@ import sys
 import tempfile
 
 from fontTools.ttLib import TTFont
+from fontTools.ttLib.reorderGlyphs import reorderGlyphs
 from fontTools.ttLib.tables._g_l_y_f import Glyph, GlyphCoordinates, GlyphComponent, flagOverlapSimple, OVERLAP_COMPOUND
 from fontTools.ttLib.tables import otTables as ot
 from fontTools.cu2qu import curves_to_quadratic
@@ -52,7 +53,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import delimgen   # noqa: E402
 import mathtune   # noqa: E402
 
-VERSION = '0.300'
+VERSION = '0.400'
 FAMILY = 'Anodyne'
 # weight masters at Noto Sans's own (user values; Noto's avar puts 700 at normalised 0.61)
 WEIGHTS = (100, 400, 700, 900)
@@ -63,6 +64,9 @@ WDTH_MAP = [(62.5, 62.5), (75, 100 - 0.70001220703125 * 37.5), (87.5, 100 - 0.36
 WIDTHS = [(62.5, 'ExtraCondensed'), (75, 'Condensed'), (87.5, 'SemiCondensed'), (100, '')]
 INSTANCES = [(100, 'Thin'), (200, 'ExtraLight'), (300, 'Light'), (400, 'Regular'), (500, 'Medium'),
              (600, 'SemiBold'), (700, 'Bold'), (800, 'ExtraBold'), (900, 'Black')]
+WEIGHT_MAP = [(100, 100), (200, 400 - 0.796875 * 300), (300, 250), (400, 400),
+              (500, 400 + 0.18 * 500), (600, 400 + 0.38 * 500),
+              (700, 400 + 0.61 * 500), (800, 400 + 0.79 * 500), (900, 900)]
 
 
 def log(*a):
@@ -609,7 +613,326 @@ def add_feature(font, tag, mapping):
 
 # ------------------------------------------------------------------ the build of one style (roman or italic)
 
-def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None):
+def mapped_weight(value):
+    """Noto's user weight mapped into the design coordinate used for interpolation."""
+    for (u0, d0), (u1, d1) in zip(WEIGHT_MAP, WEIGHT_MAP[1:]):
+        if value <= u1:
+            return d0 + (d1 - d0) * (value - u0) / (u1 - u0)
+    return WEIGHT_MAP[-1][1]
+
+
+def grade_outline(base, target):
+    """Move toward another valid weight without changing the base advance.
+
+    Unlike a shared Regular delta, this construction saturates at Thin/Black. Each
+    weight and width has its own grade masters, so a negative grade cannot remove
+    more ink than the lightest drawing contains. The advance correction can still
+    distort a rare contour; back it off deterministically in that case.
+    """
+    dadv, advance = target.adv - base.adv, base.adv or 1
+    if target.components:
+        out = Outline(components=[(c[0], c[1] - dadv * cb[1] / advance, c[2], c[3])
+                                  for c, cb in zip(target.components, base.components)], adv=base.adv)
+    else:
+        out = Outline([[(p[0] - dadv * pb[0] / advance, p[1], p[2]) for p, pb in zip(c, cb)]
+                       for c, cb in zip(target.contours, base.contours)], adv=base.adv)
+        strength = 1.0
+        while not sane(base, out) or not between(base, out):
+            strength *= 0.5
+            if strength < 1 / 128:
+                return base.copy()
+            out = lerp(base, out, 0.5)
+    return out
+
+
+def _glyph_bounds(font, name):
+    glyph = font['glyf'][name]
+    if glyph.numberOfContours == 0:
+        return None
+    glyph.recalcBounds(font['glyf'])
+    return glyph.xMin, glyph.yMin, glyph.xMax, glyph.yMax
+
+
+def _map_anchor(anchor, old, new):
+    if anchor is None or old is None or new is None:
+        return
+    for attr, i in (('XCoordinate', 0), ('YCoordinate', 1)):
+        extent = old[i + 2] - old[i]
+        if extent:
+            value = new[i] + (getattr(anchor, attr) - old[i]) * (new[i + 2] - new[i]) / extent
+            setattr(anchor, attr, round(value))
+    # Point-index anchors and pixel device corrections belong to the old drawing.
+    anchor.Format = 1
+    for attr in ('AnchorPoint', 'XDeviceTable', 'YDeviceTable'):
+        if hasattr(anchor, attr):
+            delattr(anchor, attr)
+
+
+def position_master(font, reference, noto_font, width_scale=1):
+    """Use Noto's real positioning master, retaining Lisnoti's extra math kerns.
+
+    Lisnoti kept Noto's first lookups and appended its own. Assert that contract
+    rather than silently using unrelated lookup numbers after an upstream update.
+    All grade masters at the same weight/width receive the same advance kerns.
+    """
+    source = noto_font['GPOS'].table
+    target = font['GPOS'].table
+    count = len(source.LookupList.Lookup)
+    if len(target.LookupList.Lookup) < count:
+        raise ValueError('Lisnoti GPOS no longer contains the Noto lookup prefix')
+    for old, new in zip(target.LookupList.Lookup, source.LookupList.Lookup):
+        old_type = old.SubTable[0].ExtensionLookupType if old.LookupType == 9 else old.LookupType
+        if old_type != new.LookupType:
+            raise ValueError('Noto/Lisnoti positioning lookup topology changed')
+    target.LookupList.Lookup[:count] = copy.deepcopy(source.LookupList.Lookup)
+    old_bounds, new_bounds = {}, {}
+
+    def anchor(name, value):
+        if name not in old_bounds:
+            old_bounds[name] = _glyph_bounds(noto_font, name)
+            new_bounds[name] = _glyph_bounds(font, name)
+        _map_anchor(value, old_bounds[name], new_bounds[name])
+
+    for lookup in target.LookupList.Lookup[:count]:
+        for sub in lookup.SubTable:
+            sub = getattr(sub, 'ExtSubTable', sub)
+            kind = sub.__class__.__name__
+            if kind in ('MarkBasePos', 'MarkLigPos'):
+                for name, rec in zip(sub.MarkCoverage.glyphs, sub.MarkArray.MarkRecord):
+                    anchor(name, rec.MarkAnchor)
+            if kind == 'MarkBasePos':
+                for name, rec in zip(sub.BaseCoverage.glyphs, sub.BaseArray.BaseRecord):
+                    for value in rec.BaseAnchor:
+                        anchor(name, value)
+            elif kind == 'MarkLigPos':
+                for name, rec in zip(sub.LigatureCoverage.glyphs, sub.LigatureArray.LigatureAttach):
+                    for component in rec.ComponentRecord:
+                        for value in component.LigatureAnchor:
+                            anchor(name, value)
+            elif kind == 'MarkMarkPos':
+                for name, rec in zip(sub.Mark1Coverage.glyphs, sub.Mark1Array.MarkRecord):
+                    anchor(name, rec.MarkAnchor)
+                for name, rec in zip(sub.Mark2Coverage.glyphs, sub.Mark2Array.Mark2Record):
+                    for value in rec.Mark2Anchor:
+                        anchor(name, value)
+    # The two appended Lisnoti lookups contain its redrawn characters and math
+    # alphabets. Scale their horizontal spacing at condensed widths, not grade.
+    def scale_values(obj):
+        if isinstance(obj, (list, tuple)):
+            for value in obj:
+                scale_values(value)
+        elif hasattr(obj, '__dict__'):
+            for attr in ('XPlacement', 'XAdvance'):
+                if hasattr(obj, attr):
+                    setattr(obj, attr, round(getattr(obj, attr) * width_scale))
+            for value in list(obj.__dict__.values()):
+                if not isinstance(value, (str, int, float, bytes)):
+                    scale_values(value)
+    for lookup in target.LookupList.Lookup[count:]:
+        scale_values(lookup)
+    gdef = font['GDEF'].table
+    noto_gdef = noto_font['GDEF'].table
+    # Noto's mark-filtering set numbers are used by the copied lookups.
+    gdef.MarkGlyphSetsDef = copy.deepcopy(noto_gdef.MarkGlyphSetsDef)
+    if noto_gdef.GlyphClassDef is not None:
+        gdef.GlyphClassDef.classDefs.update(noto_gdef.GlyphClassDef.classDefs)
+
+
+def refresh_math_metrics(font, reference=None):
+    """Refresh MATH geometry after drawing or instancing a face.
+
+    With a reference, move MathValueRecords from that reference's drawing into
+    the final geometry. Without one those values have already been instanced;
+    only non-variable variant/assembly measurements are refreshed.
+    """
+    if 'MATH' not in font:
+        return
+    table = font['MATH'].table
+    old_bounds, new_bounds = {}, {}
+
+    def bounds(name, old=False):
+        cache = old_bounds if old else new_bounds
+        if name not in cache:
+            cache[name] = _glyph_bounds(reference if old else font, name)
+        return cache[name]
+
+    def ratio(name, axis):
+        old, new = bounds(name, True), bounds(name)
+        if old is None or new is None or old[axis + 2] == old[axis]:
+            return 1
+        return (new[axis + 2] - new[axis]) / (old[axis + 2] - old[axis])
+
+    if reference is not None:
+        # Always start from the untouched measurements to avoid repeated scaling.
+        font['MATH'] = copy.deepcopy(reference['MATH'])
+        table = font['MATH'].table
+        mc = table.MathConstants
+        yscale = ratio('x', 1)
+        xscale = font['hmtx']['n'][0] / (reference['hmtx']['n'][0] or 1)
+        cmap = font.getBestCmap()
+        minus = cmap.get(0x2212, 'hyphen')
+        rule_scale = ratio(minus, 1)
+        for key, rec in vars(mc).items():
+            if isinstance(rec, ot.MathValueRecord):
+                scale = rule_scale if 'Thickness' in key else xscale if ('Kern' in key or key in ('SpaceAfterScript', 'SkewedFractionHorizontalGap')) else yscale
+                rec.Value = round(rec.Value * scale)
+                rec.DeviceTable = None
+        for key in ('DelimitedSubFormulaMinHeight', 'DisplayOperatorMinHeight'):
+            setattr(mc, key, round(getattr(mc, key) * yscale))
+        gi = table.MathGlyphInfo
+        if gi.MathItalicsCorrectionInfo:
+            info = gi.MathItalicsCorrectionInfo
+            for name, rec in zip(info.Coverage.glyphs, info.ItalicsCorrection):
+                old, new = bounds(name, True), bounds(name)
+                if old and new:
+                    rec.Value = max(0, round(rec.Value + new[2] - font['hmtx'][name][0] - old[2] + reference['hmtx'][name][0]))
+                    rec.DeviceTable = None
+        if gi.MathTopAccentAttachment:
+            info = gi.MathTopAccentAttachment
+            for name, rec in zip(info.TopAccentCoverage.glyphs, info.TopAccentAttachment):
+                old, new = bounds(name, True), bounds(name)
+                if old and new and old[2] != old[0]:
+                    rec.Value = round(new[0] + (rec.Value - old[0]) * (new[2] - new[0]) / (old[2] - old[0]))
+                    rec.DeviceTable = None
+        if gi.MathKernInfo:
+            info = gi.MathKernInfo
+            for name, record in zip(info.MathKernCoverage.glyphs, info.MathKernInfoRecords):
+                for corner in ('TopRightMathKern', 'TopLeftMathKern', 'BottomRightMathKern', 'BottomLeftMathKern'):
+                    kern = getattr(record, corner)
+                    if kern:
+                        for rec in kern.CorrectionHeight:
+                            rec.Value = round(rec.Value * ratio(name, 1)); rec.DeviceTable = None
+                        for rec in kern.KernValue:
+                            rec.Value = round(rec.Value * ratio(name, 0)); rec.DeviceTable = None
+    mv = table.MathVariants
+    for direction, axis in (('Vert', 1), ('Horiz', 0)):
+        coverage = getattr(mv, direction + 'GlyphCoverage')
+        if coverage is None:
+            continue
+        for construction in getattr(mv, direction + 'GlyphConstruction'):
+            for variant in construction.MathGlyphVariantRecord:
+                box = bounds(variant.VariantGlyph)
+                if box:
+                    variant.AdvanceMeasurement = max(1, round(box[axis + 2] - box[axis]))
+            assembly = construction.GlyphAssembly
+            if not assembly:
+                continue
+            for part in assembly.PartRecords:
+                box = bounds(part.glyph)
+                if not box:
+                    continue
+                previous = part.FullAdvance or 1
+                extent = max(1, round(box[axis + 2] - box[axis]))
+                part.StartConnectorLength = min(extent, round(part.StartConnectorLength * extent / previous))
+                part.EndConnectorLength = min(extent, round(part.EndConnectorLength * extent / previous))
+                part.FullAdvance = extent
+
+
+def _math_records(obj, path=()):
+    if isinstance(obj, ot.MathValueRecord):
+        yield path, obj
+    elif isinstance(obj, (list, tuple)):
+        for i, value in enumerate(obj):
+            yield from _math_records(value, path + (i,))
+    elif hasattr(obj, '__dict__'):
+        for key, value in vars(obj).items():
+            if key != 'DeviceTable':
+                yield from _math_records(value, path + (key,))
+
+
+def add_math_variations(vf, model, master_paths):
+    """Attach variable MathValueRecords to GDEF's shared ItemVariationStore.
+
+    OpenType only permits variation devices in MathValueRecords. Integer variant
+    extents and assembly advances remain default measurements in a direct VF;
+    refresh_math_metrics repairs those in the portable static instance export.
+    """
+    from fontTools.varLib.varStore import OnlineVarStoreBuilder
+    from fontTools.varLib.builder import buildVarDevTable
+    rows = []
+    for path in master_paths:
+        master = TTFont(path)
+        rows.append(dict(_math_records(master['MATH'].table)))
+        master.close()
+    builder = OnlineVarStoreBuilder([axis.axisTag for axis in vf['fvar'].axes])
+    builder.setModel(model)
+    variable = []
+    for path, rec in _math_records(vf['MATH'].table):
+        values = [row[path].Value for row in rows]
+        if min(values) == max(values):
+            rec.DeviceTable = None
+            continue
+        rec.Value, index = builder.storeMasters(values)
+        rec.DeviceTable = buildVarDevTable(index)
+        variable.append(rec.DeviceTable)
+    store = builder.finish()
+    if not variable:
+        return
+    gdef = vf['GDEF'].table
+    existing = getattr(gdef, 'VarStore', None)
+    if existing is None:
+        gdef.VarStore = store
+    else:
+        region_offset = len(existing.VarRegionList.Region)
+        data_offset = len(existing.VarData)
+        existing.VarRegionList.Region.extend(store.VarRegionList.Region)
+        existing.VarRegionList.RegionCount = len(existing.VarRegionList.Region)
+        for data in store.VarData:
+            data.VarRegionIndex = [i + region_offset for i in data.VarRegionIndex]
+            existing.VarData.append(data)
+        existing.VarDataCount = len(existing.VarData)
+        for device in variable:
+            device.StartSize += data_offset
+    gdef.Version = max(gdef.Version, 0x00010003)
+    log('variable MATH records:', len(variable))
+
+
+def measure_stem(font):
+    """Measure Noto l across its middle, excluding the width due to italic shear."""
+    # A slanted bar's bounding box includes its shear across the full height.
+    # Noto Italic Thin has a 26-unit stroke inside a 187-unit bounding box.
+    glyphs = font.getGlyphSet()
+    pen = delimgen._Flat(glyphs)
+    glyphs['l'].draw(pen)
+    outline = read(font, 'l')
+    _, y0, _, y1 = bbox(outline.contours)
+    crossings = delimgen._crossings(pen.polys, (y0 + y1) / 2)
+    if len(crossings) != 2:
+        raise ValueError('Cannot measure the Noto l stem at its mid-height')
+    return crossings[1] - crossings[0]
+
+
+def validate_master_compatibility(paths):
+    """Fail before varLib can silently skip incompatible glyph variation data."""
+    expected_order, expected = None, None
+    errors = {}
+    for path in paths:
+        with TTFont(path) as font:
+            order = font.getGlyphOrder()
+            if expected_order is not None and order != expected_order:
+                raise ValueError(f'{path}: master glyph order differs from the default')
+            signatures = {}
+            for name in order:
+                glyph = font['glyf'][name]
+                if glyph.isComposite():
+                    signatures[name] = ('components', tuple((component.glyphName, getattr(component, 'transform', None))
+                                                            for component in glyph.components))
+                elif glyph.numberOfContours > 0:
+                    signatures[name] = ('contours', tuple(glyph.endPtsOfContours), tuple(flag & 1 for flag in glyph.flags))
+                else:
+                    signatures[name] = ('empty',)
+            if expected is None:
+                expected_order, expected = order, signatures
+            else:
+                for name, signature in signatures.items():
+                    if signature != expected[name]:
+                        errors.setdefault(name, []).append(os.path.basename(path))
+    if errors:
+        details = '; '.join(f'{name}: {", ".join(locations[:3])}' for name, locations in sorted(errors.items()))
+        raise ValueError(f'Incompatible master glyphs ({len(errors)}); refusing to drop their variations: {details}')
+
+
+def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None, masters_dir=None, prepare_only=False):
     style = 'Italic' if italic else 'Roman'
     log(f'[{style}] loading')
     R, B = TTFont(lisR), TTFont(lisB)
@@ -622,18 +945,21 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None):
     shifts = mathtune.delimiter_shifts(R)
     mathtune.tune(R, shifts)
     mathtune.tune(B, shifts)
+    # New alternates are drawn before point matching and therefore participate in
+    # every axis just like the original math glyphs.
+    import mathfeatures
+    mathfeatures.add_math_features(R)
+    mathfeatures.add_math_features(B)
     log(f'[{style}] maths: delimiters drawn again, {len(shifts)} spaced at TeX\'s proportions')
     V = instantiateVariableFont(TTFont(notoVF), {'wdth': 100})
     noto = {w: instantiateVariableFont(TTFont(notoVF), {'wdth': 100, 'wght': w}) for w in WEIGHTS}
     notoC = {w: instantiateVariableFont(TTFont(notoVF), {'wdth': WDTH_MIN, 'wght': w}) for w in WEIGHTS}
     # Noto's own stems, for the extrapolation and emboldening ratios: the stem of 'l' (a plain bar in Noto)
-    def stem(f):
-        o = read(f, 'l'); x0, _, x1, _ = bbox(o.contours); return x1 - x0
-    s = {w: stem(noto[w]) for w in WEIGHTS}
+    s = {w: measure_stem(noto[w]) for w in WEIGHTS}
     k_thin, k_black = (s[100] - s[400]) / (s[700] - s[400]), (s[900] - s[400]) / (s[700] - s[400])
     log(f'[{style}] Noto stems {s}; thin ×{k_thin:.2f}, black ×{k_black:.2f}')
     # condensed: Noto's stems there, and how much narrower its lowercase is, per weight
-    sC = {w: stem(notoC[w]) for w in WEIGHTS}
+    sC = {w: measure_stem(notoC[w]) for w in WEIGHTS}
     kC = {w: sum(notoC[w]['hmtx'][c][0] / noto[w]['hmtx'][c][0] for c in 'nohdeasu') / 8 for w in WEIGHTS}
     log(f'[{style}] condensed stems {sC}; widths ×' + ', '.join(f'{kC[w]:.3f}' for w in WEIGHTS))
 
@@ -652,6 +978,11 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None):
             for c in gl.components:
                 need(c.glyphName)
     for g in list(smcp.values()) + list(c2sc.values()):
+        need(g)
+    # Noto's positioning tables include a handful of non-Unicode glyphs that
+    # Lisnoti removed. Keep their outlines so its complete positioning masters
+    # can be reused without dropping lookups or changing their indices.
+    for g in V.getGlyphOrder():
         need(g)
     # glyphs that already exist under those names in Lisnoti but differ from Noto's would be wrong targets
     order = R.getGlyphOrder() + added
@@ -724,19 +1055,26 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None):
             pair = make_compatible(r, b)
             if pair:
                 kinds['bold' if structure(b) == structure(r) else 'fitted'] += 1
-                masters[400][g] = pair[0]
         if pair and not between(*pair):
             pair = None
         if pair:
             r0, b0 = pair
+            # Only replace Regular after accepting the fit. A rejected fitted
+            # Regular otherwise has different on/off-curve flags from the
+            # original outline used by the fallback weight masters.
+            masters[400][g] = r0
             masters[700][g] = b0
             kt, kb = k_thin, k_black
             thin = lerp(r0, b0, kt)
-            while not sane(r0, thin) and kt < -0.2:
+            while not sane(r0, thin) and abs(kt) > 1 / 128:
                 kt *= 0.8
                 thin = lerp(r0, b0, kt)
-            masters[100][g] = thin
-            masters[900][g] = lerp(r0, b0, kb)
+            masters[100][g] = thin if sane(r0, thin) else r0.copy()
+            black = lerp(r0, b0, kb)
+            while not sane(b0, black) and kb > 1 + 1 / 128:
+                kb = 1 + (kb - 1) * 0.8
+                black = lerp(r0, b0, kb)
+            masters[900][g] = black if sane(b0, black) else b0.copy()
             continue
         if r.components:  # a composite of glyphs that vary on their own
             for w in (100, 700, 900):
@@ -748,10 +1086,10 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None):
             dx = (s[w] - s[400]) / 2
             o = embolden(r, dx, dx * 0.75)
             f = 1.0
-            while not sane(r, o) and f > 0.2:
+            while not sane(r, o) and f > 1 / 128:
                 f *= 0.75
                 o = embolden(r, dx * f, dx * f * 0.75)
-            masters[w][g] = o
+            masters[w][g] = o if sane(r, o) else r.copy()
         kinds['embolden'] += 1
     log(f'[{style}] glyph sources: {kinds}')
 
@@ -784,54 +1122,54 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None):
             squeezed = Outline([[(p[0] * k, p[1], p[2]) for p in c] for c in m.contours], adv=m.adv * k)
             f = 1.0
             o = embolden(squeezed, sx, 0)
-            while not sane(squeezed, o) and f > 0.2:
+            while not sane(squeezed, o) and f > 1 / 128:
                 f *= 0.75
                 o = embolden(squeezed, sx * f, 0)
-            condensed[w][g] = o
+            condensed[w][g] = o if sane(squeezed, o) else squeezed
             if w == 400:
                 synthetic += 1
     log(f'[{style}] condensed: {len(noto_glyphs)} glyphs Noto\'s, {synthetic} squeezed')
 
-    # --- grade masters: stems of 400+GRAD at 400's widths
-    def at(g, wt):
-        # Noto's avar: user 300 → normalised −0.5 (half-way to Thin); 550 → 0.28 (0.459 of the way to the 0.61 Bold)
-        if wt < 400:
-            t = {300: 0.5}[wt]
-            return lerp(masters[400][g], masters[100][g], t)
-        t = {550: 0.28 / 0.61}[wt]
-        return lerp(masters[400][g], masters[700][g], t)
-    grade = {GRAD_MIN: {}, GRAD_MAX: {}}
-    for gv, wt in ((GRAD_MIN, 300), (GRAD_MAX, 550)):
+    # --- grade at every weight/width corner, bounded by valid weight drawings.
+    # Sharing Regular's delta removed more ink than Thin contained. Complete
+    # corners encode the interactions and grade saturates at Thin and Black.
+    def graded(glyphs, weight, gv):
+        target = max(WEIGHTS[0], min(WEIGHTS[-1], weight + gv))
+        lo = max(w for w in WEIGHTS if w <= target)
+        hi = min(w for w in WEIGHTS if w >= target)
+        fraction = 0 if lo == hi else (mapped_weight(target) - mapped_weight(lo)) / (mapped_weight(hi) - mapped_weight(lo))
         for g in order:
-            base = masters[400][g]
-            o = at(g, wt)
-            dadv = o.adv - base.adv
-            a = base.adv or 1
-            if o.components:
-                comps = [(c[0], c[1] - dadv * (cb[1] / a), c[2], c[3]) for c, cb in zip(o.components, base.components)]
-                grade[gv][g] = Outline(components=comps, adv=base.adv)
-            else:
-                cs = [[(p[0] - dadv * (pb[0] / a), p[1], p[2]) for p, pb in zip(c, cb)] for c, cb in zip(o.contours, base.contours)]
-                grade[gv][g] = Outline(cs, adv=base.adv)
+            candidate = glyphs[lo][g] if lo == hi else lerp(glyphs[lo][g], glyphs[hi][g], fraction)
+            yield g, grade_outline(glyphs[weight][g], candidate)
 
     # --- master fonts
     for t in ('fpgm', 'prep', 'cvt ', 'hdmx', 'LTSH', 'VDMX', 'DSIG', 'STAT'):
         if t in R:
             del R[t]
     paths = {}
-    locs = [((w, 100, 0), masters[w]) for w in WEIGHTS] + [((w, WDTH_MIN, 0), condensed[w]) for w in WEIGHTS] \
-        + [((400, 100, gv), grade[gv]) for gv in (GRAD_MIN, GRAD_MAX)]
-    for (w, wd, gv), glyphs in locs:
-        f = copy.deepcopy(R)
-        for g in order:
-            write(f, g, glyphs[g])
-        f['maxp'].recalc(f)
-        p = os.path.join(tmp, f'{style}-{w}-{wd}-{gv}.ttf')
-        f.save(p)
-        paths[(w, wd, gv)] = p
-    log(f'[{style}] masters written')
-    # (the outlines and Noto's instances are on disk now: free them before varLib loads ten masters)
-    for d in (masters, condensed, grade, noto, notoC):
+    for wd, outlines, positions in ((100, masters, noto), (WDTH_MIN, condensed, notoC)):
+        for w in WEIGHTS:
+            # Width scaling is independent of grade, including the added math
+            # kerning; changing grade never changes a shaped line's advance.
+            width_scale = 1 if wd == 100 else kC[w]
+            for gv in (0, GRAD_MIN, GRAD_MAX):
+                f = copy.deepcopy(R)
+                glyphs = outlines[w].items() if gv == 0 else graded(outlines, w, gv)
+                for g, outline in glyphs:
+                    write(f, g, outline)
+                position_master(f, R, positions[w], width_scale)
+                refresh_math_metrics(f, R)
+                # Imported Noto coverage order follows its own glyph IDs. Sort
+                # coverage and parallel records together for Anodyne's order.
+                reorderGlyphs(f, f.getGlyphOrder())
+                f['maxp'].recalc(f)
+                p = os.path.join(tmp, f'{style}-{w}-{wd}-{gv}.ttf')
+                f.save(p)
+                paths[(w, wd, gv)] = p
+    log(f'[{style}] {len(paths)} masters written')
+    validate_master_compatibility(paths.values())
+    # Free the drawings before varLib loads the complete grid.
+    for d in (masters, condensed, noto, notoC):
         d.clear()
     V = None
     import gc
@@ -840,7 +1178,7 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None):
     ds = DesignSpaceDocument()
     wa = AxisDescriptor(); wa.tag, wa.name, wa.minimum, wa.default, wa.maximum = 'wght', 'Weight', 100, 400, 900
     # Noto Sans's avar (user → design): the masters sit where Noto's do
-    wa.map = [(100, 100), (200, 400 - 0.796875 * 300), (300, 250), (400, 400), (500, 400 + 0.18 * 500), (600, 400 + 0.38 * 500), (700, 400 + 0.61 * 500), (800, 400 + 0.79 * 500), (900, 900)]
+    wa.map = WEIGHT_MAP
     da = AxisDescriptor(); da.tag, da.name, da.minimum, da.default, da.maximum = 'wdth', 'Width', WDTH_MIN, 100, 100
     da.map = WDTH_MAP
     ga = AxisDescriptor(); ga.tag, ga.name, ga.minimum, ga.default, ga.maximum = 'GRAD', 'Grade', GRAD_MIN, 0, GRAD_MAX
@@ -857,8 +1195,14 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None):
             inst.styleName = ' '.join(x for x in parts if x) or 'Regular'
             inst.location = {'Weight': design[wv], 'Width': designW[wd], 'Grade': 0}
             ds.addInstance(inst)
+    if masters_dir:
+        import masters as editable_masters
+        editable_masters.export_designspace(ds, os.path.join(masters_dir, style), math_regular=R, math_bold=B)
+    if prepare_only:
+        return None, R, B
     log(f'[{style}] varLib.build')
-    vf, _, _ = varLib.build(ds, exclude=['MVAR'], optimize=True)
+    vf, model, master_paths = varLib.build(ds, exclude=['MVAR'], optimize=True)
+    add_math_variations(vf, model, master_paths)
     return vf, R, B
 
 
@@ -891,14 +1235,19 @@ def set_names(font, style, ps_style, variable):
         nm.setName(v, i, 1, 0, 0)
     if 'OS/2' in font:
         font['OS/2'].achVendID = 'OLYX'
+    font['head'].fontRevision = float(VERSION)
+    from metadata import finalize_metrics
+    finalize_metrics(font)
     for rec in nm.names:
         assert 'Lisnoti' not in rec.toUnicode() or rec.nameID in (0, 9), (rec.nameID, rec.toUnicode())
 
 
 def stat(vf, italic):
+    from metadata import compact_instance_names, compact_width_label
+    compact_instance_names(vf)
     axes = [
         dict(tag='wght', name='Weight', values=[dict(value=v, name=n, **({'flags': 0x2} if v == 400 else {})) for v, n in INSTANCES]),
-        dict(tag='wdth', name='Width', values=[dict(value=v, name=n or 'Normal', **({'flags': 0x2} if v == 100 else {})) for v, n in WIDTHS]),
+        dict(tag='wdth', name='Width', values=[dict(value=v, name=compact_width_label(n) or 'Normal', **({'flags': 0x2} if v == 100 else {})) for v, n in WIDTHS]),
         dict(tag='GRAD', name='Grade', values=[dict(value=0, name='Normal', flags=0x2)]),
         dict(tag='ital', name='Italic', values=[dict(value=1, name='Italic')] if italic else [dict(value=0, name='Roman', flags=0x2, linkedValue=1)]),
     ]
@@ -941,18 +1290,19 @@ def static(vf, w, math_from, out, style, ps):
     if 'STAT' in f:
         del f['STAT']
     if math_from is not None and 'MATH' in math_from:
-        names = set(f.getGlyphOrder())
-        f['MATH'] = copy.deepcopy(math_from['MATH'])
+        refresh_math_metrics(f, math_from)
         sort_math(f)
-        try:
-            f['MATH'].compile(f)
-        except Exception as e:
-            log('MATH from the Bold did not fit:', e)
-            f['MATH'] = copy.deepcopy(vf['MATH'])
+    else:
+        refresh_math_metrics(f)
+    # A malformed math face must fail the build; substituting Regular's table
+    # hid outline/measurement mismatches in earlier releases.
+    f['MATH'].compile(f)
     set_names(f, style, ps, False)
     f['OS/2'].usWeightClass = w
     f['OS/2'].fsSelection = (f['OS/2'].fsSelection & ~0b1100001) | (0x20 if w >= 700 else 0) | (0x1 if 'Italic' in style else 0) | (0x40 if style == 'Regular' else 0)
     f['head'].macStyle = (1 if w >= 700 else 0) | (2 if 'Italic' in style else 0)
+    from metadata import static_stat
+    static_stat(f, w, italic='Italic' in style)
     f.save(out)
     log('wrote', out, os.path.getsize(out))
 
@@ -1013,6 +1363,8 @@ def install(out, repo):
             sub = subset.Subsetter(opts)
             sub.populate(unicodes=unicodes(rng))
             sub.subset(f)
+            from metadata import finalize_metrics
+            finalize_metrics(f, reset_clip=True)
             name = f'anodyne-{style}-{part}.woff2'
             f.flavor = 'woff2'
             f.save(os.path.join(web, name))
@@ -1051,7 +1403,11 @@ def main():
     ap.add_argument('--only', choices=['roman', 'italic'])
     ap.add_argument('--repo', help='then write the files OverLyX serves into this folder (fonts/anodyne)')
     ap.add_argument('--install-only', action='store_true', help='skip the build: only --repo from --out')
+    ap.add_argument('--masters', help='export compatible editable masters and layout sources here')
+    ap.add_argument('--prepare-only', action='store_true', help='write --masters without compiling the variable fonts')
     a = ap.parse_args()
+    if a.prepare_only and not a.masters:
+        ap.error('--prepare-only requires --masters')
     if a.install_only:
         install(a.out, a.repo)
         return
@@ -1063,7 +1419,9 @@ def main():
             r, b = ('Lisnoti-Italic.ttf', 'Lisnoti-BoldItalic.ttf') if italic else ('Lisnoti-Regular.ttf', 'Lisnoti-Bold.ttf')
             nv = 'NotoSans-Italic[wdth,wght].ttf' if italic else 'NotoSans[wdth,wght].ttf'
             vf, R, B = build_style(os.path.join(a.lisnoti, r), os.path.join(a.lisnoti, b), os.path.join(a.noto, nv), italic, tmp,
-                                   os.path.join(a.noto, 'NotoSansMath-Regular.ttf'))
+                                   os.path.join(a.noto, 'NotoSansMath-Regular.ttf'), a.masters, a.prepare_only)
+            if a.prepare_only:
+                continue
             set_names(vf, 'Italic' if italic else 'Regular', 'Italic' if italic else 'Regular', True)
             stat(vf, italic)
             name = f'{FAMILY}-Italic[GRAD,wdth,wght].ttf' if italic else f'{FAMILY}[GRAD,wdth,wght].ttf'

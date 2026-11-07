@@ -6,6 +6,8 @@
 <title>Anodyne</title>
 <meta name="description" content="Anodyne: a sans-serif for text, maths and code, with weight 100–900, width 62.5–100 and a grade axis that darkens text without moving it.">
 <link rel="stylesheet" href="fonts/webfonts/anodyne.css">
+<link rel="stylesheet" href="fonts/mathwebfonts/anodyne-math.css">
+<script defer src="assets/vendor/mathjax-tex-4.1.3.min.js"></script>
 <style>
 /* layout: one column of specimen panels; the playground first, everything set in Anodyne itself */
 :root {
@@ -44,12 +46,13 @@ body {
 a { color: var(--accent); }
 .wrap { max-width: 1080px; margin: 0 auto; padding-block: 28px 72px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
-  display: grid; gap: 64px; }
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 64px; }
+.wrap > * { min-width: 0; }
 .label { font-variant-caps: all-small-caps; letter-spacing: .06em; color: var(--muted); font-size: 17px; }
 h2 { font-size: clamp(26px, 4vw, 34px); line-height: 1.15; margin: 0; font-weight: 720; text-wrap: balance; }
 p { margin: 0; max-width: 66ch; }
 .lede { color: var(--muted); font-size: 19px; }
-section { display: grid; gap: 18px; }
+section { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
 
 /* hero */
@@ -111,10 +114,73 @@ header { display: grid; gap: 14px; padding-top: 24px; }
 :root[data-theme="dark"] .math img { filter: invert(1) hue-rotate(180deg); opacity: .92; }
 .math .panel { padding: 20px; display: grid; gap: 16px; }
 .alphas { font-size: 30px; line-height: 1.5; overflow-wrap: anywhere; }
+.math-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; padding: 20px; }
+.math-live { padding: 24px; overflow-x: auto; font-size: 27px; }
+.math-live math, .math-choice .glyphs { font-family: "Anodyne Math", Anodyne, sans-serif; }
+.math-live math { margin-block: 18px; }
+.math-editor { padding: 20px 24px 0; display: grid; gap: 10px; }
+.math-editor[hidden] { display: none; }
+.math-editor label { font-size: 14px; font-weight: 600; }
+.math-editor textarea { width: 100%; min-height: 115px; resize: vertical; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); color: var(--ink); padding: 12px; font: 14px/1.55 var(--mono); }
+.math-editor textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.math-editor textarea[aria-invalid="true"] { border-color: #c34444; }
+.math-editor-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.math-editor-tools select { padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; font-size: 14px; }
+.math-editor-tools button { font: inherit; font-size: 14px; cursor: pointer; }
+.math-editor-status { min-height: 1.5em; margin: 0; font-size: 13px; color: var(--muted); }
+.math-editor-status[data-error="true"] { color: #ba3333; }
+.math-feature-examples { border-top: 1px solid var(--line); margin-top: 25px; padding-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px 24px; }
+.math-feature-examples figure { margin: 0; min-width: 0; }
+.math-feature-examples figcaption { font-size: 12px; color: var(--muted); }
+.math-feature-examples math { margin-block: 8px; font-size: 25px; }
+.math-choice { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 285px), 1fr)); gap: 12px; }
+.math-choice article { padding: 18px; display: grid; gap: 10px; }
+.math-choice h3 { margin: 0; font-size: 17px; font-weight: 650; }
+.math-choice .glyphs { display: flex; gap: 20px; align-items: baseline; font-size: 32px; }
+.math-choice .glyphs span:first-child { color: var(--muted); }
+.math-choice small { color: var(--muted); }
+.math-choice button { width: fit-content; }
 
 /* next to the other maths fonts: the section is written by sources/mathfonts/build.py */
 .mf-jump { font-size: 14.5px; line-height: 1.75; color: var(--muted); }
 .mf-jump a { margin-right: .75em; white-space: nowrap; }
+.mf [hidden] { display: none !important; }
+.mf-tools { padding: 20px; display: grid; gap: 16px; }
+.mf-filter-row { display: grid; grid-template-columns: minmax(180px, 1.4fr) minmax(120px, .7fr) minmax(190px, 1fr); gap: 14px; }
+.mf-filter-row label, .mf-zoom { display: grid; gap: 6px; font-size: 14px; color: var(--muted); }
+.mf-filter-row input, .mf-filter-row select { width: 100%; min-width: 0; padding: 9px 11px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--ink); font: inherit; font-size: 16px; }
+.mf-toolbar { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; }
+.mf-toolbar button { font: inherit; font-size: 14px; cursor: pointer; }
+.mf-zoom { grid-template-columns: 1fr auto; min-width: 210px; margin-right: auto; }
+.mf-zoom input { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.mf-zoom output { color: var(--ink); font-variant-numeric: tabular-nums; }
+.mf-status { font-size: 14px; color: var(--muted); }
+.mf-picker { padding: 0; border: 0; margin: 0; min-width: 0; }
+.mf-picker legend { padding: 0 0 8px; font-size: 15px; font-weight: 650; }
+.mf-pick-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 7px; max-height: 244px; overflow: auto; padding: 3px; }
+.mf-pick { display: grid; grid-template-columns: 18px 1fr; column-gap: 7px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; align-items: baseline; cursor: pointer; }
+.mf-pick.is-selected { border-color: var(--accent); background: var(--code); }
+.mf-pick input { accent-color: var(--accent); margin: 0; width: 16px; height: 16px; }
+.mf-pick span { font-size: 14px; line-height: 1.3; }
+.mf-pick small { grid-column: 2; font-size: 12px; color: var(--muted); }
+.mf-pick:has(input:disabled) { opacity: .55; cursor: default; }
+.mf-focus { display: grid; gap: 12px; }
+.mf-focus > h3 { margin: 4px 0 0; font-size: 23px; }
+.mf-comparisons { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 450px), 1fr)); gap: 14px; align-items: start; }
+.mf-compare { padding: 16px; min-width: 0; display: grid; gap: 12px; }
+.mf-compare-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.mf-compare h4 { font-size: 20px; line-height: 1.2; margin: 0; }
+.mf-compare button { border: 0; padding: 3px; background: transparent; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.mf-shelf { overflow-x: auto; min-width: 0; padding-bottom: 6px; }
+.mf .mf-shelf img { max-width: none; height: auto; }
+.mf-shelf:focus-visible, .mf-catalog summary:focus-visible, .mf-filter-row select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mf-compare-foot { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 5px 12px; font-size: 14px; }
+.mf-catalog { min-width: 0; }
+.mf-catalog > summary { font-size: 18px; font-weight: 650; cursor: pointer; padding: 12px 0; }
+.mf-catalog[open] > summary { margin-bottom: 12px; }
+.mf-catalog .mf-jump { margin-bottom: 18px; }
+.mf-catalog .mf-grid { margin-block: 14px 22px; }
+@media (max-width: 650px) { .mf-filter-row { grid-template-columns: 1fr 1fr; } .mf-search { grid-column: 1 / -1; } .mf-tools { padding: 14px; } .mf-zoom { width: 100%; margin: 0; } }
 .mf-group { margin: 14px 0 0; font-size: 22px; font-weight: 680; }
 .mf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap: 16px;  align-items: start; }
 .mf-font { padding: 18px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; scroll-margin-top: 16px; }
@@ -151,6 +217,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
   .stage { border-right: 0; border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; }
   .versus { grid-template-columns: 1fr; }
   .charset div { grid-template-columns: 1fr; gap: 2px; }
+  .math-controls { grid-template-columns: 1fr; gap: 15px; }
 }
 </style>
 </head>
@@ -242,24 +309,129 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
     </div>
   </section>
 
+  <section aria-labelledby="math-lab">
+    <h2 id="math-lab">Maths with room to move</h2>
+    <p>Change the weight, width and grade of a whole formula. Choose upright integrals or a different convention for relations and sets; the letters, operators and accents belong together.</p>
+    <div class="panel">
+      <div class="math-controls">
+        <div class="axis"><div class="head"><label for="math-wght">Maths weight</label><output id="math-wght-out">400</output></div><input id="math-wght" type="range" min="100" max="900" step="1" value="400"></div>
+        <div class="axis"><div class="head"><label for="math-wdth">Maths width</label><output id="math-wdth-out">100%</output></div><input id="math-wdth" type="range" min="62.5" max="100" step="0.5" value="100"></div>
+        <div class="axis"><div class="head"><label for="math-grad">Maths grade</label><output id="math-grad-out">0</output></div><input id="math-grad" type="range" min="-100" max="150" step="1" value="0"></div>
+      </div>
+      <div class="math-editor" id="math-editor" hidden>
+        <label for="math-tex">Write a formula in TeX</label>
+        <textarea id="math-tex" spellcheck="false" autocapitalize="off" autocomplete="off" maxlength="8000" aria-describedby="math-editor-status">\sum_{k=1}^{n}\frac{\alpha_k x^{2k}}{\sqrt{1+\beta_k^2}}\le\int_{-\infty}^{\infty}\left|\frac{\partial\Phi}{\partial t}\right|\,\mathrm{d}t</textarea>
+        <div class="math-editor-tools">
+          <label for="math-preset">Try</label>
+          <select id="math-preset"><option value="calculus">Calculus</option><option value="sets">Sets and relations</option><option value="quantum">Quantum mechanics</option><option value="delimiters">Tall delimiters</option></select>
+          <button type="button" id="math-render-button" class="btn primary" disabled>Render formula</button>
+        </div>
+        <p class="math-editor-status" id="math-editor-status" role="status" aria-live="polite">Loading the TeX editor…</p>
+      </div>
+      <div class="math-live" id="math-live">
+        <div id="math-render">
+        <math display="block" aria-label="A sum of fractions is at most an integral">
+          <mrow><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mfrac><mrow><msub><mi>α</mi><mi>k</mi></msub><msup><mi>x</mi><mrow><mn>2</mn><mi>k</mi></mrow></msup></mrow><msqrt><mrow><mn>1</mn><mo>+</mo><msubsup><mi>β</mi><mi>k</mi><mn>2</mn></msubsup></mrow></msqrt></mfrac><mo>≤</mo><msubsup><mo>∫</mo><mrow><mo>−</mo><mi>∞</mi></mrow><mi>∞</mi></msubsup><mrow><mo>|</mo><mfrac><mrow><mo>∂</mo><mi>Φ</mi></mrow><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac><mo>|</mo><mi mathvariant="normal">d</mi><mi>t</mi></mrow></mrow>
+        </math>
+        <math display="block" aria-label="A matrix, an accented variable, a cube root and set relations">
+          <mrow><mo>(</mo><mtable><mtr><mtd><msub><mi>a</mi><mn>1</mn></msub></mtd><mtd><msub><mi>b</mi><mn>1</mn></msub></mtd></mtr><mtr><mtd><msub><mi>a</mi><mn>2</mn></msub></mtd><mtd><msub><mi>b</mi><mn>2</mn></msub></mtd></mtr></mtable><mo>)</mo><mover accent="true"><mi>x</mi><mo>^</mo></mover><mo>=</mo><mroot><mrow><mi>ℏ</mi><mo>+</mo><mi>ε</mi></mrow><mn>3</mn></mroot><mo>,</mo><mspace width="1em"/><mi>A</mi><mo>∩</mo><mi>B</mi><mo>=</mo><mo>∅</mo><mo>,</mo><mspace width="1em"/><mi>x</mi><mo>∉</mo><mi>A</mi></mrow>
+        </math>
+        </div>
+        <div class="math-feature-examples" aria-label="Examples for the mathematical style choices">
+          <figure><figcaption>Upright integrals</figcaption><math display="block" data-math-example="ss02"><mrow><msubsup><mo>∫</mo><mn>0</mn><mn>1</mn></msubsup><msup><mi>x</mi><mn>2</mn></msup><mi mathvariant="normal">d</mi><mi>x</mi><mo>=</mo><mfrac><mn>1</mn><mn>3</mn></mfrac></mrow></math></figure>
+          <figure><figcaption>Slanted inequalities</figcaption><math display="block" data-math-example="ss03"><mrow><mn>0</mn><mo>≤</mo><msup><mi>x</mi><mn>2</mn></msup><mo>≤</mo><mn>1</mn></mrow></math></figure>
+          <figure><figcaption>Compact set symbols</figcaption><math display="block" data-math-example="ss04"><mrow><mi>x</mi><mo>∈</mo><mi>A</mi><mo>,</mo><mspace width=".5em"/><mi>y</mi><mo>∉</mo><mi>A</mi></mrow></math></figure>
+          <figure><figcaption>Vertical negations</figcaption><math display="block" data-math-example="ss05"><mrow><mi>A</mi><mo>≠</mo><mi>B</mi><mo>,</mo><mspace width=".5em"/><mi>A</mi><mo>⊄</mo><mi>B</mi></mrow></math></figure>
+          <figure><figcaption>Oval empty set</figcaption><math display="block" data-math-example="cv01"><mrow><mi>A</mi><mo>∩</mo><mi>B</mi><mo>=</mo><mo>∅</mo></mrow></math></figure>
+          <figure><figcaption>Lowered-bar ℏ</figcaption><math display="block" data-math-example="cv02"><mrow><mi>E</mi><mo>=</mo><mi>ℏ</mi><mi>ω</mi></mrow></math></figure>
+          <figure><figcaption>Chancery script capitals</figcaption><math display="block" data-math-example="ss01"><mrow><mi mathvariant="normal">𝒜</mi><mo>⊂</mo><mi mathvariant="normal">ℬ</mi><mo>∪</mo><mi mathvariant="normal">𝒞</mi></mrow></math></figure>
+        </div>
+      </div>
+    </div>
+    <p class="readout">For precise stretched constructions in TeX or desktop apps, export a math instance at your chosen axes; see the build instructions in the source.</p>
+    <div class="toggles" aria-label="Script style"><button type="button" data-math-feature="ss01" aria-pressed="false">Use chancery script capitals</button><span class="readout">Roundhand script is the default.</span></div>
+    <div class="math-choice toggles" id="math-choices">
+      <article class="panel"><h3>Upright integrals</h3><div class="glyphs"><span>∫ ∮ ∭</span><span style="font-feature-settings:'ss02' 1">∫ ∮ ∭</span></div><small>Following Noto Sans Math, Fira Math and XITS.</small><button type="button" data-math-feature="ss02" aria-pressed="false">Use upright integrals</button></article>
+      <article class="panel"><h3>Slanted inequalities</h3><div class="glyphs"><span>≤ ≥</span><span style="font-feature-settings:'ss03' 1">≤ ≥</span></div><small>Another familiar convention, as in Lete Sans and KpMath.</small><button type="button" data-math-feature="ss03" aria-pressed="false">Use slanted inequalities</button></article>
+      <article class="panel"><h3>Compact set symbols</h3><div class="glyphs"><span>∈ ∉ ∋ ∖ ∣ ∥</span><span style="font-feature-settings:'ss04' 1">∈ ∉ ∋ ∖ ∣ ∥</span></div><small>Smaller membership and relation signs for dense notation, following Lete Sans and XCharter.</small><button type="button" data-math-feature="ss04" aria-pressed="false">Use compact set signs</button></article>
+      <article class="panel"><h3>Vertical negations</h3><div class="glyphs"><span>≠ ∉ ⊄</span><span style="font-feature-settings:'ss05' 1">≠ ∉ ⊄</span></div><small>An alternative to the diagonal slash, as in STIX Two and XITS.</small><button type="button" data-math-feature="ss05" aria-pressed="false">Use vertical negations</button></article>
+      <article class="panel"><h3>Oval empty set</h3><div class="glyphs"><span>∅</span><span style="font-feature-settings:'cv01' 1">∅</span></div><small>A taller alternative to Anodyne’s circular default.</small><button type="button" data-math-feature="cv01" aria-pressed="false">Use oval empty set</button></article>
+      <article class="panel"><h3>Lowered-bar ℏ</h3><div class="glyphs"><span>ℏ</span><span style="font-feature-settings:'cv02' 1">ℏ</span></div><small>A second bar position for the reduced Planck constant.</small><button type="button" data-math-feature="cv02" aria-pressed="false">Use lowered-bar ℏ</button></article>
+    </div>
+  </section>
+
 <!-- mathfonts:start (written by sources/mathfonts/build.py) -->
 <section class="mf" aria-labelledby="mathfonts">
 <h2 id="mathfonts">Next to the other OpenType maths fonts</h2>
 <p>The same sentence and formulas in Anodyne and in the 34 other free fonts listed under <a href="https://tex.stackexchange.com/questions/425098">“Which OpenType math fonts are available?”</a>, each with its text companion, set by LuaLaTeX with unicode-math at 13 pt and drawn as outlines. The facts come from the font files: stretchy glyphs from the MATH table, script forms from the ssty feature, maths alphabets out of the Unicode block. Under each font, every stylistic set and character variant that changes characters, with the usual glyphs in grey above and the alternates below.</p>
-<p class="mf-jump"><a href="#mf-anodyne">Anodyne</a> <a href="#mf-lisnoti">Lisnoti</a> <a href="#mf-notosansmath">Noto Sans Math</a> <a href="#mf-firamath">Fira Math</a> <a href="#mf-letesans">Lete Sans Math</a> <a href="#mf-newcmsans">New Computer Modern Sans Math</a> <a href="#mf-kpsans">KpMath Sans</a> <a href="#mf-plexmath">IBM Plex Math</a> <a href="#mf-arsenalmath">Arsenal Math</a> <a href="#mf-luciole">Luciole Math</a> <a href="#mf-pennstander">Pennstander Math</a> <a href="#mf-neohellenic">GFS Neohellenic Math</a> <a href="#mf-latinmodern">Latin Modern Math</a> <a href="#mf-newcm">New Computer Modern Math</a> <a href="#mf-mlmodern">MLModern Math</a> <a href="#mf-concrete">Concrete Math</a> <a href="#mf-eulermath">Euler Math</a> <a href="#mf-neoeuler">Neo Euler</a> <a href="#mf-termes">TeX Gyre Termes Math</a> <a href="#mf-pagella">TeX Gyre Pagella Math</a> <a href="#mf-bonum">TeX Gyre Bonum Math</a> <a href="#mf-schola">TeX Gyre Schola Math</a> <a href="#mf-dejavu">TeX Gyre DejaVu Math</a> <a href="#mf-stixtwo">STIX Two Math</a> <a href="#mf-stix">STIX Math</a> <a href="#mf-xits">XITS Math</a> <a href="#mf-libertinus">Libertinus Math</a> <a href="#mf-asana">Asana Math</a> <a href="#mf-garamond">Garamond Math</a> <a href="#mf-erewhon">Erewhon Math</a> <a href="#mf-kpmath">KpMath</a> <a href="#mf-xcharter">XCharter Math</a> <a href="#mf-oldstandard">Old Standard Math</a> <a href="#mf-pl46">PL46 Math</a> <a href="#mf-berenis">Berenis ADF Pro Math</a></p>
+<div class="panel mf-tools" id="mf-tools" hidden>
+<div class="mf-filter-row">
+<label class="mf-search">Find a font<input id="mf-search" type="search" placeholder="Name, feature or symbol…" autocomplete="off"></label>
+<label>Style<select id="mf-group"><option value="all">All styles</option><option value="sans">Sans-serif</option><option value="serif">Serif</option></select></label>
+<label>Must have<select id="mf-feature"><option value="all">Any features</option><option value="upright-integrals">Upright integral alternates</option><option value="integral-styles">Any integral alternates</option><option value="script-alternates">Script / calligraphic alternates</option><option value="double-struck">Double-struck alternates</option><option value="slanted-inequalities">Slanted inequalities</option><option value="vertical-negations">Vertical negations</option><option value="empty-set">Empty-set alternates</option><option value="character-variants">Character variants</option><option value="script-forms">Optical script forms (ssty)</option><option value="bold">Companion bold maths</option><option value="math-table">OpenType MATH table</option></select></label>
+</div>
+<div class="mf-toolbar"><label class="mf-zoom">Shared sample size <output id="mf-zoom-out" for="mf-zoom">100%</output><input id="mf-zoom" type="range" min="80" max="160" step="10" value="100"></label><button class="btn" type="button" id="mf-reset">Reset comparison</button><button class="btn" type="button" id="mf-clear-selection">Clear selection</button></div>
+<p class="mf-status" id="mf-results" role="status" aria-live="polite">35 fonts available. Choose up to four.</p>
+<fieldset class="mf-picker"><legend>Choose up to four fonts</legend><div class="mf-pick-list" id="mf-pick-list">
+<label class="mf-pick" data-font="anodyne"><input type="checkbox" value="anodyne" checked><span>Anodyne</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="lisnoti"><input type="checkbox" value="lisnoti" checked><span>Lisnoti</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="notosansmath"><input type="checkbox" value="notosansmath" checked><span>Noto Sans Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="firamath"><input type="checkbox" value="firamath"><span>Fira Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="letesans"><input type="checkbox" value="letesans"><span>Lete Sans Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="newcmsans"><input type="checkbox" value="newcmsans"><span>New Computer Modern Sans Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="kpsans"><input type="checkbox" value="kpsans"><span>KpMath Sans</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="plexmath"><input type="checkbox" value="plexmath"><span>IBM Plex Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="arsenalmath"><input type="checkbox" value="arsenalmath"><span>Arsenal Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="luciole"><input type="checkbox" value="luciole"><span>Luciole Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="pennstander"><input type="checkbox" value="pennstander"><span>Pennstander Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="neohellenic"><input type="checkbox" value="neohellenic"><span>GFS Neohellenic Math</span><small>Sans-serif</small></label>
+<label class="mf-pick" data-font="latinmodern"><input type="checkbox" value="latinmodern"><span>Latin Modern Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="newcm"><input type="checkbox" value="newcm"><span>New Computer Modern Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="mlmodern"><input type="checkbox" value="mlmodern"><span>MLModern Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="concrete"><input type="checkbox" value="concrete"><span>Concrete Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="eulermath"><input type="checkbox" value="eulermath"><span>Euler Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="neoeuler"><input type="checkbox" value="neoeuler"><span>Neo Euler</span><small>Serif</small></label>
+<label class="mf-pick" data-font="termes"><input type="checkbox" value="termes"><span>TeX Gyre Termes Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="pagella"><input type="checkbox" value="pagella"><span>TeX Gyre Pagella Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="bonum"><input type="checkbox" value="bonum"><span>TeX Gyre Bonum Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="schola"><input type="checkbox" value="schola"><span>TeX Gyre Schola Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="dejavu"><input type="checkbox" value="dejavu"><span>TeX Gyre DejaVu Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="stixtwo"><input type="checkbox" value="stixtwo"><span>STIX Two Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="stix"><input type="checkbox" value="stix"><span>STIX Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="xits"><input type="checkbox" value="xits"><span>XITS Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="libertinus"><input type="checkbox" value="libertinus"><span>Libertinus Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="asana"><input type="checkbox" value="asana"><span>Asana Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="garamond"><input type="checkbox" value="garamond"><span>Garamond Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="erewhon"><input type="checkbox" value="erewhon"><span>Erewhon Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="kpmath"><input type="checkbox" value="kpmath"><span>KpMath</span><small>Serif</small></label>
+<label class="mf-pick" data-font="xcharter"><input type="checkbox" value="xcharter"><span>XCharter Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="oldstandard"><input type="checkbox" value="oldstandard"><span>Old Standard Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="pl46"><input type="checkbox" value="pl46"><span>PL46 Math</span><small>Serif</small></label>
+<label class="mf-pick" data-font="berenis"><input type="checkbox" value="berenis"><span>Berenis ADF Pro Math</span><small>Serif</small></label>
+</div><p id="mf-empty" hidden>No fonts match. Try a different name or clear the filters.</p></fieldset>
+</div>
+<div class="mf-focus" id="mf-focus" hidden><h3 id="mf-selection-heading">Your comparison</h3><p class="mf-note">Every sample is set at the same point size. Increase the shared size to inspect details; swipe a sample if it is wider than its panel.</p><div class="mf-comparisons" id="mf-comparisons" aria-labelledby="mf-selection-heading"></div><p id="mf-no-selection" hidden>Choose a font above to start comparing.</p></div>
+<details class="mf-catalog" id="mf-catalog" open><summary>Browse all font details and alternates</summary>
+<nav class="mf-jump" aria-label="Jump to a font"><a href="#mf-anodyne">Anodyne</a> <a href="#mf-lisnoti">Lisnoti</a> <a href="#mf-notosansmath">Noto Sans Math</a> <a href="#mf-firamath">Fira Math</a> <a href="#mf-letesans">Lete Sans Math</a> <a href="#mf-newcmsans">New Computer Modern Sans Math</a> <a href="#mf-kpsans">KpMath Sans</a> <a href="#mf-plexmath">IBM Plex Math</a> <a href="#mf-arsenalmath">Arsenal Math</a> <a href="#mf-luciole">Luciole Math</a> <a href="#mf-pennstander">Pennstander Math</a> <a href="#mf-neohellenic">GFS Neohellenic Math</a> <a href="#mf-latinmodern">Latin Modern Math</a> <a href="#mf-newcm">New Computer Modern Math</a> <a href="#mf-mlmodern">MLModern Math</a> <a href="#mf-concrete">Concrete Math</a> <a href="#mf-eulermath">Euler Math</a> <a href="#mf-neoeuler">Neo Euler</a> <a href="#mf-termes">TeX Gyre Termes Math</a> <a href="#mf-pagella">TeX Gyre Pagella Math</a> <a href="#mf-bonum">TeX Gyre Bonum Math</a> <a href="#mf-schola">TeX Gyre Schola Math</a> <a href="#mf-dejavu">TeX Gyre DejaVu Math</a> <a href="#mf-stixtwo">STIX Two Math</a> <a href="#mf-stix">STIX Math</a> <a href="#mf-xits">XITS Math</a> <a href="#mf-libertinus">Libertinus Math</a> <a href="#mf-asana">Asana Math</a> <a href="#mf-garamond">Garamond Math</a> <a href="#mf-erewhon">Erewhon Math</a> <a href="#mf-kpmath">KpMath</a> <a href="#mf-xcharter">XCharter Math</a> <a href="#mf-oldstandard">Old Standard Math</a> <a href="#mf-pl46">PL46 Math</a> <a href="#mf-berenis">Berenis ADF Pro Math</a></nav>
 <h3 class="mf-group">Sans-serif</h3><div class="mf-grid">
-<article class="panel mf-font mf-ours" id="mf-anodyne">
+<article class="panel mf-font mf-ours" id="mf-anodyne" data-font="anodyne" data-group="sans" data-capabilities="bold character-variants empty-set integral-styles math-table script-alternates script-forms slanted-inequalities upright-integrals vertical-negations" data-search="Anodyne Anodyne cv01 Oval empty set empty set ∅ cv02 Lowered-bar hbar planck constant over two pi ℏ ss01  script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02 Upright integrals integrals ∫∬∭∮∯∰ ss03 Slanted inequalities relations ≤≥≰≱ ss04 Compact set symbols negated relations ∈∋∖∣∥∉ ss05 Vertical negation strokes negated relations ∉∌≠⊄⊅⊈ ss06    ss07  Greek capitals ᾈᾘᾨ">
 <div class="mf-head"><h3>Anodyne</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/anodyne.svg" width="435" height="150" loading="lazy" alt="Anodyne: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Anodyne. Lisnoti with every weight from 100 to 900, a width and a grade axis, and formulas at Computer Modern’s proportions (TeX’s constants, delimiters that grow as Computer Modern’s do); the MATH table is in all four static files.</p>
-<ul class="mf-facts"><li>9 100 glyphs</li><li>981 size variants and 81 assemblies for 167 vertical and 29 horizontal stretchy glyphs</li><li>script forms (ssty) for 462 glyphs</li><li>maths alphabets 996 of 996</li><li>bold maths: Anodyne-Bold.ttf</li><li>dotless i and j under accents (dtls)</li><li>mirrored forms for right-to-left maths (rtlm)</li><li>ss06 changes only glyphs without a character of their own</li></ul>
+<ul class="mf-facts"><li>9 208 glyphs</li><li>1 025 size variants and 89 assemblies for 211 vertical and 29 horizontal stretchy glyphs</li><li>script forms (ssty) for 454 glyphs</li><li>maths alphabets 996 of 996</li><li>bold maths: Anodyne-Bold.ttf</li><li>dotless i and j under accents (dtls)</li><li>mirrored forms for right-to-left maths (rtlm)</li><li>ss06 changes only glyphs without a character of their own</li></ul>
 <div class="mf-sets">
+<figure><img src="images/mathfonts/anodyne-cv01.svg" width="19" height="43" loading="lazy" alt="cv01 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv01</code> Oval empty set</figcaption></figure>
+<figure><img src="images/mathfonts/anodyne-cv02.svg" width="14" height="38" loading="lazy" alt="cv02 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv02</code> Lowered-bar hbar</figcaption></figure>
 <figure><img src="images/mathfonts/anodyne-ss01.svg" width="141" height="38" loading="lazy" alt="ss01 changes 26 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> script capitals</figcaption></figure>
+<figure><img src="images/mathfonts/anodyne-ss02.svg" width="177" height="49" loading="lazy" alt="ss02 changes 25 characters; shown: ∫∬∭∮∯∰, default above, alternate below"><figcaption><code>ss02</code> Upright integrals</figcaption></figure>
+<figure><img src="images/mathfonts/anodyne-ss03.svg" width="69" height="37" loading="lazy" alt="ss03 changes 4 characters; shown: ≤≥≰≱, default above, alternate below"><figcaption><code>ss03</code> Slanted inequalities</figcaption></figure>
+<figure><img src="images/mathfonts/anodyne-ss04.svg" width="89" height="36" loading="lazy" alt="ss04 changes 7 characters; shown: ∈∋∖∣∥∉, default above, alternate below"><figcaption><code>ss04</code> Compact set symbols</figcaption></figure>
+<figure><img src="images/mathfonts/anodyne-ss05.svg" width="111" height="36" loading="lazy" alt="ss05 changes 11 characters; shown: ∉∌≠⊄⊅⊈, default above, alternate below"><figcaption><code>ss05</code> Vertical negation strokes</figcaption></figure>
 <figure><img src="images/mathfonts/anodyne-ss07.svg" width="86" height="38" loading="lazy" alt="ss07 changes 27 characters; shown: ᾈᾘᾨ, default above, alternate below"><figcaption><code>ss07</code> Greek capitals</figcaption></figure>
 </div>
-<p class="mf-src">Version 0.300 from this repository · <a href="https://github.com/japhba/anodyne">github.com/japhba/anodyne</a></p>
+<p class="mf-src">Version 0.400 from this repository · <a href="https://github.com/japhba/anodyne">github.com/japhba/anodyne</a></p>
 </article>
-<article class="panel mf-font" id="mf-lisnoti">
+<article class="panel mf-font" id="mf-lisnoti" data-font="lisnoti" data-group="sans" data-capabilities="bold math-table script-alternates script-forms" data-search="Lisnoti Lisnoti ss01  script capitals 𝒜ℬ𝒞𝒟ℰℱ">
 <div class="mf-head"><h3>Lisnoti</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/lisnoti.svg" width="435" height="149" loading="lazy" alt="Lisnoti: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Lisnoti. Noto Sans with Noto Sans Math’s MATH table, the font Anodyne is forked from.</p>
@@ -269,7 +441,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 2.006 from CTAN · <a href="https://ctan.org/pkg/lisnoti">ctan.org/pkg/lisnoti</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
 </article>
-<article class="panel mf-font" id="mf-notosansmath">
+<article class="panel mf-font" id="mf-notosansmath" data-font="notosansmath" data-group="sans" data-capabilities="integral-styles math-table script-alternates script-forms upright-integrals" data-search="Noto Sans Math Noto Sans ss01 Chancery Style script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02 Straight integrals integrals ∫⨐⨑⨒⨓⨔">
 <div class="mf-head"><h3>Noto Sans Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/notosansmath.svg" width="435" height="146" loading="lazy" alt="Noto Sans Math with Noto Sans: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Noto Sans.</p>
@@ -280,7 +452,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 3.000 from GitHub · <a href="https://github.com/notofonts/math">github.com/notofonts/math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-firamath">
+<article class="panel mf-font" id="mf-firamath" data-font="firamath" data-group="sans" data-capabilities="integral-styles math-table script-forms upright-integrals" data-search="Fira Math Fira Sans ss01 Upright Integrals integrals ∫∬∭∮∯∰ ss02 Planck Constant with Bar planck constant over two pi ℏ ss03 Complement Alternates complement ∁">
 <div class="mf-head"><h3>Fira Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/firamath.svg" width="435" height="152" loading="lazy" alt="Fira Math with Fira Sans: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Fira Sans. The answer sets FiraGO as text; Fira Sans, which FiraGO extends, stands in for it here. Not in the font, so set in grey from Latin Modern Math: ℱ 𝒜 𝔤.</p>
@@ -292,7 +464,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.3.4 from CTAN · <a href="https://ctan.org/pkg/firamath">ctan.org/pkg/firamath</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-letesans">
+<article class="panel mf-font" id="mf-letesans" data-font="letesans" data-group="sans" data-capabilities="bold character-variants empty-set integral-styles math-table script-alternates script-forms slanted-inequalities upright-integrals vertical-negations" data-search="Lete Sans Math Lato cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 4 alphabets 𝜖 cv04  κ in 4 alphabets 𝜅 cv05  π in 4 alphabets 𝜋 cv06  φ in 4 alphabets 𝜙 cv07  ρ in 4 alphabets 𝜌 cv08  σ in 4 alphabets 𝜎 cv09  θ in 4 alphabets 𝜃 cv10  Θ in 4 alphabets Θ cv11  g in 4 alphabets g cv12  l in 4 alphabets l cv13  l in 4 alphabets l cv14  figures and bold figures 0𝟎 ss01 mathcal script capitals 𝒜ℬ𝒞𝒟ℰℱ ss04 leqslant relations ≤≥≦≧≰≱ ss05 smaller negated relations ∈∋∖∣∥∤ ss06 subsetneq subsets ⊊⊋⫋⫌ ss07 parallelslant parallel to and negated relations ∥∦ ss08 Upright Integrals integrals ∫∬∭∮∯⨑ ss09 Negated Symbols With Vertical Stroke negated relations ≨≩∉∌⊄⊅">
 <div class="mf-head"><h3>Lete Sans Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/letesans.svg" width="435" height="144" loading="lazy" alt="Lete Sans Math with Lato: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Lato.</p>
@@ -322,7 +494,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.63 from CTAN · <a href="https://ctan.org/pkg/lete-sans-math">ctan.org/pkg/lete-sans-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-newcmsans">
+<article class="panel mf-font" id="mf-newcmsans" data-font="newcmsans" data-group="sans" data-capabilities="character-variants double-struck empty-set integral-styles math-table script-alternates script-forms upright-integrals" data-search="New Computer Modern Sans Math New Computer Modern Sans cv01  relations ≨⊊⊕⨼0∩ cv02  empty set ∅ cv03  mathematical italic small j 𝑗 ss01  script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02  integrals ∫⨐⨑⨒⨓⨔ ss03  double-struck letters 𝔸𝕒𝟘ⅆℾ⅀ ss04  figures 012345 ss08  relations &lt;←a𝛼A𝛢">
 <div class="mf-head"><h3>New Computer Modern Sans Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/newcmsans.svg" width="436" height="156" loading="lazy" alt="New Computer Modern Sans Math with New Computer Modern Sans: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in New Computer Modern Sans.</p>
@@ -339,7 +511,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 4.0 from CTAN · <a href="https://ctan.org/pkg/newcomputermodern">ctan.org/pkg/newcomputermodern</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-kpsans">
+<article class="panel mf-font" id="mf-kpsans" data-font="kpsans" data-group="sans" data-capabilities="bold character-variants empty-set integral-styles math-table script-alternates script-forms slanted-inequalities" data-search="KpMath Sans KpSans cv00  fraktur capitals ℑℜ cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 4 alphabets 𝜖 cv05  π in 4 alphabets 𝜋 cv06  φ in 4 alphabets 𝜙 cv07  ρ in 4 alphabets 𝜌 cv08  σ in 4 alphabets 𝜎 cv09  θ in 4 alphabets 𝜃 cv10  Θ in 4 alphabets Θ ss01 mathcal script capitals 𝒜ℬ𝒞𝒟ℰℱ ss03 narrowiints integrals ∬∭∯∰⨌ ss04 leqslant relations ≤≥≦≧≰≱ ss05 smaller negated relations ∈∋∖∣∥∤ ss06 subsetneq subsets ⊊⊋⫋⫌ ss07 parallelslant parallel to and negated relations ∥∦">
 <div class="mf-head"><h3>KpMath Sans</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/kpsans.svg" width="434" height="144" loading="lazy" alt="KpMath Sans with KpSans: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in KpSans.</p>
@@ -364,7 +536,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.75 from CTAN · <a href="https://ctan.org/pkg/kpfonts-otf">ctan.org/pkg/kpfonts-otf</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-plexmath">
+<article class="panel mf-font" id="mf-plexmath" data-font="plexmath" data-group="sans" data-capabilities="double-struck math-table script-alternates script-forms" data-search="IBM Plex Math IBM Plex Serif salt  figures and small letters 0g ss02 simple lowercase g g in 9 alphabets g ss03 slashed number zero figures and double-struck figures … 0𝟘𝟢𝟶𝟎𝟬 ss11 Math Fraktur forms capitals ABCabc ss12 Math Fraktur Bold forms capitals ABCabc ss13 Math monospaced forms capitals ABab01 ss14 Math Script forms capitals ABCabc ss15 Math Script Bold forms capitals ABCabc">
 <div class="mf-head"><h3>IBM Plex Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/plexmath.svg" width="434" height="149" loading="lazy" alt="IBM Plex Math with IBM Plex Serif: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in IBM Plex Serif.</p>
@@ -381,7 +553,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 1.000 from CTAN · <a href="https://github.com/IBM/plex">github.com/IBM/plex</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
 </article>
-<article class="panel mf-font" id="mf-arsenalmath">
+<article class="panel mf-font" id="mf-arsenalmath" data-font="arsenalmath" data-group="sans" data-capabilities="bold character-variants empty-set integral-styles math-table script-alternates script-forms slanted-inequalities" data-search="Arsenal Math Arsenal cv00  fraktur capitals ℑℜ cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 4 alphabets 𝜖 cv05  π in 4 alphabets 𝜋 cv06  φ in 4 alphabets 𝜙 cv07  ρ in 4 alphabets 𝜌 cv08  σ in 4 alphabets 𝜎 cv09  θ in 4 alphabets 𝜃 cv10  Θ in 4 alphabets Θ ss01 mathcal script capitals 𝒜ℬ𝒞𝒟ℰℱ ss03 narrowiints integrals ∬∭∯∰⨌ ss04 leqslant relations ≤≥≦≧≰≱ ss05 smaller negated relations ∈∋∣∥∤∦ ss06 subsetneq subsets ⊊⊋⫋⫌ ss07 parallelslant parallel to and negated relations ∥∦">
 <div class="mf-head"><h3>Arsenal Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/arsenalmath.svg" width="434" height="157" loading="lazy" alt="Arsenal Math with Arsenal: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Arsenal.</p>
@@ -406,7 +578,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.9.3 from CTAN · <a href="https://ctan.org/pkg/arsenal-math">ctan.org/pkg/arsenal-math</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
 </article>
-<article class="panel mf-font" id="mf-luciole">
+<article class="panel mf-font" id="mf-luciole" data-font="luciole" data-group="sans" data-capabilities="bold character-variants empty-set math-table script-alternates script-forms slanted-inequalities" data-search="Luciole Math Luciole cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 4 alphabets 𝜖 cv04  κ in 4 alphabets 𝜅 cv05  π in 4 alphabets 𝜋 cv06  φ in 4 alphabets 𝜙 cv07  ρ in 4 alphabets 𝜌 cv08  σ in 4 alphabets 𝜎 cv09  θ in 4 alphabets 𝜃 cv10  Θ in 4 alphabets Θ cv11  figures and bold figures 0𝟎 cv12  l in 4 alphabets l cv13  l in 4 alphabets l cv14  a in 4 alphabets a ss01 mathscr script capitals 𝒜ℬ𝒞𝒟ℰℱ ss04 leqslant relations ≤≥≦≧≰≱ ss05 smaller negated relations ∈∋∖∣∥∤ ss06 subsetneq subsets ⊊⊋⫋⫌ ss07 parallelslant parallel to and negated relations ∥∦">
 <div class="mf-head"><h3>Luciole Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/luciole.svg" width="436" height="162" loading="lazy" alt="Luciole Math with Luciole: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Luciole.</p>
@@ -434,7 +606,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.76 from CTAN · <a href="https://www.luciole-vision.com/en/math.html">www.luciole-vision.com/en/math.html</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
 </article>
-<article class="panel mf-font" id="mf-pennstander">
+<article class="panel mf-font" id="mf-pennstander" data-font="pennstander" data-group="sans" data-capabilities="bold character-variants double-struck integral-styles math-table script-forms" data-search="Pennstander Math Pennstander cv01    cv15    cv20    cv30    cv31  integrals ∫⨐⨑⨒⨓⨔ cv32    ss01 Alternate Letters small letters agI ss02 Sharp Letters capitals AMNQvz ss03 Straight Feet small letters lt ss04 Alternate 4 figures 4¼¾⁴𝟒 ss05 Simplified Fraktur fraktur letters 𝔄𝔎𝔏𝔛𝔵𝔶 ss06  dollar sign $ ss07 Alternate 7 figures and double-struck figures … 7𝟟𝟕 ss08 Alternate Parentheses brackets (){} ss20 Flair integrals ∫d5∑⨐⨑">
 <div class="mf-head"><h3>Pennstander Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/pennstander.svg" width="436" height="144" loading="lazy" alt="Pennstander Math with Pennstander: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Pennstander.</p>
@@ -453,7 +625,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.001 from CTAN · <a href="https://github.com/juliusross1/Pennstander">github.com/juliusross1/Pennstander</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
 </article>
-<article class="panel mf-font" id="mf-neohellenic">
+<article class="panel mf-font" id="mf-neohellenic" data-font="neohellenic" data-group="sans" data-capabilities="math-table script-forms" data-search="GFS Neohellenic Math GFS Neohellenic">
 <div class="mf-head"><h3>GFS Neohellenic Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/neohellenic.svg" width="437" height="141" loading="lazy" alt="GFS Neohellenic Math with GFS Neohellenic: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in GFS Neohellenic. Not in the font, so set in grey from Latin Modern Math: 𝔤.</p>
@@ -461,14 +633,14 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 <p class="mf-src">Version 1.02 from CTAN · <a href="https://ctan.org/pkg/gfsneohellenicmath">ctan.org/pkg/gfsneohellenicmath</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
 </div><h3 class="mf-group">Serif</h3><div class="mf-grid">
-<article class="panel mf-font" id="mf-latinmodern">
+<article class="panel mf-font" id="mf-latinmodern" data-font="latinmodern" data-group="serif" data-capabilities="math-table script-forms" data-search="Latin Modern Math Latin Modern Roman">
 <div class="mf-head"><h3>Latin Modern Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/latinmodern.svg" width="436" height="156" loading="lazy" alt="Latin Modern Math with Latin Modern Roman: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Latin Modern Roman. unicode-math’s default.</p>
 <ul class="mf-facts"><li>4 802 glyphs</li><li>455 size variants and 114 assemblies for 94 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 995 glyphs</li><li>maths alphabets 945 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
 <p class="mf-src">Version 1.959 from CTAN · <a href="https://ctan.org/pkg/lm-math">ctan.org/pkg/lm-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-newcm">
+<article class="panel mf-font" id="mf-newcm" data-font="newcm" data-group="serif" data-capabilities="bold character-variants double-struck empty-set integral-styles math-table script-alternates script-forms upright-integrals" data-search="New Computer Modern Math New Computer Modern Book cv01  relations ≨⊊⊕⨼0∩ cv02  empty set ∅ ss01  script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02  integrals ∫⨐⨑⨒⨓⨔ ss03  double-struck letters 𝔸𝕒𝟘ⅆℾ⅀ ss04  figures 012345 ss05  double-struck capitals 𝔸𝔹ℂ𝔻𝔼𝔽 ss06  script capitals 𝒜ℬ𝒞𝒟ℰℱ">
 <div class="mf-head"><h3>New Computer Modern Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/newcm.svg" width="436" height="149" loading="lazy" alt="New Computer Modern Math with New Computer Modern Book: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in New Computer Modern Book. Shown in the Book weight, fontsetup’s default.</p>
@@ -485,14 +657,14 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 4.0 from CTAN · <a href="https://ctan.org/pkg/newcomputermodern">ctan.org/pkg/newcomputermodern</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-mlmodern">
+<article class="panel mf-font" id="mf-mlmodern" data-font="mlmodern" data-group="serif" data-capabilities="math-table script-forms" data-search="MLModern Math MLModern">
 <div class="mf-head"><h3>MLModern Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/mlmodern.svg" width="436" height="157" loading="lazy" alt="MLModern Math with MLModern: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in MLModern.</p>
 <ul class="mf-facts"><li>4 802 glyphs</li><li>455 size variants and 114 assemblies for 94 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 995 glyphs</li><li>maths alphabets 945 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
 <p class="mf-src">Version 2.0 from CTAN · <a href="https://ctan.org/pkg/mlmodern">ctan.org/pkg/mlmodern</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
 </article>
-<article class="panel mf-font" id="mf-concrete">
+<article class="panel mf-font" id="mf-concrete" data-font="concrete" data-group="serif" data-capabilities="bold character-variants empty-set integral-styles math-table script-forms slanted-inequalities upright-integrals" data-search="Concrete Math CMU Concrete cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 6 alphabets 𝜖 cv04  κ in 6 alphabets 𝜅 cv05  π in 6 alphabets 𝜋 cv06  φ in 6 alphabets 𝜙 cv07  ρ in 6 alphabets 𝜌 cv08  σ in 6 alphabets 𝜎 cv09  θ in 6 alphabets 𝜃 cv10  Θ in 6 alphabets Θ ss03 upint integrals ∫∬∭∮∯⨑ ss04 leqslant relations ≤≥≦≧≰≱ ss05 smaller negated relations ∈∋∖∣∥∤ ss06 subsetneq subsets ⊊⊋⫋⫌">
 <div class="mf-head"><h3>Concrete Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/concrete.svg" width="436" height="137" loading="lazy" alt="Concrete Math with CMU Concrete: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in CMU Concrete.</p>
@@ -515,7 +687,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.78 from CTAN · <a href="https://ctan.org/pkg/concmath-otf">ctan.org/pkg/concmath-otf</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-eulermath">
+<article class="panel mf-font" id="mf-eulermath" data-font="eulermath" data-group="serif" data-capabilities="character-variants empty-set math-table script-forms" data-search="Euler Math CMU Concrete cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 6 alphabets 𝜖 cv04  κ in 4 alphabets 𝜅 cv05  π in 4 alphabets 𝜋 cv06  φ in 6 alphabets 𝜙 cv09  θ in 4 alphabets 𝜃 cv10  Θ in 4 alphabets Θ cv11  Φ in 4 alphabets Φ salt  figures and bold fraktur small letters … 1𝖉𝖋𝖄𝖅𝟏 ss05 smaller negated relations ∈∋∣∥∤∦ ss06 subsetneq subsets ⊊⊋⫋⫌">
 <div class="mf-head"><h3>Euler Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/eulermath.svg" width="436" height="147" loading="lazy" alt="Euler Math with CMU Concrete: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in CMU Concrete.</p>
@@ -536,7 +708,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.77 from CTAN · <a href="https://ctan.org/pkg/euler-math">ctan.org/pkg/euler-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-neoeuler">
+<article class="panel mf-font" id="mf-neoeuler" data-font="neoeuler" data-group="serif" data-capabilities="math-table script-forms" data-search="Neo Euler CMU Concrete salt  figures and bold fraktur small letters … 1𝖉𝖋𝖄𝖅𝟏">
 <div class="mf-head"><h3>Neo Euler</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/neoeuler.svg" width="436" height="156" loading="lazy" alt="Neo Euler with CMU Concrete: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in CMU Concrete. Upright letters only, so set with math-style=upright as in the answer; abandoned in 2010 and incomplete. Not in the font, so set in grey from Latin Modern Math: ℂ.</p>
@@ -546,42 +718,42 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 000.002 from GitHub · <a href="https://github.com/khaledhosny/euler-otf">github.com/khaledhosny/euler-otf</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-termes">
+<article class="panel mf-font" id="mf-termes" data-font="termes" data-group="serif" data-capabilities="math-table script-forms" data-search="TeX Gyre Termes Math TeX Gyre Termes">
 <div class="mf-head"><h3>TeX Gyre Termes Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/termes.svg" width="435" height="141" loading="lazy" alt="TeX Gyre Termes Math with TeX Gyre Termes: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in TeX Gyre Termes.</p>
 <ul class="mf-facts"><li>4 246 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 671 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
 <p class="mf-src">Version 1.543 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-termes">ctan.org/pkg/tex-gyre-math-termes</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-pagella">
+<article class="panel mf-font" id="mf-pagella" data-font="pagella" data-group="serif" data-capabilities="math-table script-forms" data-search="TeX Gyre Pagella Math TeX Gyre Pagella">
 <div class="mf-head"><h3>TeX Gyre Pagella Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/pagella.svg" width="435" height="147" loading="lazy" alt="TeX Gyre Pagella Math with TeX Gyre Pagella: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in TeX Gyre Pagella.</p>
 <ul class="mf-facts"><li>4 246 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 671 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
 <p class="mf-src">Version 1.632 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-pagella">ctan.org/pkg/tex-gyre-math-pagella</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-bonum">
+<article class="panel mf-font" id="mf-bonum" data-font="bonum" data-group="serif" data-capabilities="math-table script-forms" data-search="TeX Gyre Bonum Math TeX Gyre Bonum">
 <div class="mf-head"><h3>TeX Gyre Bonum Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/bonum.svg" width="436" height="143" loading="lazy" alt="TeX Gyre Bonum Math with TeX Gyre Bonum: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in TeX Gyre Bonum.</p>
 <ul class="mf-facts"><li>4 246 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 671 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
 <p class="mf-src">Version 1.005 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-bonum">ctan.org/pkg/tex-gyre-math-bonum</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-schola">
+<article class="panel mf-font" id="mf-schola" data-font="schola" data-group="serif" data-capabilities="math-table script-forms" data-search="TeX Gyre Schola Math TeX Gyre Schola">
 <div class="mf-head"><h3>TeX Gyre Schola Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/schola.svg" width="435" height="143" loading="lazy" alt="TeX Gyre Schola Math with TeX Gyre Schola: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in TeX Gyre Schola.</p>
 <ul class="mf-facts"><li>4 246 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 671 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
 <p class="mf-src">Version 1.533 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-schola">ctan.org/pkg/tex-gyre-math-schola</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-dejavu">
+<article class="panel mf-font" id="mf-dejavu" data-font="dejavu" data-group="serif" data-capabilities="math-table script-forms" data-search="TeX Gyre DejaVu Math DejaVu Serif">
 <div class="mf-head"><h3>TeX Gyre DejaVu Math</h3><span class="mf-lic">Bitstream Vera licence, DejaVu changes public domain</span></div>
 <img class="mf-sample" src="images/mathfonts/dejavu.svg" width="436" height="147" loading="lazy" alt="TeX Gyre DejaVu Math with DejaVu Serif: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in DejaVu Serif. The DejaVu project ships the same font as DejaVu Math TeX Gyre.</p>
 <ul class="mf-facts"><li>4 280 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 685 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
 <p class="mf-src">Version 1.106 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-dejavu">ctan.org/pkg/tex-gyre-math-dejavu</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-stixtwo">
+<article class="panel mf-font" id="mf-stixtwo" data-font="stixtwo" data-group="serif" data-capabilities="character-variants empty-set integral-styles math-table script-alternates script-forms upright-integrals" data-search="STIX Two Math STIX Two Text cv01  small lambda with stroke ƛ cv02  small rams horn ɤ cv03  empty set ∅ cv04  set minus ∖ ss01  script letters 𝒜ℬ𝒞𝒶𝒷𝒸 ss02  italic small letters 𝑔𝑢𝑣𝑤𝑧 ss03  small letters ℏƛ ss04  primes ′″‴‵‶‷ ss05  arrows ←↑→↓⇑⇓ ss06  negated relations ⫮∤∈∋∣∥ ss07  big operators ⅀∏∐√∛∜ ss08  integrals ∫⨐⨑⨒⨓⨔ ss09  negated relations ≆≨̸∉⊄⊅ ss10  relations ≲≳⋚⋛⪝⪞ ss11  subsets ⊊⊋⫋⫌ ss12  proportional to and frown … ∝⌢⌣ ss13  sine wave ∿ ss14  big operators ⨼⨽ ss15  intersection and union … ∩∪⊓⊔ ss16  circled operators ⊕⊗⊜ ss20  inverted lazy s and relations … ∾≌␣▩">
 <div class="mf-head"><h3>STIX Two Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/stixtwo.svg" width="434" height="152" loading="lazy" alt="STIX Two Math with STIX Two Text: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in STIX Two Text.</p>
@@ -611,14 +783,14 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 2.12 b168 from CTAN · <a href="https://github.com/stipub/stixfonts">github.com/stipub/stixfonts</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-stix">
+<article class="panel mf-font" id="mf-stix" data-font="stix" data-group="serif" data-capabilities="math-table" data-search="STIX Math STIX">
 <div class="mf-head"><h3>STIX Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/stix.svg" width="435" height="156" loading="lazy" alt="STIX Math with STIX: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in STIX. The first STIX release, succeeded by STIX Two.</p>
 <ul class="mf-facts"><li>4 226 glyphs</li><li>297 size variants and 65 assemblies for 98 vertical and 43 horizontal stretchy glyphs</li><li>no script forms (ssty)</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li></ul>
 <p class="mf-src">Version 1.1.1 from CTAN · <a href="https://ctan.org/pkg/stix">ctan.org/pkg/stix</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-xits">
+<article class="panel mf-font" id="mf-xits" data-font="xits" data-group="serif" data-capabilities="bold character-variants double-struck integral-styles math-table script-alternates script-forms upright-integrals vertical-negations" data-search="XITS Math XITS cv01  Arabic letters 𞸀𞸃𞸓𞸍 ss01 Mathematical Calligraphic Alphabet script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02 Mathematical Greek Sans Serif Alphabet Greek small letters 𝛼𝛽ΑΒ∂𝜕 ss03 Mathematical Italic Sans Serif Digits sans-serif figures 𝟢𝟣𝟤𝟬𝟭𝟮 ss04 Mathematical Bold Monospace Digits monospace figures 𝟶𝟷𝟸𝟹𝟺𝟻 ss05 Mathematical Bold Double-Struck Alphabet double-struck letters 𝔸𝔹ℂ𝕒𝕓𝕔 ss06 Mathematical Italic Double-Struck Alphabet double-struck letters 𝔸𝔹ℂ𝕒𝕓𝕔 ss07 Mathematical Bold Italic Double-Struck Alphabet double-struck letters 𝔸𝔹ℂ𝕒𝕓𝕔 ss08 Upright Integrals integrals ∫⨐⨑⨒⨓⨔ ss09 Negated Symbols With Vertical Stroke negated relations ≨≩̸∉⊄⊅ ss10 Plank constant over two pi, with a bar planck constant over two pi ℏ">
 <div class="mf-head"><h3>XITS Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/xits.svg" width="435" height="158" loading="lazy" alt="XITS Math with XITS: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in XITS.</p>
@@ -638,7 +810,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 1.302 from CTAN · <a href="https://github.com/aliftype/xits">github.com/aliftype/xits</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-libertinus">
+<article class="panel mf-font" id="mf-libertinus" data-font="libertinus" data-group="serif" data-capabilities="integral-styles math-table script-forms" data-search="Libertinus Math Libertinus Serif ss08  integrals ∫∬∭∮∯∰">
 <div class="mf-head"><h3>Libertinus Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/libertinus.svg" width="435" height="141" loading="lazy" alt="Libertinus Math with Libertinus Serif: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Libertinus Serif.</p>
@@ -648,7 +820,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 7.051 from CTAN · <a href="https://github.com/alerque/libertinus">github.com/alerque/libertinus</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-asana">
+<article class="panel mf-font" id="mf-asana" data-font="asana" data-group="serif" data-capabilities="math-table script-alternates script-forms" data-search="Asana Math TeX Gyre Pagella salt  script capitals 𝒜ℬ𝒞𝓁βθ">
 <div class="mf-head"><h3>Asana Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/asana.svg" width="435" height="154" loading="lazy" alt="Asana Math with TeX Gyre Pagella: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in TeX Gyre Pagella.</p>
@@ -658,7 +830,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 000.962 from CTAN · <a href="https://ctan.org/pkg/asana-math">ctan.org/pkg/asana-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-garamond">
+<article class="panel mf-font" id="mf-garamond" data-font="garamond" data-group="serif" data-capabilities="double-struck integral-styles math-table script-alternates script-forms" data-search="Garamond Math EB Garamond ss01  double-struck letters 𝔸𝕒𝟘ⅆℾ⅀ ss02  partial derivatives ∂𝛛𝜕𝝏 ss03  script capitals 𝒜ℬ𝒞𝒟ℰℱ ss04  partial derivatives 𝛛𝜶𝐀𝐚𝚪𝟎 ss05  partial derivatives 𝛛𝜶𝐀𝐚𝚪𝟎 ss06  planck constant over two pi ℏ ss07  integrals ∫∬∭∮∯⨑ ss08  script letters 𝒜ℬ𝒞𝒶𝒷𝒸 ss09  combining tilde and combining tilde below ̰̃ ss10  small letters ℎℏ ss11  relations &lt;⊂⊕≀+±">
 <div class="mf-head"><h3>Garamond Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/garamond.svg" width="434" height="143" loading="lazy" alt="Garamond Math with EB Garamond: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in EB Garamond.</p>
@@ -678,7 +850,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 2022-01-03 from CTAN · <a href="https://ctan.org/pkg/garamond-math">ctan.org/pkg/garamond-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-erewhon">
+<article class="panel mf-font" id="mf-erewhon" data-font="erewhon" data-group="serif" data-capabilities="bold character-variants empty-set integral-styles math-table script-alternates script-forms slanted-inequalities upright-integrals" data-search="Erewhon Math Erewhon cv00  figures and bold figures 0𝟎 cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 4 alphabets 𝜖 cv04  κ in 4 alphabets 𝜅 cv05  π in 4 alphabets 𝜋 cv06  φ in 4 alphabets 𝜙 cv07  ρ in 4 alphabets 𝜌 cv08  σ in 4 alphabets 𝜎 cv09  θ in 4 alphabets 𝜃 cv10  Θ in 4 alphabets Θ cv11  partial derivatives ∂𝛛𝜕𝝏 cv13  l in 4 alphabets l cv20  E in 2 alphabets ℰ cv21  Q in 2 alphabets 𝒬 cv22  T in 2 alphabets 𝒯 ss01 mathcal script capitals 𝒜ℬ𝒞𝒟ℰℱ ss03 upint integrals ∫∬∭∮∯⨑ ss04 leqslant relations ≤≥≦≧≰≱ ss05 smaller negated relations ∈∋∣∥∤∦ ss06 subsetneq subsets ⊊⊋⫋⫌ ss07 parallelslant parallel to and negated relations ∥∦ ss09 largedelim brackets ()[]{}">
 <div class="mf-head"><h3>Erewhon Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/erewhon.svg" width="434" height="145" loading="lazy" alt="Erewhon Math with Erewhon: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Erewhon.</p>
@@ -710,7 +882,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.77 from CTAN · <a href="https://ctan.org/pkg/erewhon-math">ctan.org/pkg/erewhon-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-kpmath">
+<article class="panel mf-font" id="mf-kpmath" data-font="kpmath" data-group="serif" data-capabilities="bold character-variants double-struck empty-set integral-styles math-table script-alternates script-forms slanted-inequalities" data-search="KpMath KpRoman cv00  fraktur capitals ℑℜ cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 6 alphabets 𝜀 cv04  κ in 6 alphabets 𝜅 cv05  π in 6 alphabets 𝜋 cv06  φ in 6 alphabets 𝜙 cv07  ρ in 6 alphabets 𝜌 cv08  σ in 6 alphabets 𝜎 cv09  θ in 6 alphabets 𝜃 cv10  Θ in 6 alphabets Θ ss01 mathcal script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02 bbsans double-struck letters 𝔸𝔹ℂ𝔻𝔼𝕜 ss03 narrowiints integrals ∬∭∯∰⨌ ss04 leqslant relations ≤≥≦≧≰≱ ss05 smaller negated relations ∈∋∖∣∥∤ ss06 subsetneq subsets ⊊⊋⫋⫌ ss07 parallelslant parallel to and negated relations ∥∦">
 <div class="mf-head"><h3>KpMath</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/kpmath.svg" width="435" height="146" loading="lazy" alt="KpMath with KpRoman: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in KpRoman.</p>
@@ -737,7 +909,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.75 from CTAN · <a href="https://ctan.org/pkg/kpfonts-otf">ctan.org/pkg/kpfonts-otf</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-xcharter">
+<article class="panel mf-font" id="mf-xcharter" data-font="xcharter" data-group="serif" data-capabilities="bold character-variants empty-set integral-styles math-table script-alternates script-forms slanted-inequalities upright-integrals" data-search="XCharter Math XCharter cv00  figures and bold figures 0𝟎 cv01  planck constant over two pi ℏ cv02  empty set ∅ cv03  ε in 4 alphabets 𝜖 cv04  κ in 4 alphabets 𝜅 cv05  π in 4 alphabets 𝜋 cv06  φ in 4 alphabets 𝜙 cv07  ρ in 4 alphabets 𝜌 cv08  σ in 4 alphabets 𝜎 cv09  θ in 4 alphabets 𝜃 cv10  Θ in 4 alphabets Θ cv11  v in 2 alphabets 𝑣 cv12  w in 2 alphabets 𝑤 cv13  l in 4 alphabets l cv20  E in 2 alphabets ℰ cv21  Q in 2 alphabets 𝒬 cv22  T in 2 alphabets 𝒯 ss01 mathcal script capitals 𝒜ℬ𝒞𝒟ℰℱ ss03 upint integrals ∫∬∭∮∯⨑ ss04 leqslant relations ≤≥≦≧≰≱ ss05 smaller negated relations ∈∋∖∣∥∤ ss06 subsetneq subsets ⊊⊋⫋⫌ ss07 parallelslant parallel to and negated relations ∥∦">
 <div class="mf-head"><h3>XCharter Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/xcharter.svg" width="435" height="147" loading="lazy" alt="XCharter Math with XCharter: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in XCharter.</p>
@@ -769,7 +941,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 0.77 from CTAN · <a href="https://ctan.org/pkg/xcharter-math">ctan.org/pkg/xcharter-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
-<article class="panel mf-font" id="mf-oldstandard">
+<article class="panel mf-font" id="mf-oldstandard" data-font="oldstandard" data-group="serif" data-capabilities="character-variants empty-set integral-styles math-table script-alternates script-forms upright-integrals" data-search="Old Standard Math Old Standard cv01  empty set ∅ ss01  script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02  integrals ∫⨐⨑⨒⨓⨔ ss03  figures 012345">
 <div class="mf-head"><h3>Old Standard Math</h3><span class="mf-lic">GUST Font License</span></div>
 <img class="mf-sample" src="images/mathfonts/oldstandard.svg" width="435" height="156" loading="lazy" alt="Old Standard Math with Old Standard: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Old Standard.</p>
@@ -782,14 +954,14 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 </div>
 <p class="mf-src">Version 1.0 from CTAN · <a href="https://ctan.org/pkg/oldstandard">ctan.org/pkg/oldstandard</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
 </article>
-<article class="panel mf-font" id="mf-pl46">
+<article class="panel mf-font" id="mf-pl46" data-font="pl46" data-group="serif" data-capabilities="math-table script-forms" data-search="PL46 Math PL46">
 <div class="mf-head"><h3>PL46 Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/pl46.svg" width="440" height="157" loading="lazy" alt="PL46 Math with PL46: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in PL46.</p>
 <ul class="mf-facts"><li>1 915 glyphs</li><li>249 size variants and 28 assemblies for 48 vertical and 14 horizontal stretchy glyphs</li><li>script forms (ssty) for 377 glyphs</li><li>maths alphabets 320 of 996</li><li>no bold maths font</li></ul>
 <p class="mf-src">Version 0.100 from CTAN · <a href="https://ctan.org/pkg/pl46-fonts">ctan.org/pkg/pl46-fonts</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
 </article>
-<article class="panel mf-font" id="mf-berenis">
+<article class="panel mf-font" id="mf-berenis" data-font="berenis" data-group="serif" data-capabilities="" data-search="Berenis ADF Pro Math Berenis ADF Pro ss01  capital Q Q">
 <div class="mf-head"><h3>Berenis ADF Pro Math</h3><span class="mf-lic">GNU GPL 2+ with font exception</span></div>
 <img class="mf-sample" src="images/mathfonts/berenis.svg" width="436" height="130" loading="lazy" alt="Berenis ADF Pro Math with Berenis ADF Pro: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Berenis ADF Pro. No MATH table: as in the answer, its letters and symbols sit on Latin Modern Math, which supplies the layout.</p>
@@ -800,6 +972,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 <p class="mf-src">Version 001.001 from Arkandis · <a href="http://arkandis.tuxfamily.org/adffonts.html">arkandis.tuxfamily.org/adffonts.html</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
 </article>
 </div>
+</details>
 <div class="panel mf-absent"><span class="label">Not shown</span><p>These fonts from the same answers are not free to obtain and use, so this page leaves them out:</p><ul><li><strong>Cambria Math</strong>: Proprietary (Microsoft, from Monotype); ships with Windows and Office.</li><li><strong>Lucida Bright Math</strong>: Commercial (Bigelow &amp; Holmes), sold by TUG.</li><li><strong>Minion Math</strong>: Commercial (Johannes Küster, typoma).</li><li><strong>MTPro2 Math</strong>: Commercial (PCTeX); the free Lite set is under a proprietary EULA that forbids modifying or passing it on, and the OpenType font is converted from it.</li><li><strong>NagwaTK Math</strong>: Creative Commons BY-NC-ND (non-commercial, no derivatives); the download page also sits behind a browser check.</li></ul></div>
 </section>
 <!-- mathfonts:end -->
@@ -844,9 +1017,246 @@ strong { font-weight: 650; }
 
 <script>
 (function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var catalog = $('mf-catalog');
+  if (!catalog) return;
+  var cards = Array.from(catalog.querySelectorAll('.mf-font'));
+  var byId = new Map(cards.map(function (card) { return [card.dataset.font, card]; }));
+  var defaults = ['anodyne', 'lisnoti', 'notosansmath'].filter(function (id) { return byId.has(id); });
+  var selected = defaults.slice(), visibleCount = cards.length;
+  var picks = Array.from($('mf-pick-list').querySelectorAll('input'));
+  var search = $('mf-search'), group = $('mf-group'), feature = $('mf-feature');
+  var zoom = $('mf-zoom'), comparisons = $('mf-comparisons');
+
+  function normalise(text) { return text.toLocaleLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  function status() {
+    var outside = selected.filter(function (id) { return byId.get(id).hidden; }).length;
+    $('mf-results').textContent = visibleCount + ' of ' + cards.length + ' fonts match · ' + selected.length + ' of 4 selected' +
+      (outside ? ' (' + outside + ' outside these filters)' : '') +
+      (selected.length === 4 ? '. Remove one to add another.' : '.');
+    $('mf-empty').hidden = visibleCount !== 0;
+    $('mf-clear-selection').disabled = selected.length === 0;
+  }
+  function applyFilters() {
+    var words = normalise(search.value.trim()).split(/\s+/).filter(Boolean);
+    visibleCount = 0;
+    cards.forEach(function (card) {
+      var haystack = normalise(card.dataset.search + ' ' + card.dataset.capabilities);
+      var show = (group.value === 'all' || group.value === card.dataset.group) &&
+        (feature.value === 'all' || card.dataset.capabilities.split(' ').includes(feature.value)) &&
+        words.every(function (word) { return haystack.includes(word); });
+      card.hidden = !show;
+      if (show) visibleCount++;
+      var pick = picks.find(function (input) { return input.value === card.dataset.font; });
+      if (pick) pick.closest('label').hidden = !show;
+      var jump = catalog.querySelector('a[href="#' + card.id + '"]');
+      if (jump) jump.hidden = !show;
+    });
+    catalog.querySelectorAll('.mf-group').forEach(function (heading) {
+      var grid = heading.nextElementSibling;
+      heading.hidden = !Array.from(grid.querySelectorAll('.mf-font')).some(function (card) { return !card.hidden; });
+      grid.hidden = heading.hidden;
+    });
+    status();
+  }
+  function applyZoom() {
+    $('mf-zoom-out').textContent = zoom.value + '%';
+    comparisons.querySelectorAll('.mf-shelf img').forEach(function (img) {
+      img.style.width = (Number(img.getAttribute('width')) * Number(zoom.value) / 100) + 'px';
+    });
+  }
+  function reveal(id) {
+    var card = byId.get(id);
+    if (!card) return;
+    if (card.hidden) {
+      search.value = ''; group.value = 'all'; feature.value = 'all'; applyFilters();
+    }
+    catalog.open = true;
+    card.setAttribute('tabindex', '-1');
+    card.focus({preventScroll: true});
+    card.scrollIntoView({block: 'start'});
+  }
+  function renderSelection() {
+    comparisons.replaceChildren();
+    selected.forEach(function (id) {
+      var source = byId.get(id), name = source.querySelector('h3').textContent;
+      var card = document.createElement('article');
+      card.className = 'panel mf-compare' + (id === 'anodyne' ? ' mf-ours' : '');
+      card.dataset.font = id;
+      var head = document.createElement('div'); head.className = 'mf-compare-head';
+      var title = document.createElement('h4'); title.textContent = name;
+      var remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
+      remove.setAttribute('aria-label', 'Remove ' + name + ' from comparison');
+      remove.addEventListener('click', function () {
+        selected = selected.filter(function (value) { return value !== id; });
+        renderSelection();
+        var next = comparisons.querySelector('button');
+        (next || search).focus({preventScroll: true});
+      });
+      head.append(title, remove); card.appendChild(head);
+      var shelf = document.createElement('div'); shelf.className = 'mf-shelf'; shelf.tabIndex = 0;
+      shelf.setAttribute('role', 'region'); shelf.setAttribute('aria-label', name + ' sample; scroll horizontally to inspect');
+      var image = source.querySelector('.mf-sample').cloneNode(); image.loading = 'eager';
+      shelf.appendChild(image); card.appendChild(shelf);
+      var note = source.querySelector('.mf-note');
+      if (note) card.appendChild(note.cloneNode(true));
+      var foot = document.createElement('div'); foot.className = 'mf-compare-foot';
+      var lic = document.createElement('span'); lic.className = 'mf-lic'; lic.textContent = source.querySelector('.mf-lic').textContent;
+      var detail = document.createElement('a'); detail.href = '#' + source.id; detail.textContent = 'Details and alternates';
+      detail.addEventListener('click', function (event) {
+        event.preventDefault(); history.replaceState(null, '', '#' + source.id); reveal(id);
+      });
+      foot.append(lic, detail); card.appendChild(foot); comparisons.appendChild(card);
+    });
+    picks.forEach(function (input) {
+      input.checked = selected.includes(input.value);
+      input.disabled = selected.length >= 4 && !input.checked;
+      input.closest('label').classList.toggle('is-selected', input.checked);
+    });
+    $('mf-no-selection').hidden = selected.length !== 0;
+    applyZoom(); status();
+  }
+  picks.forEach(function (input) {
+    input.addEventListener('change', function () {
+      selected = selected.filter(function (id) { return id !== input.value; });
+      if (input.checked && selected.length < 4) selected.push(input.value);
+      renderSelection();
+    });
+  });
+  search.addEventListener('input', applyFilters);
+  group.addEventListener('change', applyFilters); feature.addEventListener('change', applyFilters);
+  zoom.addEventListener('input', applyZoom);
+  $('mf-clear-selection').addEventListener('click', function () { selected = []; renderSelection(); });
+  $('mf-reset').addEventListener('click', function () {
+    search.value = ''; group.value = 'all'; feature.value = 'all'; zoom.value = '100';
+    selected = defaults.slice(); catalog.open = false; applyFilters(); renderSelection();
+  });
+  window.addEventListener('hashchange', function () {
+    if (location.hash.startsWith('#mf-')) reveal(location.hash.slice(4));
+  });
+  $('mf-tools').hidden = false; $('mf-focus').hidden = false; catalog.open = false;
+  applyFilters(); renderSelection();
+  if (location.hash.startsWith('#mf-')) reveal(location.hash.slice(4));
+})();
+</script>
+
+<script>
+(function () {
   var $ = function (id) { return document.getElementById(id); };
   var sample = $('sample'), stage = $('stage'), readout = $('readout');
   var state = { wght: 400, wdth: 100, grad: 0, size: 44, italic: false, dark: false, features: {} };
+  var mathState = { wght: 400, wdth: 100, grad: 0, features: {} };
+  function applyMath() {
+    var formula = $('math-live');
+    formula.style.fontVariationSettings = '"wght" ' + mathState.wght + ', "wdth" ' + mathState.wdth + ', "GRAD" ' + mathState.grad;
+    formula.style.fontWeight = mathState.wght;
+    formula.style.fontStretch = mathState.wdth + '%';
+    formula.style.fontFeatureSettings = Object.keys(mathState.features).filter(function (k) { return mathState.features[k]; }).map(function (k) { return '"' + k + '" 1'; }).join(', ') || 'normal';
+    // Native MathML selects large/stretchy operators directly from cmap. The
+    // small upright adapter keeps their Unicode and MATH constructions intact.
+    formula.querySelectorAll('mo').forEach(function (operator) {
+      var characters = Array.from(operator.textContent.trim());
+      var cp = characters.length === 1 ? characters[0].codePointAt(0) : 0;
+      var integral = cp >= 0x222B && cp <= 0x2233 || cp >= 0x2A0B && cp <= 0x2A1C;
+      operator.style.fontFamily = integral && mathState.features.ss02 ? '"Anodyne Math Upright"' : '';
+    });
+    var scriptCapitals = '𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵';
+    formula.querySelectorAll('mi').forEach(function (identifier) {
+      var declared = identifier.closest('[mathvariant]');
+      var script = declared && declared.getAttribute('mathvariant') === 'script';
+      var characters = Array.from(identifier.textContent.trim());
+      var capitals = characters.length > 0 && characters.every(function (character) { return /^[A-Z]$/.test(character) || scriptCapitals.includes(character); });
+      script = script && capitals || characters.length > 0 && characters.every(function (character) { return scriptCapitals.includes(character); });
+      identifier.style.fontFamily = script && mathState.features.ss01 ? '"Anodyne Math Chancery"' : '';
+    });
+    $('math-wght-out').textContent = mathState.wght;
+    $('math-wdth-out').textContent = mathState.wdth + '%';
+    $('math-grad-out').textContent = mathState.grad;
+  }
+  ['wght', 'wdth', 'grad'].forEach(function (axis) {
+    $('math-' + axis).addEventListener('input', function (e) { mathState[axis] = Number(e.target.value); applyMath(); });
+  });
+  document.querySelectorAll('[data-math-feature]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var on = this.getAttribute('aria-pressed') !== 'true';
+      this.setAttribute('aria-pressed', String(on));
+      mathState.features[this.dataset.mathFeature] = on;
+      applyMath();
+    });
+  });
+  applyMath();
+  var texInput = $('math-tex'), texStatus = $('math-editor-status');
+  var texPresets = {
+    calculus: texInput.value,
+    sets: String.raw`x\in A,\quad y\notin A,\quad A\neq B,\quad A\not\subset B,\quad A\cap B=\varnothing,\qquad\mathcal{A}\subset\mathcal{B}\cup\mathcal{C}`,
+    quantum: String.raw`i\hbar\frac{\partial\psi}{\partial t}=\hat{H}\psi,\qquad E=\hbar\omega,\qquad \left\langle\psi\middle|\psi\right\rangle=1`,
+    delimiters: String.raw`\left\{\begin{matrix}\displaystyle\frac{\sqrt{1+x^2}}{\sqrt[3]{1+y^2}}\\[8pt]\displaystyle\frac{\sum_{k=1}^{n}a_k}{\prod_{j=1}^{m}b_j}\end{matrix}\right\}\qquad\left(\begin{matrix}a&b\\c&d\end{matrix}\right)`,
+  };
+  var texRevision = 0, texTimer;
+  var mathNamespace = 'http://www.w3.org/1998/Math/MathML';
+  var safeMathElements = new Set('math mi mn mo mtext mspace mrow mfrac msqrt mroot msub msup msubsup munder mover munderover mmultiscripts mprescripts none mtable mtr mtd mlabeledtr mpadded mphantom menclose mstyle semantics annotation'.split(' '));
+  var safeMathAttributes = new Set('display displaystyle scriptlevel mathvariant mathsize mathcolor mathbackground form fence separator stretchy symmetric largeop movablelimits accent accentunder lspace rspace minsize maxsize width height depth voffset lquote rquote linethickness numalign denomalign bevelled notation rowalign columnalign groupalign align rowspacing columnspacing rowlines columnlines frame framespacing equalrows equalcolumns columnspan rowspan side minlabelspacing encoding'.split(' '));
+  function parseMathML(serialized) {
+    var parsed = new DOMParser().parseFromString(serialized, 'application/xml');
+    var math = parsed.documentElement;
+    if (math.localName !== 'math' || math.namespaceURI !== mathNamespace || parsed.querySelector('parsererror, merror')) {
+      throw new Error('That formula could not be converted to MathML.');
+    }
+    [math].concat(Array.from(math.querySelectorAll('*'))).forEach(function (element) {
+      if (element.namespaceURI !== mathNamespace || !safeMathElements.has(element.localName)) {
+        throw new Error('That formula contains unsupported markup.');
+      }
+      Array.from(element.attributes).forEach(function (attribute) {
+        if (!safeMathAttributes.has(attribute.name)) element.removeAttribute(attribute.name);
+      });
+    });
+    math.setAttribute('display', 'block');
+    window.AnodyneTeX.normalizeMathVariants(math);
+    return document.importNode(math, true);
+  }
+  async function renderTeX() {
+    if (!window.AnodyneTeX) return;
+    clearTimeout(texTimer);
+    var revision = ++texRevision;
+    $('math-render').setAttribute('aria-busy', 'true');
+    texStatus.dataset.error = 'false';
+    texStatus.textContent = 'Rendering…';
+    try {
+      var serialized = await window.AnodyneTeX.tex2mmlPromise(texInput.value);
+      var math = parseMathML(serialized);
+      if (revision !== texRevision) return;
+      $('math-render').replaceChildren(math);
+      texInput.setAttribute('aria-invalid', 'false');
+      texStatus.dataset.error = 'false';
+      texStatus.textContent = 'Formula updated. The axes and style choices apply below.';
+      applyMath();
+    } catch (error) {
+      if (revision !== texRevision) return;
+      texInput.setAttribute('aria-invalid', 'true');
+      texStatus.dataset.error = 'true';
+      texStatus.textContent = (error.message || 'Could not render that formula.') + ' Your last valid formula is still shown.';
+    } finally {
+      if (revision === texRevision) $('math-render').removeAttribute('aria-busy');
+    }
+  }
+  function texReady() {
+    $('math-render-button').disabled = false;
+    texStatus.textContent = 'Edit the TeX above, or choose an example. Ctrl/⌘ + Enter also renders.';
+  }
+  $('math-editor').hidden = false;
+  window.addEventListener('anodyne-tex-ready', texReady);
+  if (window.AnodyneTeX) texReady();
+  $('math-render-button').addEventListener('click', renderTeX);
+  $('math-preset').addEventListener('change', function () { texInput.value = texPresets[this.value]; renderTeX(); });
+  texInput.addEventListener('input', function () {
+    ++texRevision;
+    clearTimeout(texTimer);
+    texTimer = setTimeout(renderTeX, 450);
+  });
+  texInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); renderTeX(); }
+  });
   var probe = document.createElement('span');
   probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;left:-9999px;top:0';
   document.body.appendChild(probe);

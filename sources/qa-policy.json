@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "profile": "universal",
+  "release_checks": [
+    "opentype/", "family/vertical_metrics", "family/win_ascent_and_descent",
+    "fvar_name_entries", "inconsistencies_between_fvar_STAT", "mandatory_avar_table",
+    "mandatory_glyphs", "base_has_width", "case_mapping", "linegaps", "math_signs_width",
+    "missing_small_caps_glyphs", "name/", "gpos_kerning_info",
+    "os2_metrics_match_hhea", "ots", "required_tables", "sfnt_version",
+    "smallcaps_before_ligatures", "stylisticset_description", "unicode_range_bits",
+    "whitespace_glyphs", "whitespace_ink", "whitespace_widths"
+  ],
+  "read_only_checks": ["gpos7"],
+  "exceptions": [
+    {
+      "check": "base_has_width",
+      "code": "zero-width-bases",
+      "filename": "*Italic*.ttf",
+      "only_codepoints": ["2E3C"],
+      "kind": "inherited_layout_convention",
+      "reason": "Pinned Noto Sans Italic explicitly draws stenographicfullstop below and behind the preceding text, with width 0 in every source master. Preserve that upstream layout convention. This exception accepts only this single codepoint; other zero-width bases still fail.",
+      "evidence": "https://github.com/notofonts/latin-greek-cyrillic/blob/c4a321e123e4d4ff315f57f4e0adf294fe3a95be/sources/NotoSans-Italic.glyphspackage/glyphs/stenographicfullstop.glyph"
+    },
+    {
+      "check": "case_mapping",
+      "code": "missing-case-counterparts",
+      "filename": "*Italic*.ttf",
+      "only_codepoints": ["2184", "2183"],
+      "kind": "baseline_coverage_omission",
+      "reason": "The missing italic U+2183 uppercase counterpart of U+2184 is inherited from Noto Sans Italic and the 0.300 release. This is a known coverage omission, not a claim of complete Unicode case support. Preserve the existing repertoire for this release; only this exact pair is nonblocking, and other missing case counterparts still fail.",
+      "evidence": "https://github.com/google/fonts/blob/86aced91de05cd4f96a06838124cca45be337b2b/ofl/notosans/NotoSans-Italic%5Bwdth%2Cwght%5D.ttf"
+    }
+  ],
+  "notes": [
+    "Static and variable directories are alternative installation cohorts and are checked separately. Family uniqueness/range checks remain enabled in each cohort.",
+    "The selected release profile checks binary validity, metadata, style linking, metrics, shaping structure, mathematical sign widths and whitespace. sources/check.py additionally checks actual variable MATH values, construction geometry, grade invariance and glyph-area direction.",
+    "The selected profile runs the GPOS7 compatibility warning as an equivalent read-only lookup/extension walk. FontBakery 1.1.0 deep-copies the complete TTFont for this simple check, which consumed substantial time and memory on these large variable fonts. --full leaves FontBakery's original implementation enabled.",
+    "Use --full for every universal outline/interpolation diagnostic. Large math fonts with many compatible masters make those analyses expensive; their absence from the release profile is explicit, not a claim that every outline is optically reviewed.",
+    "Full mathematical fonts have large outlines and files by design. This does not waive clipping checks: Win clipping metrics must cover them while typo/hhea line metrics retain text line height. Text web subsets recompute their own clipping envelopes.",
+    "Warnings remain visible and raw FontBakery reports are retained. Unrecognized FAIL/ERROR/FATAL results fail the release gate. Known character coverage omissions are not silently excused."
+  ]
+}

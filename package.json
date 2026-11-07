@@ -1,0 +1,14 @@
+{
+  "name": "anodyne-font-qa",
+  "private": true,
+  "scripts": {
+    "build:tex": "node sources/build-tex.mjs",
+    "test:browser": "node tests/browser.cjs",
+    "test:math-browser": "node tests/math-browser.cjs"
+  },
+  "devDependencies": {
+    "@mathjax/src": "4.1.3",
+    "esbuild": "0.28.2",
+    "playwright": "1.65.0"
+  }
+}

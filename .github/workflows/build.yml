@@ -1,0 +1,46 @@
+name: Build and check font sources
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - name: Install sanitizer
+        run: sudo apt-get update && sudo apt-get install -y opentype-sanitizer
+      - name: Build from editable masters
+        run: make build
+      - name: Test staged fonts
+        run: make check FONTS=build/dist/fonts
+      - name: FontBakery release policy
+        run: make qa-setup && build/venv/bin/python sources/qa.py --fonts build/dist/fonts
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install browser QA tools
+        run: npm ci && npm run build:tex && npx playwright install --with-deps chromium
+      - name: Test the demo with the staged fonts
+        run: |
+          cp -a build/dist/fonts/. fonts/
+          npm run test:browser
+          npm run test:math-browser
+      - name: Bundle editable sources
+        run: make sources
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: Anodyne-built-fonts-and-sources
+          path: |
+            build/dist
+            build/qa.json
+            build/fontbakery
+            build/browser-proofs

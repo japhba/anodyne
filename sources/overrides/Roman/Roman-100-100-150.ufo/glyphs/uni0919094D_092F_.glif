@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni0919094D092F" format="2">
+  <advance width="1128"/>
+  <outline>
+    <contour>
+      <point x="195" y="224"/>
+      <point x="179" y="216" type="qcurve"/>
+      <point x="149" y="238"/>
+      <point x="90" y="305"/>
+      <point x="90" y="348" type="qcurve"/>
+      <point x="90" y="399"/>
+      <point x="152" y="449"/>
+      <point x="223" y="449" type="qcurve"/>
+      <point x="358" y="449" type="line"/>
+      <point x="358" y="566" type="line"/>
+      <point x="-10" y="566" type="line"/>
+      <point x="-10" y="607" type="line"/>
+      <point x="1142" y="607" type="line"/>
+      <point x="1142" y="566" type="line"/>
+      <point x="1040" y="566" type="line"/>
+      <point x="1040" y="15" type="line"/>
+      <point x="999" y="15" type="line"/>
+      <point x="999" y="125" type="line"/>
+      <point x="954" y="103"/>
+      <point x="933" y="95" type="qcurve"/>
+      <point x="897" y="81"/>
+      <point x="852" y="81" type="qcurve"/>
+      <point x="806" y="81"/>
+      <point x="728" y="121"/>
+      <point x="675" y="202"/>
+      <point x="668" y="250" type="qcurve"/>
+      <point x="724" y="263"/>
+      <point x="810" y="307"/>
+      <point x="810" y="342" type="qcurve"/>
+      <point x="810" y="375"/>
+      <point x="765" y="404"/>
+      <point x="708" y="409"/>
+      <point x="680" y="409" type="qcurve"/>
+      <point x="224" y="409" type="line"/>
+      <point x="178" y="409"/>
+      <point x="130" y="376"/>
+      <point x="130" y="342" type="qcurve"/>
+      <point x="130" y="318"/>
+      <point x="160" y="277"/>
+      <point x="187" y="259" type="qcurve"/>
+      <point x="219" y="269"/>
+      <point x="271" y="279"/>
+      <point x="297" y="279" type="qcurve"/>
+      <point x="369" y="279"/>
+      <point x="441" y="212"/>
+      <point x="441" y="154" type="qcurve"/>
+      <point x="441" y="114"/>
+      <point x="406" y="52"/>
+      <point x="331" y="15"/>
+      <point x="269" y="15" type="qcurve"/>
+      <point x="189" y="15"/>
+      <point x="64" y="79"/>
+      <point x="26" y="120" type="qcurve"/>
+      <point x="51" y="162" type="line"/>
+      <point x="89" y="118"/>
+      <point x="202" y="59"/>
+      <point x="267" y="59" type="qcurve"/>
+      <point x="331" y="59"/>
+      <point x="400" y="106"/>
+      <point x="400" y="151" type="qcurve"/>
+      <point x="400" y="191"/>
+      <point x="346" y="237"/>
+      <point x="289" y="237" type="qcurve"/>
+      <point x="258" y="237"/>
+    </contour>
+    <contour>
+      <point x="437" y="536" type="line"/>
+      <point x="437" y="479" type="line"/>
+      <point x="697" y="479" type="line"/>
+      <point x="752" y="479"/>
+      <point x="837" y="452"/>
+      <point x="888" y="390"/>
+      <point x="888" y="340" type="qcurve"/>
+      <point x="888" y="299"/>
+      <point x="848" y="243"/>
+      <point x="807" y="223" type="qcurve"/>
+      <point x="780" y="211"/>
+      <point x="765" y="204" type="qcurve"/>
+      <point x="772" y="184"/>
+      <point x="790" y="171" type="qcurve"/>
+      <point x="816" y="153"/>
+      <point x="858" y="153" type="qcurve"/>
+      <point x="902" y="153"/>
+      <point x="935" y="173" type="qcurve"/>
+      <point x="953" y="184"/>
+      <point x="960" y="191" type="qcurve"/>
+      <point x="960" y="536" type="line"/>
+    </contour>
+    <contour>
+      <point x="506" y="270"/>
+      <point x="506" y="286" type="qcurve"/>
+      <point x="506" y="303"/>
+      <point x="524" y="326"/>
+      <point x="551" y="326"/>
+      <point x="569" y="303"/>
+      <point x="569" y="286" type="qcurve"/>
+      <point x="569" y="270"/>
+      <point x="550" y="246"/>
+      <point x="525" y="246"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.overlyx.anodyne.repair</key>
+      <string>Original Regular topology retained after rejecting an incompatible Bold fit; all weight/width/grade corners regenerated with the canonical fallback.</string>
+    </dict>
+  </lib>
+</glyph>

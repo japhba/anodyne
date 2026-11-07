@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<glyph name="uni093F0930094D0902.01" format="2">
+  <advance width="259"/>
+  <outline>
+    <contour>
+      <point x="180" y="-11" type="line"/>
+      <point x="79" y="-11" type="line"/>
+      <point x="79" y="540" type="line"/>
+      <point x="0" y="540" type="line"/>
+      <point x="0" y="633" type="line"/>
+      <point x="64" y="633" type="line"/>
+      <point x="62" y="644"/>
+      <point x="56" y="670" type="qcurve"/>
+      <point x="47" y="700"/>
+      <point x="47" y="735" type="qcurve"/>
+      <point x="47" y="812"/>
+      <point x="143" y="907"/>
+      <point x="221" y="907" type="qcurve"/>
+      <point x="273" y="907"/>
+      <point x="361" y="869"/>
+      <point x="398" y="832" type="qcurve"/>
+      <point x="412" y="819"/>
+      <point x="407" y="817" type="qcurve"/>
+      <point x="410" y="843"/>
+      <point x="441" y="870" type="qcurve"/>
+      <point x="482" y="907"/>
+      <point x="552" y="907" type="qcurve"/>
+      <point x="575" y="907"/>
+      <point x="616" y="900"/>
+      <point x="643" y="891" type="qcurve"/>
+      <point x="628" y="807" type="line"/>
+      <point x="602" y="814"/>
+      <point x="573" y="818"/>
+      <point x="561" y="818" type="qcurve"/>
+      <point x="527" y="818"/>
+      <point x="493" y="780"/>
+      <point x="493" y="744" type="qcurve"/>
+      <point x="493" y="713"/>
+      <point x="511" y="653"/>
+      <point x="538" y="604" type="qcurve"/>
+      <point x="426" y="604" type="line"/>
+      <point x="396" y="680"/>
+      <point x="334" y="771"/>
+      <point x="268" y="814"/>
+      <point x="231" y="814" type="qcurve"/>
+      <point x="192" y="814"/>
+      <point x="148" y="765"/>
+      <point x="148" y="723" type="qcurve"/>
+      <point x="148" y="692"/>
+      <point x="156" y="668" type="qcurve"/>
+      <point x="163" y="647"/>
+      <point x="169" y="633" type="qcurve"/>
+      <point x="271" y="633" type="line"/>
+      <point x="271" y="540" type="line"/>
+      <point x="180" y="540" type="line"/>
+    </contour>
+    <contour>
+      <point x="553" y="787"/>
+      <point x="601" y="787"/>
+      <point x="635" y="753"/>
+      <point x="635" y="725" type="qcurve"/>
+      <point x="635" y="699"/>
+      <point x="601" y="663"/>
+      <point x="553" y="663"/>
+      <point x="519" y="699"/>
+      <point x="519" y="725" type="qcurve"/>
+      <point x="519" y="753"/>
+    </contour>
+  </outline>
+  <lib>
+    <dict>
+      <key>com.overlyx.anodyne.repair</key>
+      <string>Original Regular topology retained after rejecting an incompatible Bold fit; all weight/width/grade corners regenerated with the canonical fallback.</string>
+    </dict>
+  </lib>
+</glyph>
