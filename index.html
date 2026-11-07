@@ -112,6 +112,30 @@ header { display: grid; gap: 14px; padding-top: 24px; }
 .math .panel { padding: 20px; display: grid; gap: 16px; }
 .alphas { font-size: 30px; line-height: 1.5; overflow-wrap: anywhere; }
 
+/* next to the other maths fonts: the section is written by sources/mathfonts/build.py */
+.mf-jump { font-size: 14.5px; line-height: 1.75; color: var(--muted); }
+.mf-jump a { margin-right: .75em; white-space: nowrap; }
+.mf-group { margin: 14px 0 0; font-size: 22px; font-weight: 680; }
+.mf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr)); gap: 16px;  align-items: start; }
+.mf-font { padding: 18px 20px; display: grid; gap: 12px; align-content: start; min-width: 0; scroll-margin-top: 16px; }
+.mf-ours { border-color: var(--accent); }
+.mf-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 14px; }
+.mf-head h3 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 650; }
+.mf-lic, .mf-note, .mf-src { font-size: 14.5px; color: var(--muted); }
+.mf img { display: block; max-width: 100%; height: auto; }
+.mf-sample { width: 100%; }
+.mf-facts { margin: 0; padding: 0; list-style: none; font-size: 14.5px; line-height: 1.5; }
+.mf-facts li { display: inline; }
+.mf-facts li:not(:last-child)::after { content: " · "; color: var(--muted); }
+.mf-sets { display: flex; flex-wrap: wrap; gap: 6px; }
+.mf-sets figure { margin: 0; padding: 6px 8px 5px; border: 1px solid var(--line); border-radius: 7px; display: grid; gap: 3px; align-content: start; max-width: 100%; }
+.mf-sets figcaption { max-width: 26ch; font-size: 13px; line-height: 1.3; color: var(--muted); }
+.mf-sets code, .mf-absent code { font: 12.5px var(--mono); color: var(--ink); }
+.mf-absent { padding: 18px 20px; display: grid; gap: 8px; }
+.mf-absent ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 15px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mf img { filter: invert(1) hue-rotate(180deg); opacity: .92; } }
+:root[data-theme="dark"] .mf img { filter: invert(1) hue-rotate(180deg); opacity: .92; }
+
 .charset { padding: 20px 22px; display: grid; gap: 10px; }
 .charset div { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 14px; align-items: baseline; }
 .charset span:last-child { font-size: 22px; overflow-wrap: anywhere; }
@@ -217,6 +241,568 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
       <div class="alphas" aria-label="Maths alphabets">𝐀𝐁𝐂 𝐴𝐵𝐶 𝑨𝑩𝑪 𝒜ℬ𝒞 𝔄𝔅ℭ 𝔸𝔹ℂ 𝖠𝖡𝖢 𝙰𝙱𝙲 ∑∏∫∮ √∞ ∀∃∂∇</div>
     </div>
   </section>
+
+<!-- mathfonts:start (written by sources/mathfonts/build.py) -->
+<section class="mf" aria-labelledby="mathfonts">
+<h2 id="mathfonts">Next to the other OpenType maths fonts</h2>
+<p>The same sentence and formulas in Anodyne and in the 34 other free fonts listed under <a href="https://tex.stackexchange.com/questions/425098">“Which OpenType math fonts are available?”</a>, each with its text companion, set by LuaLaTeX with unicode-math at 13 pt and drawn as outlines. The facts come from the font files: stretchy glyphs from the MATH table, script forms from the ssty feature, maths alphabets out of the Unicode block. Under each font, every stylistic set and character variant that changes characters, with the usual glyphs in grey above and the alternates below.</p>
+<p class="mf-jump"><a href="#mf-anodyne">Anodyne</a> <a href="#mf-lisnoti">Lisnoti</a> <a href="#mf-notosansmath">Noto Sans Math</a> <a href="#mf-firamath">Fira Math</a> <a href="#mf-letesans">Lete Sans Math</a> <a href="#mf-newcmsans">New Computer Modern Sans Math</a> <a href="#mf-kpsans">KpMath Sans</a> <a href="#mf-plexmath">IBM Plex Math</a> <a href="#mf-arsenalmath">Arsenal Math</a> <a href="#mf-luciole">Luciole Math</a> <a href="#mf-pennstander">Pennstander Math</a> <a href="#mf-neohellenic">GFS Neohellenic Math</a> <a href="#mf-latinmodern">Latin Modern Math</a> <a href="#mf-newcm">New Computer Modern Math</a> <a href="#mf-mlmodern">MLModern Math</a> <a href="#mf-concrete">Concrete Math</a> <a href="#mf-eulermath">Euler Math</a> <a href="#mf-neoeuler">Neo Euler</a> <a href="#mf-termes">TeX Gyre Termes Math</a> <a href="#mf-pagella">TeX Gyre Pagella Math</a> <a href="#mf-bonum">TeX Gyre Bonum Math</a> <a href="#mf-schola">TeX Gyre Schola Math</a> <a href="#mf-dejavu">TeX Gyre DejaVu Math</a> <a href="#mf-stixtwo">STIX Two Math</a> <a href="#mf-stix">STIX Math</a> <a href="#mf-xits">XITS Math</a> <a href="#mf-libertinus">Libertinus Math</a> <a href="#mf-asana">Asana Math</a> <a href="#mf-garamond">Garamond Math</a> <a href="#mf-erewhon">Erewhon Math</a> <a href="#mf-kpmath">KpMath</a> <a href="#mf-xcharter">XCharter Math</a> <a href="#mf-oldstandard">Old Standard Math</a> <a href="#mf-pl46">PL46 Math</a> <a href="#mf-berenis">Berenis ADF Pro Math</a></p>
+<h3 class="mf-group">Sans-serif</h3><div class="mf-grid">
+<article class="panel mf-font mf-ours" id="mf-anodyne">
+<div class="mf-head"><h3>Anodyne</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/anodyne.svg" width="435" height="149" loading="lazy" alt="Anodyne: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Anodyne. Lisnoti with every weight from 100 to 900, a width and a grade axis; the MATH table is in all four static files.</p>
+<ul class="mf-facts"><li>9 099 glyphs</li><li>1 017 size variants and 81 assemblies for 167 vertical and 29 horizontal stretchy glyphs</li><li>script forms (ssty) for 462 glyphs</li><li>maths alphabets 996 of 996</li><li>bold maths: Anodyne-Bold.ttf</li><li>dotless i and j under accents (dtls)</li><li>mirrored forms for right-to-left maths (rtlm)</li><li>ss06 changes only glyphs without a character of their own</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/anodyne-ss01.svg" width="141" height="38" loading="lazy" alt="ss01 changes 26 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> script capitals</figcaption></figure>
+<figure><img src="images/mathfonts/anodyne-ss07.svg" width="86" height="38" loading="lazy" alt="ss07 changes 27 characters; shown: ᾈᾘᾨ, default above, alternate below"><figcaption><code>ss07</code> Greek capitals</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.200 from this repository · <a href="https://github.com/japhba/anodyne">github.com/japhba/anodyne</a></p>
+</article>
+<article class="panel mf-font" id="mf-lisnoti">
+<div class="mf-head"><h3>Lisnoti</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/lisnoti.svg" width="435" height="149" loading="lazy" alt="Lisnoti: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Lisnoti. Noto Sans with Noto Sans Math’s MATH table, the font Anodyne is forked from.</p>
+<ul class="mf-facts"><li>9 099 glyphs</li><li>1 017 size variants and 81 assemblies for 167 vertical and 29 horizontal stretchy glyphs</li><li>script forms (ssty) for 462 glyphs</li><li>maths alphabets 996 of 996</li><li>bold maths: Lisnoti-Bold.ttf</li><li>mirrored forms for right-to-left maths (rtlm)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/lisnoti-ss01.svg" width="141" height="38" loading="lazy" alt="ss01 changes 26 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> script capitals</figcaption></figure>
+</div>
+<p class="mf-src">Version 2.006 from CTAN · <a href="https://ctan.org/pkg/lisnoti">ctan.org/pkg/lisnoti</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
+</article>
+<article class="panel mf-font" id="mf-notosansmath">
+<div class="mf-head"><h3>Noto Sans Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/notosansmath.svg" width="435" height="146" loading="lazy" alt="Noto Sans Math with Noto Sans: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Noto Sans.</p>
+<ul class="mf-facts"><li>5 014 glyphs</li><li>1 110 size variants and 79 assemblies for 219 vertical and 29 horizontal stretchy glyphs</li><li>script forms (ssty) for 477 glyphs</li><li>maths alphabets 996 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li><li>mirrored forms for right-to-left maths (rtlm)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/notosansmath-ss01.svg" width="143" height="38" loading="lazy" alt="ss01 changes 26 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> Chancery Style</figcaption></figure>
+<figure><img src="images/mathfonts/notosansmath-ss02.svg" width="137" height="49" loading="lazy" alt="ss02 changes 27 characters; shown: ∫⨐⨑⨒⨓⨔, default above, alternate below"><figcaption><code>ss02</code> Straight integrals</figcaption></figure>
+</div>
+<p class="mf-src">Version 3.000 from GitHub · <a href="https://github.com/notofonts/math">github.com/notofonts/math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-firamath">
+<div class="mf-head"><h3>Fira Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/firamath.svg" width="435" height="152" loading="lazy" alt="Fira Math with Fira Sans: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Fira Sans. The answer sets FiraGO as text; Fira Sans, which FiraGO extends, stands in for it here. Not in the font, so set in grey from Latin Modern Math: ℱ 𝒜 𝔤.</p>
+<ul class="mf-facts"><li>2 094 glyphs</li><li>438 size variants and 24 assemblies for 40 vertical and 6 horizontal stretchy glyphs</li><li>script forms (ssty) for 7 glyphs</li><li>maths alphabets 440 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/firamath-ss01.svg" width="154" height="46" loading="lazy" alt="ss01 changes 7 characters; shown: ∫∬∭∮∯∰, default above, alternate below"><figcaption><code>ss01</code> Upright Integrals</figcaption></figure>
+<figure><img src="images/mathfonts/firamath-ss02.svg" width="13" height="38" loading="lazy" alt="ss02 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>ss02</code> Planck Constant with Bar</figcaption></figure>
+<figure><img src="images/mathfonts/firamath-ss03.svg" width="12" height="38" loading="lazy" alt="ss03 changes 1 character; shown: ∁, default above, alternate below"><figcaption><code>ss03</code> Complement Alternates</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.3.4 from CTAN · <a href="https://ctan.org/pkg/firamath">ctan.org/pkg/firamath</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-letesans">
+<div class="mf-head"><h3>Lete Sans Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/letesans.svg" width="435" height="144" loading="lazy" alt="Lete Sans Math with Lato: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Lato.</p>
+<ul class="mf-facts"><li>4 519 glyphs</li><li>658 size variants and 70 assemblies for 89 vertical and 44 horizontal stretchy glyphs</li><li>cut-ins for 859 glyphs</li><li>script forms (ssty) for 498 glyphs</li><li>maths alphabets 953 of 996</li><li>bold maths: LeteSansMath-Bold.otf</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/letesans-cv01.svg" width="13" height="37" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv02.svg" width="17" height="37" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv03.svg" width="12" height="29" loading="lazy" alt="cv03 changes 4 characters; shown: 𝜖, default above, alternate below"><figcaption><code>cv03</code> ε in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv04.svg" width="14" height="29" loading="lazy" alt="cv04 changes 4 characters; shown: 𝜅, default above, alternate below"><figcaption><code>cv04</code> κ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv05.svg" width="19" height="28" loading="lazy" alt="cv05 changes 4 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv06.svg" width="16" height="36" loading="lazy" alt="cv06 changes 4 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv07.svg" width="14" height="33" loading="lazy" alt="cv07 changes 4 characters; shown: 𝜌, default above, alternate below"><figcaption><code>cv07</code> ρ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv08.svg" width="15" height="32" loading="lazy" alt="cv08 changes 4 characters; shown: 𝜎, default above, alternate below"><figcaption><code>cv08</code> σ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv09.svg" width="16" height="37" loading="lazy" alt="cv09 changes 4 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv10.svg" width="18" height="37" loading="lazy" alt="cv10 changes 4 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv11.svg" width="13" height="32" loading="lazy" alt="cv11 changes 4 characters; shown: g, default above, alternate below"><figcaption><code>cv11</code> g in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv12.svg" width="8" height="38" loading="lazy" alt="cv12 changes 4 characters; shown: l, default above, alternate below"><figcaption><code>cv12</code> l in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv13.svg" width="12" height="38" loading="lazy" alt="cv13 changes 4 characters; shown: l, default above, alternate below"><figcaption><code>cv13</code> l in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-cv14.svg" width="33" height="37" loading="lazy" alt="cv14 changes 2 characters; shown: 0𝟎, default above, alternate below"><figcaption><code>cv14</code> figures and bold figures</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-ss01.svg" width="132" height="39" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> mathcal</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-ss04.svg" width="118" height="42" loading="lazy" alt="ss04 changes 17 characters; shown: ≤≥≦≧≰≱, default above, alternate below"><figcaption><code>ss04</code> leqslant</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-ss05.svg" width="99" height="32" loading="lazy" alt="ss05 changes 7 characters; shown: ∈∋∖∣∥∤, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-ss06.svg" width="78" height="45" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-ss07.svg" width="35" height="39" loading="lazy" alt="ss07 changes 2 characters; shown: ∥∦, default above, alternate below"><figcaption><code>ss07</code> parallelslant</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-ss08.svg" width="128" height="50" loading="lazy" alt="ss08 changes 15 characters; shown: ∫∬∭∮∯⨑, default above, alternate below"><figcaption><code>ss08</code> Upright Integrals</figcaption></figure>
+<figure><img src="images/mathfonts/letesans-ss09.svg" width="119" height="44" loading="lazy" alt="ss09 changes 28 characters; shown: ≨≩∉∌⊄⊅, default above, alternate below"><figcaption><code>ss09</code> Negated Symbols With Vertical Stroke</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.63 from CTAN · <a href="https://ctan.org/pkg/lete-sans-math">ctan.org/pkg/lete-sans-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-newcmsans">
+<div class="mf-head"><h3>New Computer Modern Sans Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/newcmsans.svg" width="436" height="156" loading="lazy" alt="New Computer Modern Sans Math with New Computer Modern Sans: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in New Computer Modern Sans.</p>
+<ul class="mf-facts"><li>8 937 glyphs</li><li>592 size variants and 117 assemblies for 165 vertical and 86 horizontal stretchy glyphs</li><li>cut-ins for 516 glyphs</li><li>script forms (ssty) for 1 059 glyphs</li><li>maths alphabets 996 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/newcmsans-cv01.svg" width="124" height="45" loading="lazy" alt="cv01 changes 25 characters; shown: ≨⊊⊕⨼0∩, default above, alternate below"><figcaption><code>cv01</code> relations</figcaption></figure>
+<figure><img src="images/mathfonts/newcmsans-cv02.svg" width="18" height="42" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/newcmsans-cv03.svg" width="13" height="38" loading="lazy" alt="cv03 changes 1 character; shown: 𝑗, default above, alternate below"><figcaption><code>cv03</code> mathematical italic small j</figcaption></figure>
+<figure><img src="images/mathfonts/newcmsans-ss01.svg" width="141" height="36" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> script capitals</figcaption></figure>
+<figure><img src="images/mathfonts/newcmsans-ss02.svg" width="120" height="48" loading="lazy" alt="ss02 changes 26 characters; shown: ∫⨐⨑⨒⨓⨔, default above, alternate below"><figcaption><code>ss02</code> integrals</figcaption></figure>
+<figure><img src="images/mathfonts/newcmsans-ss03.svg" width="116" height="44" loading="lazy" alt="ss03 changes 72 characters; shown: 𝔸𝕒𝟘ⅆℾ⅀, default above, alternate below"><figcaption><code>ss03</code> double-struck letters</figcaption></figure>
+<figure><img src="images/mathfonts/newcmsans-ss04.svg" width="101" height="36" loading="lazy" alt="ss04 changes 10 characters; shown: 012345, default above, alternate below"><figcaption><code>ss04</code> figures</figcaption></figure>
+<figure><img src="images/mathfonts/newcmsans-ss08.svg" width="124" height="35" loading="lazy" alt="ss08 changes 873 characters; shown: &lt;←a𝛼A𝛢, default above, alternate below"><figcaption><code>ss08</code> relations</figcaption></figure>
+</div>
+<p class="mf-src">Version 4.0 from CTAN · <a href="https://ctan.org/pkg/newcomputermodern">ctan.org/pkg/newcomputermodern</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-kpsans">
+<div class="mf-head"><h3>KpMath Sans</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/kpsans.svg" width="434" height="144" loading="lazy" alt="KpMath Sans with KpSans: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in KpSans.</p>
+<ul class="mf-facts"><li>2 839 glyphs</li><li>278 size variants and 70 assemblies for 102 vertical and 52 horizontal stretchy glyphs</li><li>cut-ins for 105 glyphs</li><li>script forms (ssty) for 263 glyphs</li><li>maths alphabets 910 of 996</li><li>bold maths: KpMathSans-Bold.otf</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/kpsans-cv00.svg" width="58" height="39" loading="lazy" alt="cv00 changes 2 characters; shown: ℑℜ, default above, alternate below"><figcaption><code>cv00</code> fraktur capitals</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv01.svg" width="14" height="34" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv02.svg" width="17" height="35" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv03.svg" width="12" height="27" loading="lazy" alt="cv03 changes 4 characters; shown: 𝜖, default above, alternate below"><figcaption><code>cv03</code> ε in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv05.svg" width="17" height="28" loading="lazy" alt="cv05 changes 4 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv06.svg" width="17" height="38" loading="lazy" alt="cv06 changes 4 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv07.svg" width="13" height="34" loading="lazy" alt="cv07 changes 4 characters; shown: 𝜌, default above, alternate below"><figcaption><code>cv07</code> ρ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv08.svg" width="15" height="30" loading="lazy" alt="cv08 changes 4 characters; shown: 𝜎, default above, alternate below"><figcaption><code>cv08</code> σ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv09.svg" width="15" height="36" loading="lazy" alt="cv09 changes 4 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-cv10.svg" width="18" height="36" loading="lazy" alt="cv10 changes 4 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-ss01.svg" width="155" height="39" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> mathcal</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-ss03.svg" width="149" height="56" loading="lazy" alt="ss03 changes 5 characters; shown: ∬∭∯∰⨌, default above, alternate below"><figcaption><code>ss03</code> narrowiints</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-ss04.svg" width="116" height="39" loading="lazy" alt="ss04 changes 14 characters; shown: ≤≥≦≧≰≱, default above, alternate below"><figcaption><code>ss04</code> leqslant</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-ss05.svg" width="90" height="32" loading="lazy" alt="ss05 changes 7 characters; shown: ∈∋∖∣∥∤, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-ss06.svg" width="76" height="40" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+<figure><img src="images/mathfonts/kpsans-ss07.svg" width="35" height="40" loading="lazy" alt="ss07 changes 2 characters; shown: ∥∦, default above, alternate below"><figcaption><code>ss07</code> parallelslant</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.75 from CTAN · <a href="https://ctan.org/pkg/kpfonts-otf">ctan.org/pkg/kpfonts-otf</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-plexmath">
+<div class="mf-head"><h3>IBM Plex Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/plexmath.svg" width="434" height="149" loading="lazy" alt="IBM Plex Math with IBM Plex Serif: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in IBM Plex Serif.</p>
+<ul class="mf-facts"><li>7 092 glyphs</li><li>1 175 size variants and 92 assemblies for 125 vertical and 51 horizontal stretchy glyphs</li><li>cut-ins for 392 glyphs</li><li>script forms (ssty) for 1 241 glyphs</li><li>maths alphabets 996 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/plexmath-salt.svg" width="33" height="41" loading="lazy" alt="salt changes 2 characters; shown: 0g, default above, alternate below"><figcaption><code>salt</code> figures and small letters</figcaption></figure>
+<figure><img src="images/mathfonts/plexmath-ss02.svg" width="14" height="35" loading="lazy" alt="ss02 changes 9 characters; shown: g, default above, alternate below"><figcaption><code>ss02</code> simple lowercase g</figcaption></figure>
+<figure><img src="images/mathfonts/plexmath-ss03.svg" width="114" height="37" loading="lazy" alt="ss03 changes 6 characters; shown: 0𝟘𝟢𝟶𝟎𝟬, default above, alternate below"><figcaption><code>ss03</code> slashed number zero</figcaption></figure>
+<figure><img src="images/mathfonts/plexmath-ss11.svg" width="117" height="39" loading="lazy" alt="ss11 changes 52 characters; shown: ABCabc, default above, alternate below"><figcaption><code>ss11</code> Math Fraktur forms</figcaption></figure>
+<figure><img src="images/mathfonts/plexmath-ss12.svg" width="127" height="39" loading="lazy" alt="ss12 changes 52 characters; shown: ABCabc, default above, alternate below"><figcaption><code>ss12</code> Math Fraktur Bold forms</figcaption></figure>
+<figure><img src="images/mathfonts/plexmath-ss13.svg" width="116" height="38" loading="lazy" alt="ss13 changes 62 characters; shown: ABab01, default above, alternate below"><figcaption><code>ss13</code> Math monospaced forms</figcaption></figure>
+<figure><img src="images/mathfonts/plexmath-ss14.svg" width="120" height="39" loading="lazy" alt="ss14 changes 52 characters; shown: ABCabc, default above, alternate below"><figcaption><code>ss14</code> Math Script forms</figcaption></figure>
+<figure><img src="images/mathfonts/plexmath-ss15.svg" width="127" height="39" loading="lazy" alt="ss15 changes 52 characters; shown: ABCabc, default above, alternate below"><figcaption><code>ss15</code> Math Script Bold forms</figcaption></figure>
+</div>
+<p class="mf-src">Version 1.000 from CTAN · <a href="https://github.com/IBM/plex">github.com/IBM/plex</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
+</article>
+<article class="panel mf-font" id="mf-arsenalmath">
+<div class="mf-head"><h3>Arsenal Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/arsenalmath.svg" width="434" height="157" loading="lazy" alt="Arsenal Math with Arsenal: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Arsenal.</p>
+<ul class="mf-facts"><li>2 807 glyphs</li><li>268 size variants and 70 assemblies for 102 vertical and 52 horizontal stretchy glyphs</li><li>cut-ins for 170 glyphs</li><li>script forms (ssty) for 262 glyphs</li><li>maths alphabets 910 of 996</li><li>bold maths: ArsenalMath-SansBold.otf</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/arsenalmath-cv00.svg" width="58" height="39" loading="lazy" alt="cv00 changes 2 characters; shown: ℑℜ, default above, alternate below"><figcaption><code>cv00</code> fraktur capitals</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv01.svg" width="14" height="34" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv02.svg" width="17" height="35" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv03.svg" width="12" height="27" loading="lazy" alt="cv03 changes 4 characters; shown: 𝜖, default above, alternate below"><figcaption><code>cv03</code> ε in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv05.svg" width="17" height="28" loading="lazy" alt="cv05 changes 4 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv06.svg" width="17" height="38" loading="lazy" alt="cv06 changes 4 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv07.svg" width="13" height="34" loading="lazy" alt="cv07 changes 4 characters; shown: 𝜌, default above, alternate below"><figcaption><code>cv07</code> ρ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv08.svg" width="15" height="30" loading="lazy" alt="cv08 changes 4 characters; shown: 𝜎, default above, alternate below"><figcaption><code>cv08</code> σ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv09.svg" width="15" height="36" loading="lazy" alt="cv09 changes 4 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-cv10.svg" width="18" height="36" loading="lazy" alt="cv10 changes 4 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-ss01.svg" width="155" height="40" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> mathcal</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-ss03.svg" width="149" height="56" loading="lazy" alt="ss03 changes 5 characters; shown: ∬∭∯∰⨌, default above, alternate below"><figcaption><code>ss03</code> narrowiints</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-ss04.svg" width="116" height="39" loading="lazy" alt="ss04 changes 8 characters; shown: ≤≥≦≧≰≱, default above, alternate below"><figcaption><code>ss04</code> leqslant</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-ss05.svg" width="85" height="33" loading="lazy" alt="ss05 changes 6 characters; shown: ∈∋∣∥∤∦, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-ss06.svg" width="76" height="40" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+<figure><img src="images/mathfonts/arsenalmath-ss07.svg" width="35" height="41" loading="lazy" alt="ss07 changes 2 characters; shown: ∥∦, default above, alternate below"><figcaption><code>ss07</code> parallelslant</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.9.3 from CTAN · <a href="https://ctan.org/pkg/arsenal-math">ctan.org/pkg/arsenal-math</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
+</article>
+<article class="panel mf-font" id="mf-luciole">
+<div class="mf-head"><h3>Luciole Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/luciole.svg" width="436" height="162" loading="lazy" alt="Luciole Math with Luciole: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Luciole.</p>
+<ul class="mf-facts"><li>3 271 glyphs</li><li>340 size variants and 65 assemblies for 61 vertical and 49 horizontal stretchy glyphs</li><li>cut-ins for 903 glyphs</li><li>script forms (ssty) for 617 glyphs</li><li>maths alphabets 864 of 996</li><li>bold maths: Luciole-Math-Bold.otf</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/luciole-cv01.svg" width="15" height="40" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv02.svg" width="19" height="42" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv03.svg" width="14" height="30" loading="lazy" alt="cv03 changes 4 characters; shown: 𝜖, default above, alternate below"><figcaption><code>cv03</code> ε in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv04.svg" width="17" height="31" loading="lazy" alt="cv04 changes 4 characters; shown: 𝜅, default above, alternate below"><figcaption><code>cv04</code> κ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv05.svg" width="23" height="30" loading="lazy" alt="cv05 changes 4 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv06.svg" width="17" height="40" loading="lazy" alt="cv06 changes 4 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv07.svg" width="16" height="35" loading="lazy" alt="cv07 changes 4 characters; shown: 𝜌, default above, alternate below"><figcaption><code>cv07</code> ρ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv08.svg" width="17" height="35" loading="lazy" alt="cv08 changes 4 characters; shown: 𝜎, default above, alternate below"><figcaption><code>cv08</code> σ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv09.svg" width="18" height="40" loading="lazy" alt="cv09 changes 4 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv10.svg" width="18" height="39" loading="lazy" alt="cv10 changes 4 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv11.svg" width="37" height="39" loading="lazy" alt="cv11 changes 2 characters; shown: 0𝟎, default above, alternate below"><figcaption><code>cv11</code> figures and bold figures</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv12.svg" width="9" height="40" loading="lazy" alt="cv12 changes 4 characters; shown: l, default above, alternate below"><figcaption><code>cv12</code> l in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv13.svg" width="12" height="40" loading="lazy" alt="cv13 changes 4 characters; shown: l, default above, alternate below"><figcaption><code>cv13</code> l in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-cv14.svg" width="14" height="30" loading="lazy" alt="cv14 changes 4 characters; shown: a, default above, alternate below"><figcaption><code>cv14</code> a in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-ss01.svg" width="129" height="40" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> mathscr</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-ss04.svg" width="122" height="41" loading="lazy" alt="ss04 changes 12 characters; shown: ≤≥≦≧≰≱, default above, alternate below"><figcaption><code>ss04</code> leqslant</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-ss05.svg" width="105" height="33" loading="lazy" alt="ss05 changes 7 characters; shown: ∈∋∖∣∥∤, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-ss06.svg" width="85" height="46" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+<figure><img src="images/mathfonts/luciole-ss07.svg" width="39" height="41" loading="lazy" alt="ss07 changes 2 characters; shown: ∥∦, default above, alternate below"><figcaption><code>ss07</code> parallelslant</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.76 from CTAN · <a href="https://www.luciole-vision.com/en/math.html">www.luciole-vision.com/en/math.html</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
+</article>
+<article class="panel mf-font" id="mf-pennstander">
+<div class="mf-head"><h3>Pennstander Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/pennstander.svg" width="436" height="144" loading="lazy" alt="Pennstander Math with Pennstander: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Pennstander.</p>
+<ul class="mf-facts"><li>7 860 glyphs</li><li>1 907 size variants and 338 assemblies for 311 vertical and 121 horizontal stretchy glyphs</li><li>cut-ins for 2 359 glyphs</li><li>script forms (ssty) for 2 256 glyphs</li><li>maths alphabets 869 of 996</li><li>bold maths: 8 more weights, Thin to Black</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/pennstander-cv31.svg" width="128" height="45" loading="lazy" alt="cv31 changes 25 characters; shown: ∫⨐⨑⨒⨓⨔, default above, alternate below"><figcaption><code>cv31</code> integrals</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss01.svg" width="50" height="40" loading="lazy" alt="ss01 changes 12 characters; shown: agI, default above, alternate below"><figcaption><code>ss01</code> Alternate Letters</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss02.svg" width="109" height="37" loading="lazy" alt="ss02 changes 34 characters; shown: AMNQvz, default above, alternate below"><figcaption><code>ss02</code> Sharp Letters</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss03.svg" width="25" height="37" loading="lazy" alt="ss03 changes 8 characters; shown: lt, default above, alternate below"><figcaption><code>ss03</code> Straight Feet</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss04.svg" width="94" height="35" loading="lazy" alt="ss04 changes 5 characters; shown: 4¼¾⁴𝟒, default above, alternate below"><figcaption><code>ss04</code> Alternate 4</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss05.svg" width="115" height="41" loading="lazy" alt="ss05 changes 16 characters; shown: 𝔄𝔎𝔏𝔛𝔵𝔶, default above, alternate below"><figcaption><code>ss05</code> Simplified Fraktur</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss06.svg" width="13" height="38" loading="lazy" alt="ss06 changes 1 character; shown: $, default above, alternate below"><figcaption><code>ss06</code> dollar sign</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss07.svg" width="48" height="36" loading="lazy" alt="ss07 changes 3 characters; shown: 7𝟟𝟕, default above, alternate below"><figcaption><code>ss07</code> Alternate 7</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss08.svg" width="60" height="44" loading="lazy" alt="ss08 changes 4 characters; shown: (){}, default above, alternate below"><figcaption><code>ss08</code> Alternate Parentheses</figcaption></figure>
+<figure><img src="images/mathfonts/pennstander-ss20.svg" width="119" height="47" loading="lazy" alt="ss20 changes 50 characters; shown: ∫d5∑⨐⨑, default above, alternate below"><figcaption><code>ss20</code> Flair</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.001 from CTAN · <a href="https://github.com/juliusross1/Pennstander">github.com/juliusross1/Pennstander</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
+</article>
+<article class="panel mf-font" id="mf-neohellenic">
+<div class="mf-head"><h3>GFS Neohellenic Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/neohellenic.svg" width="437" height="141" loading="lazy" alt="GFS Neohellenic Math with GFS Neohellenic: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in GFS Neohellenic. Not in the font, so set in grey from Latin Modern Math: 𝔤.</p>
+<ul class="mf-facts"><li>3 546 glyphs</li><li>447 size variants and 112 assemblies for 111 vertical and 85 horizontal stretchy glyphs</li><li>cut-ins for 105 glyphs</li><li>script forms (ssty) for 7 glyphs</li><li>maths alphabets 409 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<p class="mf-src">Version 1.02 from CTAN · <a href="https://ctan.org/pkg/gfsneohellenicmath">ctan.org/pkg/gfsneohellenicmath</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+</div><h3 class="mf-group">Serif</h3><div class="mf-grid">
+<article class="panel mf-font" id="mf-latinmodern">
+<div class="mf-head"><h3>Latin Modern Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/latinmodern.svg" width="436" height="156" loading="lazy" alt="Latin Modern Math with Latin Modern Roman: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Latin Modern Roman. unicode-math’s default.</p>
+<ul class="mf-facts"><li>4 802 glyphs</li><li>455 size variants and 114 assemblies for 94 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 995 glyphs</li><li>maths alphabets 945 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<p class="mf-src">Version 1.959 from CTAN · <a href="https://ctan.org/pkg/lm-math">ctan.org/pkg/lm-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-newcm">
+<div class="mf-head"><h3>New Computer Modern Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/newcm.svg" width="436" height="149" loading="lazy" alt="New Computer Modern Math with New Computer Modern Book: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in New Computer Modern Book. Shown in the Book weight, fontsetup’s default.</p>
+<ul class="mf-facts"><li>8 598 glyphs</li><li>567 size variants and 117 assemblies for 163 vertical and 86 horizontal stretchy glyphs</li><li>cut-ins for 669 glyphs</li><li>script forms (ssty) for 1 274 glyphs</li><li>maths alphabets 996 of 996</li><li>bold maths: NewCMMath-Bold.otf, NewCMMath-Regular.otf (lighter)</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/newcm-cv01.svg" width="122" height="45" loading="lazy" alt="cv01 changes 25 characters; shown: ≨⊊⊕⨼0∩, default above, alternate below"><figcaption><code>cv01</code> relations</figcaption></figure>
+<figure><img src="images/mathfonts/newcm-cv02.svg" width="18" height="37" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/newcm-ss01.svg" width="141" height="37" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> script capitals</figcaption></figure>
+<figure><img src="images/mathfonts/newcm-ss02.svg" width="117" height="48" loading="lazy" alt="ss02 changes 26 characters; shown: ∫⨐⨑⨒⨓⨔, default above, alternate below"><figcaption><code>ss02</code> integrals</figcaption></figure>
+<figure><img src="images/mathfonts/newcm-ss03.svg" width="125" height="44" loading="lazy" alt="ss03 changes 72 characters; shown: 𝔸𝕒𝟘ⅆℾ⅀, default above, alternate below"><figcaption><code>ss03</code> double-struck letters</figcaption></figure>
+<figure><img src="images/mathfonts/newcm-ss04.svg" width="101" height="36" loading="lazy" alt="ss04 changes 10 characters; shown: 012345, default above, alternate below"><figcaption><code>ss04</code> figures</figcaption></figure>
+<figure><img src="images/mathfonts/newcm-ss05.svg" width="120" height="33" loading="lazy" alt="ss05 changes 26 characters; shown: 𝔸𝔹ℂ𝔻𝔼𝔽, default above, alternate below"><figcaption><code>ss05</code> double-struck capitals</figcaption></figure>
+<figure><img src="images/mathfonts/newcm-ss06.svg" width="132" height="37" loading="lazy" alt="ss06 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss06</code> script capitals</figcaption></figure>
+</div>
+<p class="mf-src">Version 4.0 from CTAN · <a href="https://ctan.org/pkg/newcomputermodern">ctan.org/pkg/newcomputermodern</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-mlmodern">
+<div class="mf-head"><h3>MLModern Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/mlmodern.svg" width="436" height="157" loading="lazy" alt="MLModern Math with MLModern: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in MLModern.</p>
+<ul class="mf-facts"><li>4 802 glyphs</li><li>455 size variants and 114 assemblies for 94 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 995 glyphs</li><li>maths alphabets 945 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<p class="mf-src">Version 2.0 from CTAN · <a href="https://ctan.org/pkg/mlmodern">ctan.org/pkg/mlmodern</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
+</article>
+<article class="panel mf-font" id="mf-concrete">
+<div class="mf-head"><h3>Concrete Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/concrete.svg" width="436" height="137" loading="lazy" alt="Concrete Math with CMU Concrete: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in CMU Concrete.</p>
+<ul class="mf-facts"><li>3 275 glyphs</li><li>244 size variants and 73 assemblies for 72 vertical and 52 horizontal stretchy glyphs</li><li>cut-ins for 785 glyphs</li><li>script forms (ssty) for 478 glyphs</li><li>maths alphabets 945 of 996</li><li>bold maths: Concrete-Math-Bold.otf</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/concrete-cv01.svg" width="14" height="36" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv02.svg" width="17" height="40" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv03.svg" width="12" height="27" loading="lazy" alt="cv03 changes 6 characters; shown: 𝜖, default above, alternate below"><figcaption><code>cv03</code> ε in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv04.svg" width="16" height="27" loading="lazy" alt="cv04 changes 6 characters; shown: 𝜅, default above, alternate below"><figcaption><code>cv04</code> κ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv05.svg" width="20" height="27" loading="lazy" alt="cv05 changes 6 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv06.svg" width="15" height="35" loading="lazy" alt="cv06 changes 6 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv07.svg" width="14" height="31" loading="lazy" alt="cv07 changes 6 characters; shown: 𝜌, default above, alternate below"><figcaption><code>cv07</code> ρ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv08.svg" width="15" height="29" loading="lazy" alt="cv08 changes 6 characters; shown: 𝜎, default above, alternate below"><figcaption><code>cv08</code> σ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv09.svg" width="16" height="36" loading="lazy" alt="cv09 changes 6 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-cv10.svg" width="17" height="36" loading="lazy" alt="cv10 changes 6 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-ss03.svg" width="142" height="48" loading="lazy" alt="ss03 changes 11 characters; shown: ∫∬∭∮∯⨑, default above, alternate below"><figcaption><code>ss03</code> upint</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-ss04.svg" width="129" height="38" loading="lazy" alt="ss04 changes 12 characters; shown: ≤≥≦≧≰≱, default above, alternate below"><figcaption><code>ss04</code> leqslant</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-ss05.svg" width="99" height="34" loading="lazy" alt="ss05 changes 7 characters; shown: ∈∋∖∣∥∤, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/concrete-ss06.svg" width="84" height="36" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.78 from CTAN · <a href="https://ctan.org/pkg/concmath-otf">ctan.org/pkg/concmath-otf</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-eulermath">
+<div class="mf-head"><h3>Euler Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/eulermath.svg" width="436" height="147" loading="lazy" alt="Euler Math with CMU Concrete: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in CMU Concrete.</p>
+<ul class="mf-facts"><li>3 550 glyphs</li><li>246 size variants and 69 assemblies for 58 vertical and 52 horizontal stretchy glyphs</li><li>cut-ins for 172 glyphs</li><li>script forms (ssty) for 728 glyphs</li><li>maths alphabets 931 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/eulermath-cv01.svg" width="16" height="35" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-cv02.svg" width="17" height="41" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-cv03.svg" width="12" height="27" loading="lazy" alt="cv03 changes 6 characters; shown: 𝜖, default above, alternate below"><figcaption><code>cv03</code> ε in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-cv04.svg" width="14" height="27" loading="lazy" alt="cv04 changes 4 characters; shown: 𝜅, default above, alternate below"><figcaption><code>cv04</code> κ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-cv05.svg" width="18" height="29" loading="lazy" alt="cv05 changes 4 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-cv06.svg" width="16" height="35" loading="lazy" alt="cv06 changes 6 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-cv09.svg" width="15" height="36" loading="lazy" alt="cv09 changes 4 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-cv10.svg" width="18" height="36" loading="lazy" alt="cv10 changes 4 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-cv11.svg" width="18" height="37" loading="lazy" alt="cv11 changes 4 characters; shown: Φ, default above, alternate below"><figcaption><code>cv11</code> Φ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-salt.svg" width="108" height="42" loading="lazy" alt="salt changes 9 characters; shown: 1𝖉𝖋𝖄𝖅𝟏, default above, alternate below"><figcaption><code>salt</code> figures and bold fraktur small letters …</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-ss05.svg" width="90" height="31" loading="lazy" alt="ss05 changes 6 characters; shown: ∈∋∣∥∤∦, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/eulermath-ss06.svg" width="84" height="40" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.77 from CTAN · <a href="https://ctan.org/pkg/euler-math">ctan.org/pkg/euler-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-neoeuler">
+<div class="mf-head"><h3>Neo Euler</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/neoeuler.svg" width="436" height="156" loading="lazy" alt="Neo Euler with CMU Concrete: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in CMU Concrete. Upright letters only, so set with math-style=upright as in the answer; abandoned in 2010 and incomplete. Not in the font, so set in grey from Latin Modern Math: ℂ.</p>
+<ul class="mf-facts"><li>1 904 glyphs</li><li>145 size variants and 25 assemblies for 42 vertical and 9 horizontal stretchy glyphs</li><li>script forms (ssty) for 604 glyphs</li><li>maths alphabets 259 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/neoeuler-salt.svg" width="108" height="42" loading="lazy" alt="salt changes 9 characters; shown: 1𝖉𝖋𝖄𝖅𝟏, default above, alternate below"><figcaption><code>salt</code> figures and bold fraktur small letters …</figcaption></figure>
+</div>
+<p class="mf-src">Version 000.002 from GitHub · <a href="https://github.com/khaledhosny/euler-otf">github.com/khaledhosny/euler-otf</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-termes">
+<div class="mf-head"><h3>TeX Gyre Termes Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/termes.svg" width="435" height="141" loading="lazy" alt="TeX Gyre Termes Math with TeX Gyre Termes: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in TeX Gyre Termes.</p>
+<ul class="mf-facts"><li>4 246 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 671 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<p class="mf-src">Version 1.543 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-termes">ctan.org/pkg/tex-gyre-math-termes</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-pagella">
+<div class="mf-head"><h3>TeX Gyre Pagella Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/pagella.svg" width="435" height="147" loading="lazy" alt="TeX Gyre Pagella Math with TeX Gyre Pagella: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in TeX Gyre Pagella.</p>
+<ul class="mf-facts"><li>4 246 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 671 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<p class="mf-src">Version 1.632 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-pagella">ctan.org/pkg/tex-gyre-math-pagella</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-bonum">
+<div class="mf-head"><h3>TeX Gyre Bonum Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/bonum.svg" width="436" height="143" loading="lazy" alt="TeX Gyre Bonum Math with TeX Gyre Bonum: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in TeX Gyre Bonum.</p>
+<ul class="mf-facts"><li>4 246 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 671 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<p class="mf-src">Version 1.005 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-bonum">ctan.org/pkg/tex-gyre-math-bonum</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-schola">
+<div class="mf-head"><h3>TeX Gyre Schola Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/schola.svg" width="435" height="143" loading="lazy" alt="TeX Gyre Schola Math with TeX Gyre Schola: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in TeX Gyre Schola.</p>
+<ul class="mf-facts"><li>4 246 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 671 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<p class="mf-src">Version 1.533 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-schola">ctan.org/pkg/tex-gyre-math-schola</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-dejavu">
+<div class="mf-head"><h3>TeX Gyre DejaVu Math</h3><span class="mf-lic">Bitstream Vera licence, DejaVu changes public domain</span></div>
+<img class="mf-sample" src="images/mathfonts/dejavu.svg" width="436" height="147" loading="lazy" alt="TeX Gyre DejaVu Math with DejaVu Serif: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in DejaVu Serif. The DejaVu project ships the same font as DejaVu Math TeX Gyre.</p>
+<ul class="mf-facts"><li>4 280 glyphs</li><li>467 size variants and 118 assemblies for 95 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 685 glyphs</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<p class="mf-src">Version 1.106 from CTAN · <a href="https://ctan.org/pkg/tex-gyre-math-dejavu">ctan.org/pkg/tex-gyre-math-dejavu</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-stixtwo">
+<div class="mf-head"><h3>STIX Two Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/stixtwo.svg" width="434" height="152" loading="lazy" alt="STIX Two Math with STIX Two Text: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in STIX Two Text.</p>
+<ul class="mf-facts"><li>6 760 glyphs</li><li>468 size variants and 69 assemblies for 118 vertical and 47 horizontal stretchy glyphs</li><li>cut-ins for 233 glyphs</li><li>script forms (ssty) for 529 glyphs</li><li>maths alphabets 996 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li><li>flatter accents over capitals (flac)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/stixtwo-cv01.svg" width="14" height="36" loading="lazy" alt="cv01 changes 1 character; shown: ƛ, default above, alternate below"><figcaption><code>cv01</code> small lambda with stroke</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-cv02.svg" width="14" height="28" loading="lazy" alt="cv02 changes 1 character; shown: ɤ, default above, alternate below"><figcaption><code>cv02</code> small rams horn</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-cv03.svg" width="18" height="36" loading="lazy" alt="cv03 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv03</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-cv04.svg" width="13" height="31" loading="lazy" alt="cv04 changes 1 character; shown: ∖, default above, alternate below"><figcaption><code>cv04</code> set minus</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss01.svg" width="129" height="37" loading="lazy" alt="ss01 changes 104 characters; shown: 𝒜ℬ𝒞𝒶𝒷𝒸, default above, alternate below"><figcaption><code>ss01</code> script letters</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss02.svg" width="88" height="32" loading="lazy" alt="ss02 changes 8 characters; shown: 𝑔𝑢𝑣𝑤𝑧, default above, alternate below"><figcaption><code>ss02</code> italic small letters</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss03.svg" width="31" height="36" loading="lazy" alt="ss03 changes 2 characters; shown: ℏƛ, default above, alternate below"><figcaption><code>ss03</code> small letters</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss04.svg" width="111" height="33" loading="lazy" alt="ss04 changes 7 characters; shown: ′″‴‵‶‷, default above, alternate below"><figcaption><code>ss04</code> primes</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss05.svg" width="131" height="34" loading="lazy" alt="ss05 changes 8 characters; shown: ←↑→↓⇑⇓, default above, alternate below"><figcaption><code>ss05</code> arrows</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss06.svg" width="97" height="33" loading="lazy" alt="ss06 changes 7 characters; shown: ⫮∤∈∋∣∥, default above, alternate below"><figcaption><code>ss06</code> negated relations</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss07.svg" width="150" height="44" loading="lazy" alt="ss07 changes 7 characters; shown: ⅀∏∐√∛∜, default above, alternate below"><figcaption><code>ss07</code> big operators</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss08.svg" width="120" height="42" loading="lazy" alt="ss08 changes 27 characters; shown: ∫⨐⨑⨒⨓⨔, default above, alternate below"><figcaption><code>ss08</code> integrals</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss09.svg" width="108" height="45" loading="lazy" alt="ss09 changes 31 characters; shown: ≆≨̸∉⊄⊅, default above, alternate below"><figcaption><code>ss09</code> negated relations</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss10.svg" width="124" height="49" loading="lazy" alt="ss10 changes 8 characters; shown: ≲≳⋚⋛⪝⪞, default above, alternate below"><figcaption><code>ss10</code> relations</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss11.svg" width="79" height="46" loading="lazy" alt="ss11 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss11</code> subsets</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss12.svg" width="72" height="27" loading="lazy" alt="ss12 changes 3 characters; shown: ∝⌢⌣, default above, alternate below"><figcaption><code>ss12</code> proportional to and frown …</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss13.svg" width="17" height="26" loading="lazy" alt="ss13 changes 1 character; shown: ∿, default above, alternate below"><figcaption><code>ss13</code> sine wave</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss14.svg" width="34" height="32" loading="lazy" alt="ss14 changes 2 characters; shown: ⨼⨽, default above, alternate below"><figcaption><code>ss14</code> big operators</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss15.svg" width="75" height="32" loading="lazy" alt="ss15 changes 4 characters; shown: ∩∪⊓⊔, default above, alternate below"><figcaption><code>ss15</code> intersection and union …</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss16.svg" width="67" height="36" loading="lazy" alt="ss16 changes 3 characters; shown: ⊕⊗⊜, default above, alternate below"><figcaption><code>ss16</code> circled operators</figcaption></figure>
+<figure><img src="images/mathfonts/stixtwo-ss20.svg" width="88" height="38" loading="lazy" alt="ss20 changes 4 characters; shown: ∾≌␣▩, default above, alternate below"><figcaption><code>ss20</code> inverted lazy s and relations …</figcaption></figure>
+</div>
+<p class="mf-src">Version 2.12 b168 from CTAN · <a href="https://github.com/stipub/stixfonts">github.com/stipub/stixfonts</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-stix">
+<div class="mf-head"><h3>STIX Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/stix.svg" width="435" height="156" loading="lazy" alt="STIX Math with STIX: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in STIX. The first STIX release, succeeded by STIX Two.</p>
+<ul class="mf-facts"><li>4 226 glyphs</li><li>297 size variants and 65 assemblies for 98 vertical and 43 horizontal stretchy glyphs</li><li>no script forms (ssty)</li><li>maths alphabets 994 of 996</li><li>no bold maths font</li></ul>
+<p class="mf-src">Version 1.1.1 from CTAN · <a href="https://ctan.org/pkg/stix">ctan.org/pkg/stix</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-xits">
+<div class="mf-head"><h3>XITS Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/xits.svg" width="435" height="158" loading="lazy" alt="XITS Math with XITS: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in XITS.</p>
+<ul class="mf-facts"><li>4 559 glyphs</li><li>332 size variants and 72 assemblies for 168 vertical and 41 horizontal stretchy glyphs</li><li>cut-ins for 29 glyphs</li><li>script forms (ssty) for 7 glyphs</li><li>maths alphabets 996 of 996</li><li>bold maths: XITSMath-Bold.otf</li><li>dotless i and j under accents (dtls)</li><li>mirrored forms for right-to-left maths (rtlm)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/xits-cv01.svg" width="65" height="38" loading="lazy" alt="cv01 changes 4 characters; shown: 𞸀𞸃𞸓𞸍, default above, alternate below"><figcaption><code>cv01</code> Arabic letters</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss01.svg" width="136" height="36" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> Mathematical Calligraphic Alphabet</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss02.svg" width="108" height="39" loading="lazy" alt="ss02 changes 111 characters; shown: 𝛼𝛽ΑΒ∂𝜕, default above, alternate below"><figcaption><code>ss02</code> Mathematical Greek Sans Serif Alphabet</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss03.svg" width="100" height="36" loading="lazy" alt="ss03 changes 20 characters; shown: 𝟢𝟣𝟤𝟬𝟭𝟮, default above, alternate below"><figcaption><code>ss03</code> Mathematical Italic Sans Serif Digits</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss04.svg" width="100" height="35" loading="lazy" alt="ss04 changes 10 characters; shown: 𝟶𝟷𝟸𝟹𝟺𝟻, default above, alternate below"><figcaption><code>ss04</code> Mathematical Bold Monospace Digits</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss05.svg" width="118" height="36" loading="lazy" alt="ss05 changes 52 characters; shown: 𝔸𝔹ℂ𝕒𝕓𝕔, default above, alternate below"><figcaption><code>ss05</code> Mathematical Bold Double-Struck Alphabet</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss06.svg" width="113" height="36" loading="lazy" alt="ss06 changes 52 characters; shown: 𝔸𝔹ℂ𝕒𝕓𝕔, default above, alternate below"><figcaption><code>ss06</code> Mathematical Italic Double-Struck Alphabet</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss07.svg" width="119" height="36" loading="lazy" alt="ss07 changes 52 characters; shown: 𝔸𝔹ℂ𝕒𝕓𝕔, default above, alternate below"><figcaption><code>ss07</code> Mathematical Bold Italic Double-Struck Alphabet</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss08.svg" width="121" height="50" loading="lazy" alt="ss08 changes 27 characters; shown: ∫⨐⨑⨒⨓⨔, default above, alternate below"><figcaption><code>ss08</code> Upright Integrals</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss09.svg" width="105" height="44" loading="lazy" alt="ss09 changes 29 characters; shown: ≨≩̸∉⊄⊅, default above, alternate below"><figcaption><code>ss09</code> Negated Symbols With Vertical Stroke</figcaption></figure>
+<figure><img src="images/mathfonts/xits-ss10.svg" width="14" height="36" loading="lazy" alt="ss10 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>ss10</code> Plank constant over two pi, with a bar</figcaption></figure>
+</div>
+<p class="mf-src">Version 1.302 from CTAN · <a href="https://github.com/aliftype/xits">github.com/aliftype/xits</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-libertinus">
+<div class="mf-head"><h3>Libertinus Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/libertinus.svg" width="435" height="141" loading="lazy" alt="Libertinus Math with Libertinus Serif: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Libertinus Serif.</p>
+<ul class="mf-facts"><li>4 463 glyphs</li><li>348 size variants and 37 assemblies for 59 vertical and 27 horizontal stretchy glyphs</li><li>script forms (ssty) for 6 glyphs</li><li>maths alphabets 984 of 996</li><li>no bold maths font</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/libertinus-ss08.svg" width="152" height="48" loading="lazy" alt="ss08 changes 10 characters; shown: ∫∬∭∮∯∰, default above, alternate below"><figcaption><code>ss08</code> integrals</figcaption></figure>
+</div>
+<p class="mf-src">Version 7.051 from CTAN · <a href="https://github.com/alerque/libertinus">github.com/alerque/libertinus</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-asana">
+<div class="mf-head"><h3>Asana Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/asana.svg" width="435" height="154" loading="lazy" alt="Asana Math with TeX Gyre Pagella: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in TeX Gyre Pagella.</p>
+<ul class="mf-facts"><li>3 451 glyphs</li><li>276 size variants and 52 assemblies for 77 vertical and 36 horizontal stretchy glyphs</li><li>cut-ins for 76 glyphs</li><li>script forms (ssty) for 86 glyphs</li><li>maths alphabets 996 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/asana-salt.svg" width="129" height="42" loading="lazy" alt="salt changes 56 characters; shown: 𝒜ℬ𝒞𝓁βθ, default above, alternate below"><figcaption><code>salt</code> script capitals</figcaption></figure>
+</div>
+<p class="mf-src">Version 000.962 from CTAN · <a href="https://ctan.org/pkg/asana-math">ctan.org/pkg/asana-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-garamond">
+<div class="mf-head"><h3>Garamond Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/garamond.svg" width="434" height="143" loading="lazy" alt="Garamond Math with EB Garamond: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in EB Garamond.</p>
+<ul class="mf-facts"><li>5 243 glyphs</li><li>1 137 size variants and 52 assemblies for 77 vertical and 39 horizontal stretchy glyphs</li><li>cut-ins for 2 094 glyphs</li><li>script forms (ssty) for 447 glyphs</li><li>maths alphabets 931 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/garamond-ss01.svg" width="117" height="44" loading="lazy" alt="ss01 changes 72 characters; shown: 𝔸𝕒𝟘ⅆℾ⅀, default above, alternate below"><figcaption><code>ss01</code> double-struck letters</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss02.svg" width="65" height="36" loading="lazy" alt="ss02 changes 4 characters; shown: ∂𝛛𝜕𝝏, default above, alternate below"><figcaption><code>ss02</code> partial derivatives</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss03.svg" width="137" height="36" loading="lazy" alt="ss03 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss03</code> script capitals</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss04.svg" width="105" height="36" loading="lazy" alt="ss04 changes 204 characters; shown: 𝛛𝜶𝐀𝐚𝚪𝟎, default above, alternate below"><figcaption><code>ss04</code> partial derivatives</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss05.svg" width="106" height="36" loading="lazy" alt="ss05 changes 204 characters; shown: 𝛛𝜶𝐀𝐚𝚪𝟎, default above, alternate below"><figcaption><code>ss05</code> partial derivatives</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss06.svg" width="13" height="37" loading="lazy" alt="ss06 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>ss06</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss07.svg" width="151" height="48" loading="lazy" alt="ss07 changes 11 characters; shown: ∫∬∭∮∯⨑, default above, alternate below"><figcaption><code>ss07</code> integrals</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss08.svg" width="129" height="37" loading="lazy" alt="ss08 changes 52 characters; shown: 𝒜ℬ𝒞𝒶𝒷𝒸, default above, alternate below"><figcaption><code>ss08</code> script letters</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss09.svg" width="23" height="40" loading="lazy" alt="ss09 changes 2 characters; shown: ̰̃, default above, alternate below"><figcaption><code>ss09</code> combining tilde and combining tilde below</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss10.svg" width="31" height="37" loading="lazy" alt="ss10 changes 3 characters; shown: ℎℏ, default above, alternate below"><figcaption><code>ss10</code> small letters</figcaption></figure>
+<figure><img src="images/mathfonts/garamond-ss11.svg" width="120" height="35" loading="lazy" alt="ss11 changes 193 characters; shown: &lt;⊂⊕≀+±, default above, alternate below"><figcaption><code>ss11</code> relations</figcaption></figure>
+</div>
+<p class="mf-src">Version 2022-01-03 from CTAN · <a href="https://ctan.org/pkg/garamond-math">ctan.org/pkg/garamond-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-erewhon">
+<div class="mf-head"><h3>Erewhon Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/erewhon.svg" width="434" height="145" loading="lazy" alt="Erewhon Math with Erewhon: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Erewhon.</p>
+<ul class="mf-facts"><li>3 523 glyphs</li><li>344 size variants and 79 assemblies for 80 vertical and 52 horizontal stretchy glyphs</li><li>cut-ins for 964 glyphs</li><li>script forms (ssty) for 485 glyphs</li><li>maths alphabets 951 of 996</li><li>bold maths: Erewhon-Math-Bold.otf</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/erewhon-cv00.svg" width="30" height="34" loading="lazy" alt="cv00 changes 2 characters; shown: 0𝟎, default above, alternate below"><figcaption><code>cv00</code> figures and bold figures</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv01.svg" width="14" height="36" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv02.svg" width="15" height="36" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv03.svg" width="12" height="27" loading="lazy" alt="cv03 changes 4 characters; shown: 𝜖, default above, alternate below"><figcaption><code>cv03</code> ε in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv04.svg" width="14" height="27" loading="lazy" alt="cv04 changes 4 characters; shown: 𝜅, default above, alternate below"><figcaption><code>cv04</code> κ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv05.svg" width="17" height="29" loading="lazy" alt="cv05 changes 4 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv06.svg" width="16" height="36" loading="lazy" alt="cv06 changes 4 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv07.svg" width="14" height="32" loading="lazy" alt="cv07 changes 4 characters; shown: 𝜌, default above, alternate below"><figcaption><code>cv07</code> ρ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv08.svg" width="16" height="31" loading="lazy" alt="cv08 changes 4 characters; shown: 𝜎, default above, alternate below"><figcaption><code>cv08</code> σ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv09.svg" width="15" height="36" loading="lazy" alt="cv09 changes 4 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv10.svg" width="17" height="35" loading="lazy" alt="cv10 changes 4 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv11.svg" width="67" height="37" loading="lazy" alt="cv11 changes 4 characters; shown: ∂𝛛𝜕𝝏, default above, alternate below"><figcaption><code>cv11</code> partial derivatives</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv13.svg" width="11" height="36" loading="lazy" alt="cv13 changes 4 characters; shown: l, default above, alternate below"><figcaption><code>cv13</code> l in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv20.svg" width="17" height="36" loading="lazy" alt="cv20 changes 2 characters; shown: ℰ, default above, alternate below"><figcaption><code>cv20</code> E in 2 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv21.svg" width="20" height="36" loading="lazy" alt="cv21 changes 2 characters; shown: 𝒬, default above, alternate below"><figcaption><code>cv21</code> Q in 2 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-cv22.svg" width="23" height="35" loading="lazy" alt="cv22 changes 2 characters; shown: 𝒯, default above, alternate below"><figcaption><code>cv22</code> T in 2 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-ss01.svg" width="141" height="36" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> mathcal</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-ss03.svg" width="139" height="46" loading="lazy" alt="ss03 changes 12 characters; shown: ∫∬∭∮∯⨑, default above, alternate below"><figcaption><code>ss03</code> upint</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-ss04.svg" width="117" height="36" loading="lazy" alt="ss04 changes 18 characters; shown: ≤≥≦≧≰≱, default above, alternate below"><figcaption><code>ss04</code> leqslant</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-ss05.svg" width="94" height="31" loading="lazy" alt="ss05 changes 6 characters; shown: ∈∋∣∥∤∦, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-ss06.svg" width="78" height="36" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-ss07.svg" width="34" height="38" loading="lazy" alt="ss07 changes 2 characters; shown: ∥∦, default above, alternate below"><figcaption><code>ss07</code> parallelslant</figcaption></figure>
+<figure><img src="images/mathfonts/erewhon-ss09.svg" width="79" height="38" loading="lazy" alt="ss09 changes 6 characters; shown: ()[]{}, default above, alternate below"><figcaption><code>ss09</code> largedelim</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.77 from CTAN · <a href="https://ctan.org/pkg/erewhon-math">ctan.org/pkg/erewhon-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-kpmath">
+<div class="mf-head"><h3>KpMath</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/kpmath.svg" width="435" height="146" loading="lazy" alt="KpMath with KpRoman: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in KpRoman.</p>
+<ul class="mf-facts"><li>3 509 glyphs</li><li>281 size variants and 70 assemblies for 105 vertical and 52 horizontal stretchy glyphs</li><li>cut-ins for 707 glyphs</li><li>script forms (ssty) for 503 glyphs</li><li>maths alphabets 910 of 996</li><li>bold maths: KpMath-Bold.otf, KpMath-Semibold.otf, KpMath-Light.otf</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/kpmath-cv00.svg" width="58" height="39" loading="lazy" alt="cv00 changes 2 characters; shown: ℑℜ, default above, alternate below"><figcaption><code>cv00</code> fraktur capitals</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv01.svg" width="13" height="37" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv02.svg" width="17" height="35" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv03.svg" width="12" height="27" loading="lazy" alt="cv03 changes 6 characters; shown: 𝜀, default above, alternate below"><figcaption><code>cv03</code> ε in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv04.svg" width="16" height="28" loading="lazy" alt="cv04 changes 6 characters; shown: 𝜅, default above, alternate below"><figcaption><code>cv04</code> κ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv05.svg" width="17" height="28" loading="lazy" alt="cv05 changes 6 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv06.svg" width="17" height="38" loading="lazy" alt="cv06 changes 6 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv07.svg" width="13" height="34" loading="lazy" alt="cv07 changes 6 characters; shown: 𝜌, default above, alternate below"><figcaption><code>cv07</code> ρ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv08.svg" width="15" height="30" loading="lazy" alt="cv08 changes 6 characters; shown: 𝜎, default above, alternate below"><figcaption><code>cv08</code> σ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv09.svg" width="15" height="36" loading="lazy" alt="cv09 changes 6 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-cv10.svg" width="18" height="36" loading="lazy" alt="cv10 changes 6 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 6 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-ss01.svg" width="155" height="39" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> mathcal</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-ss02.svg" width="132" height="36" loading="lazy" alt="ss02 changes 27 characters; shown: 𝔸𝔹ℂ𝔻𝔼𝕜, default above, alternate below"><figcaption><code>ss02</code> bbsans</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-ss03.svg" width="149" height="56" loading="lazy" alt="ss03 changes 5 characters; shown: ∬∭∯∰⨌, default above, alternate below"><figcaption><code>ss03</code> narrowiints</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-ss04.svg" width="116" height="39" loading="lazy" alt="ss04 changes 14 characters; shown: ≤≥≦≧≰≱, default above, alternate below"><figcaption><code>ss04</code> leqslant</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-ss05.svg" width="90" height="32" loading="lazy" alt="ss05 changes 7 characters; shown: ∈∋∖∣∥∤, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-ss06.svg" width="76" height="40" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+<figure><img src="images/mathfonts/kpmath-ss07.svg" width="35" height="40" loading="lazy" alt="ss07 changes 2 characters; shown: ∥∦, default above, alternate below"><figcaption><code>ss07</code> parallelslant</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.75 from CTAN · <a href="https://ctan.org/pkg/kpfonts-otf">ctan.org/pkg/kpfonts-otf</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-xcharter">
+<div class="mf-head"><h3>XCharter Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/xcharter.svg" width="435" height="147" loading="lazy" alt="XCharter Math with XCharter: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in XCharter.</p>
+<ul class="mf-facts"><li>3 424 glyphs</li><li>276 size variants and 73 assemblies for 72 vertical and 52 horizontal stretchy glyphs</li><li>cut-ins for 968 glyphs</li><li>script forms (ssty) for 482 glyphs</li><li>maths alphabets 951 of 996</li><li>bold maths: XCharter-Math-Bold.otf</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/xcharter-cv00.svg" width="32" height="36" loading="lazy" alt="cv00 changes 2 characters; shown: 0𝟎, default above, alternate below"><figcaption><code>cv00</code> figures and bold figures</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv01.svg" width="14" height="38" loading="lazy" alt="cv01 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv01</code> planck constant over two pi</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv02.svg" width="18" height="38" loading="lazy" alt="cv02 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv02</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv03.svg" width="12" height="28" loading="lazy" alt="cv03 changes 4 characters; shown: 𝜖, default above, alternate below"><figcaption><code>cv03</code> ε in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv04.svg" width="15" height="28" loading="lazy" alt="cv04 changes 4 characters; shown: 𝜅, default above, alternate below"><figcaption><code>cv04</code> κ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv05.svg" width="20" height="28" loading="lazy" alt="cv05 changes 4 characters; shown: 𝜋, default above, alternate below"><figcaption><code>cv05</code> π in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv06.svg" width="17" height="37" loading="lazy" alt="cv06 changes 4 characters; shown: 𝜙, default above, alternate below"><figcaption><code>cv06</code> φ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv07.svg" width="15" height="32" loading="lazy" alt="cv07 changes 4 characters; shown: 𝜌, default above, alternate below"><figcaption><code>cv07</code> ρ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv08.svg" width="15" height="32" loading="lazy" alt="cv08 changes 4 characters; shown: 𝜎, default above, alternate below"><figcaption><code>cv08</code> σ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv09.svg" width="15" height="38" loading="lazy" alt="cv09 changes 4 characters; shown: 𝜃, default above, alternate below"><figcaption><code>cv09</code> θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv10.svg" width="17" height="36" loading="lazy" alt="cv10 changes 4 characters; shown: Θ, default above, alternate below"><figcaption><code>cv10</code> Θ in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv11.svg" width="13" height="28" loading="lazy" alt="cv11 changes 2 characters; shown: 𝑣, default above, alternate below"><figcaption><code>cv11</code> v in 2 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv12.svg" width="18" height="28" loading="lazy" alt="cv12 changes 2 characters; shown: 𝑤, default above, alternate below"><figcaption><code>cv12</code> w in 2 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv13.svg" width="11" height="38" loading="lazy" alt="cv13 changes 4 characters; shown: l, default above, alternate below"><figcaption><code>cv13</code> l in 4 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv20.svg" width="17" height="36" loading="lazy" alt="cv20 changes 2 characters; shown: ℰ, default above, alternate below"><figcaption><code>cv20</code> E in 2 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv21.svg" width="20" height="36" loading="lazy" alt="cv21 changes 2 characters; shown: 𝒬, default above, alternate below"><figcaption><code>cv21</code> Q in 2 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-cv22.svg" width="23" height="35" loading="lazy" alt="cv22 changes 2 characters; shown: 𝒯, default above, alternate below"><figcaption><code>cv22</code> T in 2 alphabets</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-ss01.svg" width="141" height="36" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> mathcal</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-ss03.svg" width="142" height="48" loading="lazy" alt="ss03 changes 11 characters; shown: ∫∬∭∮∯⨑, default above, alternate below"><figcaption><code>ss03</code> upint</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-ss04.svg" width="125" height="36" loading="lazy" alt="ss04 changes 18 characters; shown: ≤≥≦≧≰≱, default above, alternate below"><figcaption><code>ss04</code> leqslant</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-ss05.svg" width="108" height="33" loading="lazy" alt="ss05 changes 7 characters; shown: ∈∋∖∣∥∤, default above, alternate below"><figcaption><code>ss05</code> smaller</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-ss06.svg" width="83" height="36" loading="lazy" alt="ss06 changes 4 characters; shown: ⊊⊋⫋⫌, default above, alternate below"><figcaption><code>ss06</code> subsetneq</figcaption></figure>
+<figure><img src="images/mathfonts/xcharter-ss07.svg" width="33" height="42" loading="lazy" alt="ss07 changes 2 characters; shown: ∥∦, default above, alternate below"><figcaption><code>ss07</code> parallelslant</figcaption></figure>
+</div>
+<p class="mf-src">Version 0.77 from CTAN · <a href="https://ctan.org/pkg/xcharter-math">ctan.org/pkg/xcharter-math</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+<article class="panel mf-font" id="mf-oldstandard">
+<div class="mf-head"><h3>Old Standard Math</h3><span class="mf-lic">GUST Font License</span></div>
+<img class="mf-sample" src="images/mathfonts/oldstandard.svg" width="435" height="156" loading="lazy" alt="Old Standard Math with Old Standard: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Old Standard.</p>
+<ul class="mf-facts"><li>8 148 glyphs</li><li>643 size variants and 116 assemblies for 160 vertical and 86 horizontal stretchy glyphs</li><li>script forms (ssty) for 707 glyphs</li><li>maths alphabets 996 of 996</li><li>no bold maths font</li><li>dotless i and j under accents (dtls)</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/oldstandard-cv01.svg" width="17" height="34" loading="lazy" alt="cv01 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv01</code> empty set</figcaption></figure>
+<figure><img src="images/mathfonts/oldstandard-ss01.svg" width="145" height="37" loading="lazy" alt="ss01 changes 52 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> script capitals</figcaption></figure>
+<figure><img src="images/mathfonts/oldstandard-ss02.svg" width="133" height="48" loading="lazy" alt="ss02 changes 26 characters; shown: ∫⨐⨑⨒⨓⨔, default above, alternate below"><figcaption><code>ss02</code> integrals</figcaption></figure>
+<figure><img src="images/mathfonts/oldstandard-ss03.svg" width="106" height="37" loading="lazy" alt="ss03 changes 10 characters; shown: 012345, default above, alternate below"><figcaption><code>ss03</code> figures</figcaption></figure>
+</div>
+<p class="mf-src">Version 1.0 from CTAN · <a href="https://ctan.org/pkg/oldstandard">ctan.org/pkg/oldstandard</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
+</article>
+<article class="panel mf-font" id="mf-pl46">
+<div class="mf-head"><h3>PL46 Math</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
+<img class="mf-sample" src="images/mathfonts/pl46.svg" width="440" height="157" loading="lazy" alt="PL46 Math with PL46: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in PL46.</p>
+<ul class="mf-facts"><li>1 915 glyphs</li><li>249 size variants and 28 assemblies for 48 vertical and 14 horizontal stretchy glyphs</li><li>script forms (ssty) for 377 glyphs</li><li>maths alphabets 320 of 996</li><li>no bold maths font</li></ul>
+<p class="mf-src">Version 0.100 from CTAN · <a href="https://ctan.org/pkg/pl46-fonts">ctan.org/pkg/pl46-fonts</a> · listed in <a href="https://tex.stackexchange.com/a/711737">the answer on newer fonts</a></p>
+</article>
+<article class="panel mf-font" id="mf-berenis">
+<div class="mf-head"><h3>Berenis ADF Pro Math</h3><span class="mf-lic">GNU GPL 2+ with font exception</span></div>
+<img class="mf-sample" src="images/mathfonts/berenis.svg" width="436" height="130" loading="lazy" alt="Berenis ADF Pro Math with Berenis ADF Pro: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
+<p class="mf-note">Text in Berenis ADF Pro. No MATH table: as in the answer, its letters and symbols sit on Latin Modern Math, which supplies the layout.</p>
+<ul class="mf-facts"><li>1 280 glyphs</li><li>no MATH table</li><li>no script forms (ssty)</li><li>maths alphabets 0 of 996</li><li>no bold maths font</li></ul>
+<div class="mf-sets">
+<figure><img src="images/mathfonts/berenis-ss01.svg" width="17" height="41" loading="lazy" alt="ss01 changes 1 character; shown: Q, default above, alternate below"><figcaption><code>ss01</code> capital Q</figcaption></figure>
+</div>
+<p class="mf-src">Version 001.001 from Arkandis · <a href="http://arkandis.tuxfamily.org/adffonts.html">arkandis.tuxfamily.org/adffonts.html</a> · listed in <a href="https://tex.stackexchange.com/a/425099">the main answer</a></p>
+</article>
+</div>
+<div class="panel mf-absent"><span class="label">Not shown</span><p>These fonts from the same answers are not free to obtain and use, so this page leaves them out:</p><ul><li><strong>Cambria Math</strong>: Proprietary (Microsoft, from Monotype); ships with Windows and Office.</li><li><strong>Lucida Bright Math</strong>: Commercial (Bigelow &amp; Holmes), sold by TUG.</li><li><strong>Minion Math</strong>: Commercial (Johannes Küster, typoma).</li><li><strong>MTPro2 Math</strong>: Commercial (PCTeX); the free Lite set is under a proprietary EULA that forbids modifying or passing it on, and the OpenType font is converted from it.</li><li><strong>NagwaTK Math</strong>: Creative Commons BY-NC-ND (non-commercial, no derivatives); the download page also sits behind a browser check.</li></ul></div>
+</section>
+<!-- mathfonts:end -->
 
   <section aria-labelledby="charset">
     <h2 id="charset">Characters</h2>
