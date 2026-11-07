@@ -73,7 +73,7 @@ FONTS = [
     dict(id='anodyne', name='Anodyne', group='sans',
          math='fonts/static/Anodyne-Regular.ttf', text='fonts/static/Anodyne-Regular.ttf', text_name='Anodyne',
          bold=['Anodyne-Bold.ttf'], home='https://github.com/japhba/anodyne',
-         note='Lisnoti with every weight from 100 to 900, a width and a grade axis; the MATH table is in all four static files.'),
+         note='Lisnoti with every weight from 100 to 900, a width and a grade axis, and formulas at Computer Modern’s proportions (TeX’s constants, delimiters that grow as Computer Modern’s do); the MATH table is in all four static files.'),
     dict(id='lisnoti', name='Lisnoti', group='sans', answer=A2,
          math=ctan('fonts/lisnoti/Lisnoti-Regular.ttf'), text=ctan('fonts/lisnoti/Lisnoti-Regular.ttf'), text_name='Lisnoti',
          bold=['Lisnoti-Bold.ttf'], home='https://ctan.org/pkg/lisnoti',

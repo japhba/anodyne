@@ -32,6 +32,18 @@ work; Anodyne adds:
   figures (`onum`, `pnum`, `tnum`, `lnum`; the zero stays slashed); case forms (`case`, not for figures
   and the maths-axis brackets); the Greek alternates (`ss06`, `ss07`); and Noto Sans Math's dotless
   i and j for accents (`dtls`).
+- **Formulas set as Computer Modern sets them** (0.3). Noto Sans Math's `MATH` table, which Lisnoti
+  uses, sets formulas tighter than beamer's default does with Computer Modern's symbols: subscripts on
+  brackets and operators hardly drop, limits sit at half TeX's gap, a root's index is jammed against
+  the sign, brackets keep the same thin margin at every size, and its tall braces are the brace
+  stretched upright, hooks and beak drawn out until they look like brackets. Anodyne takes TeX's
+  constants (Latin Modern Math's, the vertical ones scaled to Anodyne's x-height), and draws every size
+  of `( ) [ ] { } ⌈ ⌉ ⌊ ⌋ ⟨ ⟩` again from its own text-size glyph the way Computer Modern's sizes grow:
+  parentheses and angle brackets bow out almost in proportion to their height, a brace's hooks and
+  beak grow with the square root of its height while only its arms lengthen, brackets' arms lengthen
+  a little, and every stroke keeps its weight. Their margins grow on the outside only, as Computer
+  Modern's do, and the extensible pieces are cut from the largest size (the closing brace gets its own
+  extender). Only TeX's numbers are used: Computer Modern's outlines are under other licences.
 
 It keeps Lisnoti's `ss01` (chancery script capitals for `\mathcal`), fractions, super- and
 subscripts, and Unicode's maths alphanumerics.
@@ -45,7 +57,7 @@ subscripts, and Unicode's maths alphanumerics.
 | `fonts/variable/` | `Anodyne[GRAD,wdth,wght].ttf` and `Anodyne-Italic[GRAD,wdth,wght].ttf`: every weight, width and grade |
 | `fonts/static/` | Regular, Bold, Italic and Bold Italic at normal width and grade 0, each with the `MATH` table: for desktop apps and LuaLaTeX |
 | `fonts/webfonts/` | the variable fonts as woff2 by Unicode range (Latin, Latin extended, Greek, Cyrillic, symbols, maths, maths alphabets) and `anodyne.css` |
-| `sources/` | the build: `build.py` and `fetch-sources.sh` |
+| `sources/` | the build: `build.py` (with `delimgen.py`, the delimiters, and `mathtune.py`, the maths spacing) and `fetch-sources.sh` |
 
 ## Use it
 
@@ -110,4 +122,4 @@ SIL Open Font License 1.1 ([OFL.txt](OFL.txt)), with the copyright notices of No
 Symbols, Noto Sans Math, Lisnoti and Anodyne. "Lisnoti" is a Reserved Font Name of Lisnoti, which is
 why this changed version has a name of its own. Anodyne reserves no name.
 
-Version 0.200, built from Lisnoti 2.006 (commit `6642e5b`, 3 Nov 2026), Noto Sans 2.015 and Noto Sans Math 3.000.
+Version 0.300, built from Lisnoti 2.006 (commit `6642e5b`, 3 Nov 2026), Noto Sans 2.015 and Noto Sans Math 3.000.
