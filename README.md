@@ -2,6 +2,8 @@
 
 <picture><source media="(prefers-color-scheme: dark)" srcset="images/specimen-dark.png"><img alt="Anodyne at weights 100 to 900, at grades −100, 0 and 150, with small capitals, italics and maths alphabets" src="images/specimen.png"></picture>
 
+**[Try it in your browser](https://japhba.github.io/anodyne/)**: weight, grade and features on your own text (`index.html`).
+
 **Anodyne** is the sans-serif of [OverLyX](https://overlyx.app), a collaborative LaTeX editor: its
 interface font, an editor and slide font, and a font documents can be typeset in, formulas
 included. It is a fork of [Lisnoti](https://github.com/Lisnoti/Lisnoti) by Tim Gordon, which is

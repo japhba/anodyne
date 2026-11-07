@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anodyne</title>
+<meta name="description" content="Anodyne: a sans-serif for text, maths and code, with weight 100–900 and a grade axis that darkens text without moving it.">
+<link rel="stylesheet" href="fonts/webfonts/anodyne.css">
+<style>
+/* layout: one column of specimen panels; the playground first, everything set in Anodyne itself */
+:root {
+  --paper: #fafaf8;
+  --panel: #ffffff;
+  --ink: #15171b;
+  --muted: #646a75;
+  --line: #dfe2e7;
+  --accent: #1f5fd6;
+  --accent-ink: #ffffff;
+  --code: #f1f2f4;
+  --grade: 0;
+  --mono: "DejaVu Sans Mono", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1114; --panel: #16191e; --ink: #e9ebee; --muted: #9aa1ad; --line: #2a2f37;
+    --accent: #6ea2ff; --accent-ink: #0f1114; --code: #1c2026; --grade: -25; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f1114; --panel: #16191e; --ink: #e9ebee; --muted: #9aa1ad; --line: #2a2f37;
+  --accent: #6ea2ff; --accent-ink: #0f1114; --code: #1c2026; --grade: -25; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font: 17px/1.55 Anodyne, sans-serif;
+  /* light letters on dark look heavier: the page's own grade follows the theme */
+  font-variation-settings: "GRAD" var(--grade);
+  /* fractional advances: hinted whole-pixel ones (Chrome on Linux) move by a pixel as stems change */
+  text-rendering: geometricPrecision;
+}
+a { color: var(--accent); }
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 28px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 64px; }
+.label { font-variant-caps: all-small-caps; letter-spacing: .06em; color: var(--muted); font-size: 17px; }
+h2 { font-size: clamp(26px, 4vw, 34px); line-height: 1.15; margin: 0; font-weight: 720; text-wrap: balance; }
+p { margin: 0; max-width: 66ch; }
+.lede { color: var(--muted); font-size: 19px; }
+section { display: grid; gap: 18px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+
+/* hero */
+header { display: grid; gap: 14px; padding-top: 24px; }
+.mark { font-size: clamp(76px, 17vw, 208px); line-height: 1.02; margin: 0 0 0.12em; letter-spacing: -0.015em; font-weight: 400;
+  font-variation-settings: "wght" 800, "GRAD" var(--grade); }
+@media (prefers-reduced-motion: no-preference) {
+  .mark { animation: breathe 9s ease-in-out infinite alternate; }
+  @keyframes breathe {
+    from { font-variation-settings: "wght" 100, "GRAD" var(--grade); }
+    to { font-variation-settings: "wght" 900, "GRAD" var(--grade); }
+  }
+}
+.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line);
+  color: var(--ink); text-decoration: none; font-size: 16px; background: var(--panel); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* playground */
+.play { display: grid; grid-template-columns: minmax(0, 1fr) 300px; }
+.stage { padding: 26px 28px; border-right: 1px solid var(--line); min-width: 0; display: grid; gap: 12px; align-content: start; border-radius: 10px 0 0 10px; }
+.stage.dark { background: #101216; color: #ebedf0; }
+.sample { font-size: var(--size, 44px); line-height: 1.22; outline: none; overflow-wrap: anywhere; min-height: 2.4em; }
+.readout { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stage.dark .readout { color: #9aa1ad; }
+.controls { padding: 22px; display: grid; gap: 22px; align-content: start; }
+.axis { display: grid; gap: 4px; }
+.axis .head { display: flex; justify-content: space-between; font-size: 14px; color: var(--muted); }
+.axis output { color: var(--ink); font-variant-numeric: tabular-nums; }
+.axis input[type="range"] { width: 100%; accent-color: var(--accent); margin: 2px 0; }
+.rungs { position: relative; height: 18px; font-size: 12px; color: var(--muted); }
+.rungs button { position: absolute; transform: translateX(-50%); font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; cursor: pointer; white-space: nowrap; }
+.rungs button[style*="left:0%"] { transform: none; }
+.rungs button[style*="left:100%"] { transform: translateX(-100%); }
+.rungs button:hover { color: var(--ink); }
+.toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+.toggles button { font: inherit; font-size: 14px; padding: 6px 11px; border-radius: 7px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+.toggles button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+/* weight against grade */
+.versus { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.vcol { padding: 20px 22px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.vtext { font-size: 18px; line-height: 1.5; max-width: 28.75ch; transition: font-variation-settings .9s ease; }
+.vcol .lines { font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.versus.on .vw .vtext { font-variation-settings: "wght" 550, "GRAD" var(--grade); }
+.versus.on .vg .vtext { font-variation-settings: "wght" 400, "GRAD" calc(var(--grade) + 150); }
+.vw .vtext, .vg .vtext { font-variation-settings: "wght" 400, "GRAD" var(--grade); }
+@media (prefers-reduced-motion: reduce) { .vtext { transition: none; } }
+
+/* told apart */
+.apart { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.cell { padding: 16px 12px 12px; text-align: center; display: grid; gap: 4px; }
+.cell .g { font-size: 52px; line-height: 1.1; }
+.cell small { font-size: 13px; color: var(--muted); }
+
+.math img { width: 100%; max-width: 860px; height: auto; display: block; border-radius: 6px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .math img { filter: invert(1) hue-rotate(180deg); opacity: .92; } }
+:root[data-theme="dark"] .math img { filter: invert(1) hue-rotate(180deg); opacity: .92; }
+.math .panel { padding: 20px; display: grid; gap: 16px; }
+.alphas { font-size: 30px; line-height: 1.5; overflow-wrap: anywhere; }
+
+.charset { padding: 20px 22px; display: grid; gap: 10px; }
+.charset div { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 14px; align-items: baseline; }
+.charset span:last-child { font-size: 22px; overflow-wrap: anywhere; }
+
+.use { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.use .panel { padding: 18px 20px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+pre { margin: 0; padding: 12px 14px; background: var(--code); border-radius: 7px; overflow-x: auto; font: 13.5px/1.5 var(--mono); }
+
+footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px; color: var(--muted); display: grid; gap: 6px; }
+
+@media (max-width: 760px) {
+  .play { grid-template-columns: 1fr; }
+  .stage { border-right: 0; border-bottom: 1px solid var(--line); border-radius: 10px 10px 0 0; }
+  .versus { grid-template-columns: 1fr; }
+  .charset div { grid-template-columns: 1fr; gap: 2px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="label">A sans-serif for text, maths and code</span>
+    <h1 class="mark">Anodyne</h1>
+    <p class="lede">Noto Sans, by way of Lisnoti, with I l 1 and O 0 told apart, operators on one maths axis and an OpenType MATH table for formulas. Anodyne adds every weight from 100 to 900 and a grade axis that makes text darker or lighter without moving a letter.</p>
+    <div class="links">
+      <a class="btn primary" href="https://github.com/japhba/anodyne/archive/refs/heads/main.zip">Download</a>
+      <a class="btn" href="https://github.com/japhba/anodyne">Source on GitHub</a>
+      <a class="btn" href="https://overlyx.app">Used in OverLyX</a>
+    </div>
+  </header>
+
+  <section aria-labelledby="try">
+    <h2 id="try">Try it</h2>
+    <div class="panel play">
+      <div class="stage" id="stage">
+        <div class="sample" id="sample" contenteditable="true" spellcheck="false" aria-label="Sample text, editable">Set l = 1 and I₀ = 10 mA: 0.1 % of O-rings fail, α ≈ 0.05, χ² = 3.84, so x ∈ [0, 1] ⇒ f(x) ≤ 1 ± 0.01.</div>
+        <div class="readout" id="readout">On one line this text is 0 px wide.</div>
+      </div>
+      <div class="controls">
+        <div class="axis">
+          <div class="head"><label for="wght">Weight</label><output id="wght-out">400</output></div>
+          <input id="wght" type="range" min="100" max="900" step="1" value="400">
+          <div class="rungs" data-for="wght"><button type="button" data-v="100" style="left:0%">Thin</button><button type="button" data-v="400" style="left:37.5%">Regular</button><button type="button" data-v="700" style="left:75%">Bold</button><button type="button" data-v="900" style="left:100%">Black</button></div>
+        </div>
+        <div class="axis">
+          <div class="head"><label for="grad">Grade</label><output id="grad-out">0</output></div>
+          <input id="grad" type="range" min="-100" max="150" step="1" value="0">
+          <div class="rungs" data-for="grad"><button type="button" data-v="-50" style="left:20%">Lighter</button><button type="button" data-v="0" style="left:40%">Normal</button><button type="button" data-v="50" style="left:60%">Darker</button><button type="button" data-v="100" style="left:80%">Darkest</button></div>
+        </div>
+        <div class="axis">
+          <div class="head"><label for="size">Size</label><output id="size-out">44 px</output></div>
+          <input id="size" type="range" min="12" max="120" step="1" value="44">
+        </div>
+        <div class="toggles" role="group" aria-label="Style and features">
+          <button type="button" id="t-italic" aria-pressed="false">Italic</button>
+          <button type="button" id="t-dark" aria-pressed="false">Light on dark</button>
+          <button type="button" id="t-smcp" aria-pressed="false" data-feature="smcp">Small caps</button>
+          <button type="button" id="t-frac" aria-pressed="false" data-feature="frac">Fractions</button>
+          <button type="button" id="t-ss01" aria-pressed="false" data-feature="ss01">Chancery 𝒜</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="grade">
+    <h2 id="grade">Darker without reflowing</h2>
+    <p>Weight changes the width of every letter, so a paragraph breaks into new lines. Grade gives the strokes of a heavier or lighter weight at the widths of this one, so lines stay where they are: for light text on dark backgrounds (this page takes 25 off in dark mode), for screens and projectors that wash text out, and for emphasis that must not move anything.</p>
+    <div class="toggles"><button type="button" id="t-versus" aria-pressed="false">Darken both</button></div>
+    <div class="versus" id="versus">
+      <div class="panel vcol vw"><span class="label">Weight 400 → 550</span><div class="vtext">The derivative of a sum is the sum of the derivatives, and the integral of 1/x is ln |x| + C for x ≠ 0.</div><div class="lines"></div></div>
+      <div class="panel vcol vg"><span class="label">Grade 0 → 150</span><div class="vtext">The derivative of a sum is the sum of the derivatives, and the integral of 1/x is ln |x| + C for x ≠ 0.</div><div class="lines"></div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="apart">
+    <h2 id="apart">Told apart</h2>
+    <p>The characters that get confused in maths, science and code are drawn so they cannot be.</p>
+    <div class="apart">
+      <div class="panel cell"><span class="g">Il1|</span><small>capital I, ell, one, bar</small></div>
+      <div class="panel cell"><span class="g">O0o</span><small>capital O, zero, o</small></div>
+      <div class="panel cell"><span class="g">αa</span><small>alpha, a</small></div>
+      <div class="panel cell"><span class="g">χx×</span><small>chi, x, times</small></div>
+      <div class="panel cell"><span class="g">−-–</span><small>minus, hyphen, dash</small></div>
+      <div class="panel cell"><span class="g">+=≠</span><small>on the maths axis</small></div>
+      <div class="panel cell"><span class="g">≤≥±</span><small>comparison</small></div>
+      <div class="panel cell"><span class="g">{[()]}</span><small>brackets</small></div>
+    </div>
+  </section>
+
+  <section class="math" aria-labelledby="math">
+    <h2 id="math">Formulas</h2>
+    <p>Anodyne carries the OpenType MATH table of Noto Sans Math: fractions, radicals, big operators with limits, stretchy brackets and accents come from the font’s own data, in LuaLaTeX, in Word, and in OverLyX’s editor.</p>
+    <div class="panel">
+      <img src="images/math.png" alt="Formulas set by LuaLaTeX in Anodyne: a Fourier transform, a loss function with a sum, an epsilon-delta definition, a determinant, set relations and a square root over a sum">
+      <div class="alphas" aria-label="Maths alphabets">𝐀𝐁𝐂 𝐴𝐵𝐶 𝑨𝑩𝑪 𝒜ℬ𝒞 𝔄𝔅ℭ 𝔸𝔹ℂ 𝖠𝖡𝖢 𝙰𝙱𝙲 ∑∏∫∮ √∞ ∀∃∂∇</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="charset">
+    <h2 id="charset">Characters</h2>
+    <div class="panel charset">
+      <div><span class="label">Latin</span><span>ÀÁÂÃÄÅ ĀĂĄ Ćĉċč Ďđ ÉĘĚ Ğĝ Łł Ńň Őő Řř Śšş Ťţ Űů Źżž ß ẞ æœ ð þ</span></div>
+      <div><span class="label">Greek</span><span>ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ αβγδεζηθικλμνξοπρστυφχψω</span></div>
+      <div><span class="label">Cyrillic</span><span>АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ абвгдежзийклмнопрстуфхцчшщъыьэюя</span></div>
+      <div><span class="label">Figures</span><span>0123456789 ½ ⅓ ¼ ⅞ x⁰¹²³⁴⁵⁶⁷⁸⁹ x₀₁₂₃₄₅₆₇₈₉ € £ ¥ ₹ ₿ % ‰</span></div>
+      <div><span class="label">Symbols</span><span>← ↑ → ↓ ↔ ⇐ ⇒ ⇔ ↦ ✓ ✗ ★ ☆ ■ □ ▲ △ ● ○ ◆ ◇ ⌘ ␣ ♠ ♥ ♦ ♣</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="use">
+    <h2 id="use">Use it</h2>
+    <div class="use">
+      <div class="panel"><span class="label">On the web</span><pre>&lt;link rel="stylesheet" href="webfonts/anodyne.css"&gt;
+
+body { font-family: Anodyne, sans-serif; }
+strong { font-weight: 650; }
+/* light text on dark: a little lighter */
+.dark { font-variation-settings: "GRAD" -25; }</pre></div>
+      <div class="panel"><span class="label">In LaTeX (LuaLaTeX)</span><pre>\usepackage{unicode-math}
+\setmainfont{Anodyne}
+\setsansfont{Anodyne}
+\setmathfont{Anodyne}
+\setmathfont{Anodyne Bold}[version=bold]
+\setmathfont{Anodyne}[range=\mathcal,
+  StylisticSet=1]</pre></div>
+      <div class="panel"><span class="label">On a computer</span><p>Install the four files in <code>fonts/static</code>: Regular, Bold, Italic and Bold Italic, each with the MATH table, so Word and LaTeX can set equations in Anodyne. Apps that handle variable fonts can use <code>fonts/variable</code> for every weight and grade.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Anodyne is free under the SIL Open Font License 1.1. It is a fork of <a href="https://github.com/Lisnoti/Lisnoti">Lisnoti</a> by Tim Gordon (“Lisnoti” is a Reserved Font Name), which is built from Google’s <a href="https://fonts.google.com/noto">Noto</a> fonts and Khaled Hosny’s Noto Sans Math.</span>
+    <span>This page is set in Anodyne, served from <code>fonts/webfonts</code>.</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var sample = $('sample'), stage = $('stage'), readout = $('readout');
+  var state = { wght: 400, grad: 0, size: 44, italic: false, dark: false, features: {} };
+  var probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;left:-9999px;top:0';
+  document.body.appendChild(probe);
+
+  function apply() {
+    var grad = state.grad - (state.dark ? 25 : 0);
+    var fvs = '"wght" ' + state.wght + ', "GRAD" ' + grad;
+    var ffs = Object.keys(state.features).filter(function (k) { return state.features[k]; }).map(function (k) { return '"' + k + '" 1'; }).join(', ') || 'normal';
+    [sample, probe].forEach(function (el) {
+      el.style.fontVariationSettings = fvs;
+      el.style.fontFeatureSettings = ffs;
+      el.style.fontStyle = state.italic ? 'italic' : 'normal';
+      el.style.fontSize = state.size + 'px';
+    });
+    stage.classList.toggle('dark', state.dark);
+    $('wght-out').textContent = state.wght;
+    $('grad-out').textContent = state.dark ? state.grad + ' − 25' : String(state.grad);
+    $('size-out').textContent = state.size + ' px';
+    probe.textContent = sample.textContent;
+    readout.textContent = 'On one line this text is ' + probe.getBoundingClientRect().width.toFixed(1) + ' px wide at weight ' + state.wght + ', grade ' + grad + '. Grade leaves it the same; weight does not.';
+  }
+
+  [['wght', 'wght'], ['grad', 'grad'], ['size', 'size']].forEach(function (p) {
+    $(p[0]).addEventListener('input', function (e) { state[p[1]] = Number(e.target.value); apply(); });
+  });
+  document.querySelectorAll('.rungs').forEach(function (r) {
+    r.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      var input = $(r.dataset.for); input.value = b.dataset.v; state[r.dataset.for] = Number(b.dataset.v); apply();
+    });
+  });
+  function toggle(id, fn) {
+    var b = $(id);
+    b.addEventListener('click', function () { var on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(on)); fn(on, b); apply(); });
+  }
+  toggle('t-italic', function (on) { state.italic = on; });
+  toggle('t-dark', function (on) { state.dark = on; });
+  ['t-smcp', 't-frac', 't-ss01'].forEach(function (id) { toggle(id, function (on, b) { state.features[b.dataset.feature] = on; }); });
+  sample.addEventListener('input', apply);
+
+  // weight against grade: count each paragraph's lines once the transition has settled
+  var versus = $('versus');
+  function lines() {
+    versus.querySelectorAll('.vcol').forEach(function (col) {
+      var t = col.querySelector('.vtext');
+      var lh = parseFloat(getComputedStyle(t).lineHeight);
+      col.querySelector('.lines').textContent = Math.round(t.getBoundingClientRect().height / lh) + ' lines, the last one ' + lastLineWidth(t).toFixed(0) + ' px';
+    });
+  }
+  function lastLineWidth(el) {
+    var range = document.createRange(); range.selectNodeContents(el);
+    var rects = range.getClientRects(); var last = rects[rects.length - 1];
+    return last ? last.width : 0;
+  }
+  $('t-versus').addEventListener('click', function () {
+    var on = !versus.classList.contains('on');
+    versus.classList.toggle('on', on);
+    this.setAttribute('aria-pressed', String(on));
+    this.textContent = on ? 'Back to normal' : 'Darken both';
+    setTimeout(lines, 950);
+  });
+  window.addEventListener('resize', function () { apply(); lines(); });
+
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { apply(); lines(); });
+  apply(); lines();
+})();
+</script>
+</body>
+</html>
