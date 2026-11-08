@@ -1,0 +1,13 @@
+{
+  "version": "0.600",
+  "font_sha256": {
+    "Anodyne[GRAD,wdth,wght].ttf": "511fadb8f9064954b03a6966aeaff7eb6359d27f84c1cf50fe82ec18d6c537f0",
+    "Anodyne-Italic[GRAD,wdth,wght].ttf": "d8277888b4a4c619e3e96c9b3b987742fb8ec9f513ab14b97e6b507645f6f6f7"
+  },
+  "defaults": "Native baseline J and square upper-left t shoulder",
+  "alternates": [
+    "cv03",
+    "cv04"
+  ],
+  "all_glyphs_drawn_from_font": true
+}

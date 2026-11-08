@@ -54,7 +54,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import delimgen   # noqa: E402
 import mathtune   # noqa: E402
 
-VERSION = '0.500'
+VERSION = '0.600'
 FAMILY = 'Anodyne'
 # weight masters at Noto Sans's own (user values; Noto's avar puts 700 at normalised 0.61)
 WEIGHTS = (100, 400, 700, 900)

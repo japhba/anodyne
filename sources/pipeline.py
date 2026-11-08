@@ -18,12 +18,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'sources'))
 COMPILER_MODULES = ('build.py', 'masters.py', 'metadata.py', 'mathfeatures.py',
                     'delimgen.py', 'mathtune.py', 'pipeline.py', 'instance.py', 'mathweb.py',
-                    'layout_fixes.py', 'layout-fixes.json', 'master_grid.py', 'condense.py', 'greekstyles.py', 'greek_positioning.py', 'mathletters.py', 'zero.py')
+                    'layout_fixes.py', 'layout-fixes.json', 'master_grid.py', 'condense.py', 'greekstyles.py', 'greek_positioning.py', 'mathletters.py', 'zero.py', 'textforms.py')
 
 
 def signature():
     files = ['source-lock.json', 'build.py', 'masters.py', 'delimgen.py', 'mathtune.py', 'mathfeatures.py',
-             'master_grid.py', 'condense.py', 'greekstyles.py', 'greek_positioning.py', 'mathletters.py', 'zero.py']
+             'master_grid.py', 'condense.py', 'greekstyles.py', 'greek_positioning.py', 'mathletters.py', 'zero.py', 'textforms.py']
     return {name: hashlib.sha256((ROOT / 'sources' / name).read_bytes()).hexdigest()
             for name in files if (ROOT / 'sources' / name).exists()}
 

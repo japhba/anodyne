@@ -102,6 +102,14 @@ the text, mathematical and Greek specimens with the documented rendering tools.
 
 ## Text, math and arbitrary instances
 
+`textforms.py` runs on compiled editable masters before interpolation. It makes
+the already mastered native `J.salt`/`Jcircumflex.salt` drawings the Unicode text
+defaults, squares the tapered upper-left t shoulder, and registers `cv03` and
+`cv04` for the inherited drawings. Accented t components and optical sizes keep
+their matching original alternates, kerning classes, mark anchors and MATH data.
+The original prepared UFOs remain editable; these defaults are a deterministic
+compiler step, also included in the cache fingerprint and source archive.
+
 The staged distribution contains the complete variable TTFs, four named static
 math faces, the text-only Unicode-range WOFF2 subsets, and full variable
 `mathwebfonts/` WOFF2s retaining MATH and variation stores for MathML. The full

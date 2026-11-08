@@ -276,7 +276,7 @@ def _upright_integrals(font):
     return mapping
 
 
-def _register(font, tag, mapping):
+def _register(font, tag, mapping, metadata=None):
     """Append a named single-substitution feature without replacing existing layout."""
     if not mapping:
         raise ValueError(f'{tag}: no glyph substitutions were created')
@@ -293,7 +293,8 @@ def _register(font, tag, mapping):
         # Sample strings contain mathematical Unicode; MacRoman cannot encode
         # them. Windows Unicode names are sufficient for feature parameters.
         return font['name'].addName(text, platforms=((3, 1, 0x409),))
-    name_id = add_name(FEATURES[tag]['name'])
+    metadata = FEATURES[tag] if metadata is None else metadata
+    name_id = add_name(metadata['name'])
     if tag.startswith('ss'):
         params = ot.FeatureParamsStylisticSet()
         params.Version, params.UINameID = 0, name_id
@@ -301,10 +302,10 @@ def _register(font, tag, mapping):
         params = ot.FeatureParamsCharacterVariants()
         params.Format = 0
         params.FeatUILabelNameID = name_id
-        params.FeatUITooltipTextNameID = add_name(FEATURES[tag]['description'])
-        params.SampleTextNameID = add_name(FEATURES[tag]['sample'])
+        params.FeatUITooltipTextNameID = add_name(metadata['description'])
+        params.SampleTextNameID = add_name(metadata['sample'])
         params.NumNamedParameters, params.FirstParamUILabelNameID = 0, 0
-        params.Character = [ord(c) for c in FEATURES[tag]['sample'] if c != ' ']
+        params.Character = [ord(c) for c in metadata['sample'] if c != ' ']
         params.CharCount = len(params.Character)
     record.Feature.FeatureParams = params
     record.Feature.LookupListIndex = [len(gsub.LookupList.Lookup)-1]

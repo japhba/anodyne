@@ -57,5 +57,6 @@ proof: setup
 
 specimen: qa-setup
 	$(PYTHON) sources/render_text_specimen.py --fonts $(FONTS)
+	$(PYTHON) sources/render_text_settings.py --fonts $(FONTS)
 	$(PYTHON) sources/render_specimen.py --fonts $(FONTS)
 	$(PYTHON) sources/render_greek_specimen.py --fonts $(FONTS)

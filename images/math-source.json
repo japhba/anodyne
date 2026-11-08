@@ -15,15 +15,15 @@
     "Anodyne-Regular"
   ],
   "font_sha256": {
-    "Anodyne-Bold.ttf": "491831640da8a6bc6fae940703f69ae55e0b1fe7ed6933a999c3d78377b676e8",
-    "Anodyne-Regular.ttf": "1646945dc3810447f4ab3b8dc9fb0f3f172baf3956b62ca6881c417f3c7c30de"
+    "Anodyne-Bold.ttf": "5b772f562bd9fea3ff30fc99d75617820d03a6e298413fc1d6dc014a1f118356",
+    "Anodyne-Regular.ttf": "2d065a3ff70da732ec72cf84ae4a5275fae97e84d1b999df36b20a10a343a1b0"
   },
   "outputs": {
-    "math.pdf": "6e1f1bec49aec35275406b0845fd48841aea01eae137577cd99446dc0ddabb2c",
-    "math.png": "848926f7bc55c84d1bde485977d5d60b251c80149bacb2177cc53157c6a9520b",
-    "math.svg": "3c88fbfdc8089f569be4768564ee4952e351b56b8172318ca36d7a59a5b382ef"
+    "math.pdf": "c9a2a4b5a23fd4bd667d07cbc61e8c001a1d1da24ffe389feee2c68c933c7015",
+    "math.png": "af2cd52c0bcd0471058aaddef372049873cfd6b909ff99ef264ca6827c30036f",
+    "math.svg": "fc5ed9df407b72e3fb8b1c67f83c0e46fe51e202d04eb05f3ed3cd6c0f16005e"
   },
   "source_date_epoch": 1794050400,
   "template_sha256": "be9c3d20d00094dfeabada9ea674cd7a0aaf62c966dd2a79d0dccf419edcf281",
-  "version": "0.500"
+  "version": "0.600"
 }

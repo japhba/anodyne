@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="900" viewBox="0 0 1040 900">
 <rect width="1040" height="900" fill="#fafaf8"/>
 <style>text{font-family:sans-serif;fill:#34454b}.tag{font-size:15px}.title{font-size:21px}</style>
-<text x="32" y="38" font-size="28">Anodyne 0.500 · mathematical choices</text>
+<text x="32" y="38" font-size="28">Anodyne 0.600 · mathematical choices</text>
 <text x="400" y="74" class="tag">Default</text><text x="700" y="74" class="tag">Alternate</text>
 <line x1="32" y1="98" x2="1008" y2="98" stroke="#d7dddc"/>
 <text x="32" y="144" class="title">Upright integrals</text>

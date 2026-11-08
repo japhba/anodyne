@@ -239,7 +239,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
     <h2 id="try">Try it</h2>
     <div class="panel play">
       <div class="stage" id="stage">
-        <div class="sample" id="sample" contenteditable="true" spellcheck="false" aria-label="Sample text, editable">Set l = 1 and I₀ = 10 mA: 0.1 % of O-rings fail, α ≈ 0.05, χ² = 3.84, so x ∈ [0, 1] ⇒ f(x) ≤ 1 ± 0.01.</div>
+        <div class="sample" id="sample" contenteditable="true" spellcheck="false" aria-label="Sample text, editable">Set J = l = 1 and I₀ = 10 mA: 0.1 % of O-rings fail, α ≈ 0.05, χ² = 3.84, so x ∈ [0, 1] ⇒ f(x) ≤ 1 ± 0.01.</div>
         <div class="readout" id="readout">On one line this text is 0 px wide.</div>
       </div>
       <div class="controls">
@@ -270,6 +270,8 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
           <button type="button" id="t-ss01" aria-pressed="false" data-feature="ss01">Chancery 𝒜</button>
           <button type="button" id="t-onum" aria-pressed="false" data-feature="onum">Old-style 1984</button>
           <button type="button" id="t-pnum" aria-pressed="false" data-feature="pnum">Proportional</button>
+          <button type="button" id="t-cv03" aria-pressed="false" data-feature="cv03">Descending J</button>
+          <button type="button" id="t-cv04" aria-pressed="false" data-feature="cv04">Tapered t join</button>
         </div>
       </div>
     </div>
@@ -421,14 +423,16 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 <details class="mf-catalog" id="mf-catalog" open><summary>Browse all font details and alternates</summary>
 <nav class="mf-jump" aria-label="Jump to a font"><a href="#mf-anodyne">Anodyne</a> <a href="#mf-lisnoti">Lisnoti</a> <a href="#mf-notosansmath">Noto Sans Math</a> <a href="#mf-firamath">Fira Math</a> <a href="#mf-letesans">Lete Sans Math</a> <a href="#mf-newcmsans">New Computer Modern Sans Math</a> <a href="#mf-kpsans">KpMath Sans</a> <a href="#mf-plexmath">IBM Plex Math</a> <a href="#mf-arsenalmath">Arsenal Math</a> <a href="#mf-luciole">Luciole Math</a> <a href="#mf-pennstander">Pennstander Math</a> <a href="#mf-neohellenic">GFS Neohellenic Math</a> <a href="#mf-latinmodern">Latin Modern Math</a> <a href="#mf-newcm">New Computer Modern Math</a> <a href="#mf-mlmodern">MLModern Math</a> <a href="#mf-concrete">Concrete Math</a> <a href="#mf-eulermath">Euler Math</a> <a href="#mf-neoeuler">Neo Euler</a> <a href="#mf-termes">TeX Gyre Termes Math</a> <a href="#mf-pagella">TeX Gyre Pagella Math</a> <a href="#mf-bonum">TeX Gyre Bonum Math</a> <a href="#mf-schola">TeX Gyre Schola Math</a> <a href="#mf-dejavu">TeX Gyre DejaVu Math</a> <a href="#mf-stixtwo">STIX Two Math</a> <a href="#mf-stix">STIX Math</a> <a href="#mf-xits">XITS Math</a> <a href="#mf-libertinus">Libertinus Math</a> <a href="#mf-asana">Asana Math</a> <a href="#mf-garamond">Garamond Math</a> <a href="#mf-erewhon">Erewhon Math</a> <a href="#mf-kpmath">KpMath</a> <a href="#mf-xcharter">XCharter Math</a> <a href="#mf-oldstandard">Old Standard Math</a> <a href="#mf-pl46">PL46 Math</a> <a href="#mf-berenis">Berenis ADF Pro Math</a></nav>
 <h3 class="mf-group">Sans-serif</h3><div class="mf-grid">
-<article class="panel mf-font mf-ours" id="mf-anodyne" data-font="anodyne" data-group="sans" data-capabilities="bold character-variants double-struck empty-set integral-styles math-table script-alternates script-forms slanted-inequalities upright-integrals vertical-negations" data-search="Anodyne Anodyne cv01 Oval empty set empty set ∅ cv02 Lowered-bar hbar planck constant over two pi ℏ ss01  script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02 Upright integrals integrals ∫∬∭∮∯∰ ss03 Slanted inequalities relations ≤≥≰≱ ss04 Compact set symbols negated relations ∈∋∖∣∥∉ ss05 Vertical negation strokes negated relations ∉∌≠⊄⊅⊈ ss06    ss07  Greek capitals ᾈᾘᾨ ss08 Greek roundhand script Greek letters Α𝛼∂ϒℾ϶ ss09 Greek bold script Greek letters Α𝛼∂ϒℾ϶ ss10 Greek fraktur Greek letters Α𝛼∂ϒℾ϶ ss11 Greek bold fraktur Greek letters Α𝛼∂ϒℾ϶ ss12 Greek double-struck Greek letters Α𝛼∂ϒℾ϶ ss13 Greek monospace Greek letters Α𝛼∂ϒℾ϶ ss14 Greek chancery script Greek letters Α𝛼∂ϒℾ϶">
+<article class="panel mf-font mf-ours" id="mf-anodyne" data-font="anodyne" data-group="sans" data-capabilities="bold character-variants double-struck empty-set integral-styles math-table script-alternates script-forms slanted-inequalities upright-integrals vertical-negations" data-search="Anodyne Anodyne cv01 Oval empty set empty set ∅ cv02 Lowered-bar hbar planck constant over two pi ℏ cv03 Descending J J in 2 alphabets J cv04 Tapered t shoulder small letters tŧ ss01  script capitals 𝒜ℬ𝒞𝒟ℰℱ ss02 Upright integrals integrals ∫∬∭∮∯∰ ss03 Slanted inequalities relations ≤≥≰≱ ss04 Compact set symbols negated relations ∈∋∖∣∥∉ ss05 Vertical negation strokes negated relations ∉∌≠⊄⊅⊈ ss06    ss07  Greek capitals ᾈᾘᾨ ss08 Greek roundhand script Greek letters Α𝛼∂ϒℾ϶ ss09 Greek bold script Greek letters Α𝛼∂ϒℾ϶ ss10 Greek fraktur Greek letters Α𝛼∂ϒℾ϶ ss11 Greek bold fraktur Greek letters Α𝛼∂ϒℾ϶ ss12 Greek double-struck Greek letters Α𝛼∂ϒℾ϶ ss13 Greek monospace Greek letters Α𝛼∂ϒℾ϶ ss14 Greek chancery script Greek letters Α𝛼∂ϒℾ϶">
 <div class="mf-head"><h3>Anodyne</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
 <img class="mf-sample" src="images/mathfonts/anodyne.svg" width="435" height="150" loading="lazy" alt="Anodyne: the sample sentence, a sum over a fraction with a root against an integral of a partial derivative in bars, and a product in brackets beside script, fraktur and double-struck letters">
 <p class="mf-note">Text in Anodyne. Lisnoti with every weight from 100 to 900, a width and a grade axis, and formulas at Computer Modern’s proportions (TeX’s constants, delimiters that grow as Computer Modern’s do); the MATH table is in all four static files.</p>
-<ul class="mf-facts"><li>11 329 glyphs</li><li>1 025 size variants and 89 assemblies for 211 vertical and 29 horizontal stretchy glyphs</li><li>script forms (ssty) for 454 glyphs</li><li>maths alphabets 996 of 996</li><li>bold maths: Anodyne-Bold.ttf</li><li>dotless i and j under accents (dtls)</li><li>mirrored forms for right-to-left maths (rtlm)</li><li>ss06 changes only glyphs without a character of their own</li></ul>
+<ul class="mf-facts"><li>11 341 glyphs</li><li>1 025 size variants and 89 assemblies for 211 vertical and 29 horizontal stretchy glyphs</li><li>script forms (ssty) for 454 glyphs</li><li>maths alphabets 996 of 996</li><li>bold maths: Anodyne-Bold.ttf</li><li>dotless i and j under accents (dtls)</li><li>mirrored forms for right-to-left maths (rtlm)</li><li>ss06 changes only glyphs without a character of their own</li></ul>
 <div class="mf-sets">
 <figure><img src="images/mathfonts/anodyne-cv01.svg" width="19" height="43" loading="lazy" alt="cv01 changes 1 character; shown: ∅, default above, alternate below"><figcaption><code>cv01</code> Oval empty set</figcaption></figure>
 <figure><img src="images/mathfonts/anodyne-cv02.svg" width="14" height="38" loading="lazy" alt="cv02 changes 1 character; shown: ℏ, default above, alternate below"><figcaption><code>cv02</code> Lowered-bar hbar</figcaption></figure>
+<figure><img src="images/mathfonts/anodyne-cv03.svg" width="11" height="40" loading="lazy" alt="cv03 changes 2 characters; shown: J, default above, alternate below"><figcaption><code>cv03</code> Descending J</figcaption></figure>
+<figure><img src="images/mathfonts/anodyne-cv04.svg" width="25" height="35" loading="lazy" alt="cv04 changes 10 characters; shown: tŧ, default above, alternate below"><figcaption><code>cv04</code> Tapered t shoulder</figcaption></figure>
 <figure><img src="images/mathfonts/anodyne-ss01.svg" width="141" height="38" loading="lazy" alt="ss01 changes 26 characters; shown: 𝒜ℬ𝒞𝒟ℰℱ, default above, alternate below"><figcaption><code>ss01</code> script capitals</figcaption></figure>
 <figure><img src="images/mathfonts/anodyne-ss02.svg" width="177" height="49" loading="lazy" alt="ss02 changes 25 characters; shown: ∫∬∭∮∯∰, default above, alternate below"><figcaption><code>ss02</code> Upright integrals</figcaption></figure>
 <figure><img src="images/mathfonts/anodyne-ss03.svg" width="69" height="37" loading="lazy" alt="ss03 changes 4 characters; shown: ≤≥≰≱, default above, alternate below"><figcaption><code>ss03</code> Slanted inequalities</figcaption></figure>
@@ -443,7 +447,7 @@ footer { border-top: 1px solid var(--line); padding-top: 20px; font-size: 14.5px
 <figure><img src="images/mathfonts/anodyne-ss13.svg" width="117" height="38" loading="lazy" alt="ss13 changes 483 characters; shown: Α𝛼∂ϒℾ϶, default above, alternate below"><figcaption><code>ss13</code> Greek monospace</figcaption></figure>
 <figure><img src="images/mathfonts/anodyne-ss14.svg" width="118" height="38" loading="lazy" alt="ss14 changes 483 characters; shown: Α𝛼∂ϒℾ϶, default above, alternate below"><figcaption><code>ss14</code> Greek chancery script</figcaption></figure>
 </div>
-<p class="mf-src">Version 0.500 from this repository · <a href="https://github.com/japhba/anodyne">github.com/japhba/anodyne</a></p>
+<p class="mf-src">Version 0.600 from this repository · <a href="https://github.com/japhba/anodyne">github.com/japhba/anodyne</a></p>
 </article>
 <article class="panel mf-font" id="mf-lisnoti" data-font="lisnoti" data-group="sans" data-capabilities="bold math-table script-alternates script-forms" data-search="Lisnoti Lisnoti ss01  script capitals 𝒜ℬ𝒞𝒟ℰℱ">
 <div class="mf-head"><h3>Lisnoti</h3><span class="mf-lic">SIL Open Font License 1.1</span></div>
@@ -1366,7 +1370,7 @@ A\cap B=\varnothing\qquad E=\hbar\omega
   }
   toggle('t-italic', function (on) { state.italic = on; });
   toggle('t-dark', function (on) { state.dark = on; });
-  ['t-smcp', 't-frac', 't-ss01', 't-onum', 't-pnum'].forEach(function (id) { toggle(id, function (on, b) { state.features[b.dataset.feature] = on; }); });
+  ['t-smcp', 't-frac', 't-ss01', 't-onum', 't-pnum', 't-cv03', 't-cv04'].forEach(function (id) { toggle(id, function (on, b) { state.features[b.dataset.feature] = on; }); });
   sample.addEventListener('input', apply);
 
   // weight against grade: count each paragraph's lines once the transition has settled

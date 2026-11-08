@@ -32,6 +32,19 @@ async function main() {
     const errors = [];
     page.on('pageerror', error => errors.push(String(error)));
     await page.goto(base, { waitUntil: 'networkidle' });
+    await page.locator('#sample').fill('Junction · Ĵ · total · ţ ť ŧ');
+    await page.evaluate(() => document.fonts.ready);
+    const defaults = await page.locator('#sample').screenshot();
+    for (const tag of ['cv03', 'cv04']) {
+      const button = page.locator('#t-' + tag);
+      assert.equal(await button.getAttribute('aria-pressed'), 'false');
+      await button.click();
+      assert.match(await page.locator('#sample').evaluate(node => node.style.fontFeatureSettings), new RegExp(tag));
+      assert.equal(defaults.equals(await page.locator('#sample').screenshot()), false,
+        tag + ' must change the rendered glyphs');
+      await button.click();
+    }
+    await page.locator('#stage').screenshot({ path: path.join(output, 'text-defaults.png') });
     const selected = () => page.locator('#mf-comparisons .mf-compare').evaluateAll(nodes => nodes.map(n => n.dataset.font));
     const visibleChoices = () => page.locator('#mf-pick-list .mf-pick:visible').count();
     assert.deepEqual(await selected(), ['anodyne', 'lisnoti', 'notosansmath']);

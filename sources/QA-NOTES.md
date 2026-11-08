@@ -53,3 +53,14 @@ Regular are preserved. Source migration preflight checks complete mathematical
 axis response before export, and compiled-font tests repeat those functional
 checks. Specimen JSON sidecars record the rendering font hashes, so a proof from
 an older font build is not treated as validation of a newer binary.
+
+The radical cap in the font has the same thickness as `RadicalRuleThickness`,
+including every fixed size and the assembly's top piece. The compiled-font
+regression checks this through the axes. LuaLaTeX joins the cap and overbar
+flush. Chromium 158 currently shows a step: its
+[MathML painter](https://github.com/chromium/chromium/blob/main/third_party/blink/renderer/core/paint/mathml_painter.cc)
+places the radical glyph's top and the overbar rectangle at the same block
+offset, then `PaintBar` shifts the overbar upward by half its thickness. This
+is a browser painting issue, not a reason to distort the font's radical or MATH
+constants. The same formulas should be compared in native MathML and LuaLaTeX
+when investigating it; a font-only outline proof cannot test browser painting.

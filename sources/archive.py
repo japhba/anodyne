@@ -68,6 +68,7 @@ def create_binary_archive(fonts, destination):
         archive.write(ROOT / 'sources/QA-NOTES.md', 'validation/QA-NOTES.md')
         for name in ('specimen.png', 'specimen-dark.png', 'specimen.svg', 'specimen-dark.svg',
                      'specimen.json', 'specimen-dark.json',
+                     'text-settings.png', 'text-settings.svg', 'text-settings.json',
                      'math.png', 'math.pdf', 'math.svg', 'math-source.json',
                      'greek-math-styles.png', 'greek-math-styles.svg', 'greek-math-styles.pdf',
                      'greek-math-styles.json',

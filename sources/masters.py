@@ -132,6 +132,8 @@ def compile_font(path, overrides=None):
         normalize_timestamp(font)
         from layout_fixes import apply_layout_fixes
         apply_layout_fixes(font)
+        from textforms import apply_text_forms
+        apply_text_forms(font)
         return font
 
 

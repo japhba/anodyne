@@ -37,7 +37,7 @@
       "style": "chancery"
     }
   },
-  "font_sha256": "6fbbf27d3101747810951f8afd341a1615a41e2a17503b63dc2b3f52443b73ba",
+  "font_sha256": "511fadb8f9064954b03a6966aeaff7eb6359d27f84c1cf50fe82ec18d6c537f0",
   "generator_sha256": "6d950742f1096ef42c8e9bf6ba7d93ff8380c3c6bf7336f1847be3a8d41a27e9",
   "greek_sources_sha256": "5257e6101cd7db942dbbceaa459ab7b3a63130255c05be62dd628a5cae25ca7c",
   "location": {
@@ -48,12 +48,12 @@
   "missing_glyphs": false,
   "native_accented_characters_per_family": 237,
   "outputs": {
-    "greek-math-styles.pdf": "7794a83b145e5eb52e3fa5c28aee5b1bb188537df53a7c315b5b603f976c792d",
-    "greek-math-styles.png": "eb757caaa5224031c847ebb2448eb3e4ac62978205e135bebc28ec200c248ab9",
-    "greek-math-styles.svg": "44e56bb2ea91a793abc089ea480b92299cc5773e990fefa71f345084cc2f6322"
+    "greek-math-styles.pdf": "583bd4cd11003d2d118f760cd1be1ab544093793722b513a7762550814eb1feb",
+    "greek-math-styles.png": "152f00d1e7e3a530fdfe0fa71fefb2ab7c3a3351418889e4defbdc61ea2d0fb0",
+    "greek-math-styles.svg": "1b156c45125bc3ba53578229401f1528e7c2e18f65b4c82170ca1ceb51a0069f"
   },
   "pixels": 3200,
   "source_characters_per_family": 303,
   "source_date_epoch": 1794050400,
-  "version": "0.500"
+  "version": "0.600"
 }

@@ -54,6 +54,24 @@ work; Anodyne adds:
 It keeps Lisnoti's `ss01` (chancery script capitals for `\mathcal`), fractions, super- and
 subscripts, and Unicode's maths alphanumerics.
 
+Version 0.600 makes the native baseline J and square upper-left t shoulder the defaults
+in Roman and Italic, throughout weight, width and grade. Accented text forms follow the
+same choices. Normal curved bowls and the t foot retain their curves. The inherited
+forms remain available independently:
+
+| Feature | Optional inherited form |
+|:--|:--|
+| `cv03` | Descending J (including Ĵ) |
+| `cv04` | Tapered t shoulder (including accents and optical sizes) |
+
+No feature settings are needed for the new defaults. For example,
+`font-feature-settings: "cv03" 1, "cv04" 1` restores both older forms in CSS;
+`RawFeature={+cv03,+cv04}` does the same in fontspec. The playground has separate
+switches for each. Dedicated script, fraktur and other mathematical alphabet
+drawings retain their own designs; Unicode sans-serif J shares the text default.
+
+![Baseline J and square t shoulder, with optional inherited forms](images/text-settings.png)
+
 Version 0.500 restores Noto's ordinary zero and numeral substitutions. Slashed zero is an
 explicit `zero` feature. Mathematical monospace retains Noto Sans Math's native dotted zero;
 its Latin, Greek and digit cells now share consistent advances across the three axes.
