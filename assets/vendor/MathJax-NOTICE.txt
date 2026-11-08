@@ -8,7 +8,7 @@ Copyright (c) 2024-2026 The MathJax Consortium
 Copyright (c) 2026 The MathJax Consortium
 
 Licensed under the Apache License, Version 2.0. See MathJax-LICENSE.txt.
-This distribution bundles the base and AMS TeX input packages and the MathML
+This distribution bundles the base, AMS and boldsymbol TeX input packages and the MathML
 serializer. Anodyne adds a bounded TeX-to-MathML wrapper and renders the
 result with the browser’s native MathML engine. No MathJax font assets or
 HTML/SVG output engines are included.

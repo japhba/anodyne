@@ -1,0 +1,59 @@
+{
+  "all_glyphs_drawn_from_font": true,
+  "features": {
+    "ss08": {
+      "family": "Anodyne Greek Script",
+      "name": "Greek roundhand script",
+      "style": "script"
+    },
+    "ss09": {
+      "family": "Anodyne Greek Bold Script",
+      "name": "Greek bold script",
+      "style": "bold-script"
+    },
+    "ss10": {
+      "family": "Anodyne Greek Fraktur",
+      "name": "Greek fraktur",
+      "style": "fraktur"
+    },
+    "ss11": {
+      "family": "Anodyne Greek Bold Fraktur",
+      "name": "Greek bold fraktur",
+      "style": "bold-fraktur"
+    },
+    "ss12": {
+      "family": "Anodyne Greek Double Struck",
+      "name": "Greek double-struck",
+      "style": "double-struck"
+    },
+    "ss13": {
+      "family": "Anodyne Greek Monospace",
+      "name": "Greek monospace",
+      "style": "monospace"
+    },
+    "ss14": {
+      "family": "Anodyne Greek Chancery",
+      "name": "Greek chancery script",
+      "style": "chancery"
+    }
+  },
+  "font_sha256": "6fbbf27d3101747810951f8afd341a1615a41e2a17503b63dc2b3f52443b73ba",
+  "generator_sha256": "6d950742f1096ef42c8e9bf6ba7d93ff8380c3c6bf7336f1847be3a8d41a27e9",
+  "greek_sources_sha256": "5257e6101cd7db942dbbceaa459ab7b3a63130255c05be62dd628a5cae25ca7c",
+  "location": {
+    "GRAD": 0,
+    "wdth": 100,
+    "wght": 400
+  },
+  "missing_glyphs": false,
+  "native_accented_characters_per_family": 237,
+  "outputs": {
+    "greek-math-styles.pdf": "7794a83b145e5eb52e3fa5c28aee5b1bb188537df53a7c315b5b603f976c792d",
+    "greek-math-styles.png": "eb757caaa5224031c847ebb2448eb3e4ac62978205e135bebc28ec200c248ab9",
+    "greek-math-styles.svg": "44e56bb2ea91a793abc089ea480b92299cc5773e990fefa71f345084cc2f6322"
+  },
+  "pixels": 3200,
+  "source_characters_per_family": 303,
+  "source_date_epoch": 1794050400,
+  "version": "0.500"
+}

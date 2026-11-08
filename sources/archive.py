@@ -24,8 +24,12 @@ def create_archive(folder, destination):
                       if p.is_file() and '__pycache__' not in p.parts)
     extras.extend(ROOT / name for name in ('index.html', 'mathfonts.json', 'package.json', 'package-lock.json'))
     with zipfile.ZipFile(destination, 'a', compression=zipfile.ZIP_DEFLATED) as archive:
+        included = set(archive.namelist())
         for path in sorted(extras):
-            archive.write(path, str(path.relative_to(ROOT)))
+            name = str(path.relative_to(ROOT))
+            if name not in included:
+                archive.write(path, name)
+                included.add(name)
         archive.writestr('VERIFY-SOURCES.txt',
             'Build and verify the included editable sources:\n'
             '  make build MASTERS=masters\n'
@@ -34,7 +38,8 @@ def create_archive(folder, destination):
             '\nThe source-generator fixture tests skip if the optional pinned src/ cache is absent.\n'
             'All compiled-font regression tests run on the staged distribution.\n'
             '\nTo test the demo, first make release MASTERS=masters, then npm ci,\n'
-            'npx playwright install chromium, npm run test:browser and npm run test:math-browser.\n')
+            'npx playwright install chromium, npm run test:browser, npm run test:math-browser,\n'
+            'npm run test:greek-converter and npm run test:greek-browser.\n')
     masters.deterministic_zip(destination)
 
 
@@ -61,7 +66,12 @@ def create_binary_archive(fonts, destination):
         for path in sorted((ROOT / 'build/fontbakery').glob('*.json')):
             archive.write(path, str(Path('validation/fontbakery') / path.name))
         archive.write(ROOT / 'sources/QA-NOTES.md', 'validation/QA-NOTES.md')
-        for name in ('specimen.png', 'math.png', 'math-features.svg', 'math-variations.svg'):
+        for name in ('specimen.png', 'specimen-dark.png', 'specimen.svg', 'specimen-dark.svg',
+                     'specimen.json', 'specimen-dark.json',
+                     'math.png', 'math.pdf', 'math.svg', 'math-source.json',
+                     'greek-math-styles.png', 'greek-math-styles.svg', 'greek-math-styles.pdf',
+                     'greek-math-styles.json',
+                     'math-features.svg', 'math-variations.svg'):
             path = ROOT / 'images' / name
             if path.is_file():
                 archive.write(path, str(Path('images') / name))

@@ -119,6 +119,7 @@ def formula_pdf(font_path, output, label, weight, width, grade):
     static_instance(font_path, instance, label, weight, width, grade)
     tex = '\n'.join([
         r'\documentclass[border=12pt]{standalone}',
+        r'\pdfvariable suppressoptionalinfo 767\relax',
         r'\usepackage{amsmath}', r'\usepackage{unicode-math}',
         r'\tracinglostchars=3',
         r'\setmainfont{proof-font.ttf}[Path=./]',

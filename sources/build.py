@@ -11,17 +11,18 @@ Reserved Font Name, so the fork needs its own name), built as a variable font wi
                  The few glyphs whose Bold has other contours are emboldened point by point (FreeType's
                  outline-emboldening rule), so they stay compatible too.
   wdth  62.5–100 width. Noto Sans's own condensed masters (at each weight master) for the glyphs Lisnoti kept
-                 from Noto; the others squeezed to Noto's lowercase width at that weight and their stems brought
-                 back horizontally to Noto's condensed stems (no condensed drawing of them exists).
+                 from Noto; derived glyphs use character-aware Noto width ratios and calibrated local stem
+                 restoration, preserving italic shear, dots, rules and fixed-width mathematical alphabets.
   GRAD  -100–150 grade: the stems of weight 400+GRAD at the widths of 400 — darker or lighter text that never
                  reflows. Derived from the weight masters: each point's weight delta, less the advance growth
                  spread across the glyph by the point's position.
 
 It also brings back the features Lisnoti dropped while keeping their glyphs: Noto Sans's small capitals
 (smcp, c2sc; \\textsc and small-caps headings have real ones), old-style, proportional, tabular and lining
-figures (the zero stays slashed), case forms (not for figures and the maths-axis brackets), the Greek
-alternates (ss06, ss07); and Noto Sans Math's dotless i and j for accents (dtls). Lisnoti's MATH table stays (static, for the Regular; the Bold instance gets Lisnoti
-Bold's), so LuaLaTeX's unicode-math can set formulas in the static instances — tuned to Computer Modern's
+figures (with Noto's open default zero and explicit opt-in slashed zero), case forms (including native
+zero behavior but excluding other figures and the maths-axis brackets), the Greek alternates (ss06,
+ss07); and Noto Sans Math's dotless i and j for accents (dtls). Mathematical layout varies with the
+axes; static instances refresh construction extents from their final drawings. It is tuned to Computer Modern's
 proportions first: delimgen.py draws the tall delimiters again, mathtune.py sets TeX's constants and spacing.
 
 Writes to --out: Anodyne[GRAD,wdth,wght].ttf, Anodyne-Italic[GRAD,wdth,wght].ttf (variable) and
@@ -53,7 +54,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import delimgen   # noqa: E402
 import mathtune   # noqa: E402
 
-VERSION = '0.400'
+VERSION = '0.500'
 FAMILY = 'Anodyne'
 # weight masters at Noto Sans's own (user values; Noto's avar puts 700 at normalised 0.61)
 WEIGHTS = (100, 400, 700, 900)
@@ -954,6 +955,10 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None, masters_dir=None
     V = instantiateVariableFont(TTFont(notoVF), {'wdth': 100})
     noto = {w: instantiateVariableFont(TTFont(notoVF), {'wdth': 100, 'wght': w}) for w in WEIGHTS}
     notoC = {w: instantiateVariableFont(TTFont(notoVF), {'wdth': WDTH_MIN, 'wght': w}) for w in WEIGHTS}
+    from zero import NativeZeroSources
+    zero_sources = NativeZeroSources(noto, notoC, TTFont(notoMath), italic,
+        roman_reference=TTFont(os.path.join(os.path.dirname(notoVF), 'NotoSans[wdth,wght].ttf')) if italic else None)
+    zero_sources.restore_fonts(R, B, layout=False)
     # Noto's own stems, for the extrapolation and emboldening ratios: the stem of 'l' (a plain bar in Noto)
     s = {w: measure_stem(noto[w]) for w in WEIGHTS}
     k_thin, k_black = (s[100] - s[400]) / (s[700] - s[400]), (s[900] - s[400]) / (s[700] - s[400])
@@ -998,15 +1003,12 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None, masters_dir=None
     log(f'[{style}] small caps: {len(smcp)} smcp, {len(c2sc)} c2sc, {len(added)} glyphs from Noto')
 
     # --- Noto's figures, case forms and Greek alternates: Lisnoti kept their glyphs, not the features.
-    # The zero stays slashed: old-style figures take Noto's slashed old-style zero, proportional ones
-    # keep the default zero; case forms leave figures and brackets (Lisnoti's are on the maths axis) alone.
+    # Figure choices use Noto's native substitutions, including its open default
+    # zero. A slashed zero is available only through Noto's explicit zero feature.
+    # Case forms leave figures and brackets (Lisnoti's are on the maths axis) alone.
     names = set(order)
     feats = {tag: {a: b for a, b in single_subst_map(V, tag).items() if a in names and b in names}
-             for tag in ('onum', 'pnum', 'tnum', 'lnum', 'case', 'ss06', 'ss07')}
-    if 'zero.osf.slash' in names:
-        feats['onum']['zero'] = 'zero.osf.slash'
-        feats['lnum']['zero.osf.slash'] = 'zero'
-    feats['pnum'].pop('zero', None)
+             for tag in ('onum', 'pnum', 'tnum', 'lnum', 'zero', 'case', 'ss06', 'ss07')}
     figures = ('zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine')
     brackets = {'parenleft', 'parenright', 'bracketleft', 'bracketright', 'braceleft', 'braceright'}
     feats['case'] = {a: b for a, b in feats['case'].items() if a not in brackets and not a.startswith(figures)}
@@ -1020,6 +1022,8 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None, masters_dir=None
     for tag, m in feats.items():
         if m:
             add_feature(R, tag, m)
+    zero_sources.restore_layout(R)
+    zero_sources.restore_layout(B)
     log(f'[{style}] features from Noto: ' + ', '.join(f'{t} {len(m)}' for t, m in feats.items()))
 
     # --- masters per glyph
@@ -1027,7 +1031,13 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None, masters_dir=None
     kinds = {'noto': 0, 'bold': 0, 'fitted': 0, 'embolden': 0, 'static': 0}
     vnames = set(V.getGlyphOrder())
     bnames = set(B.getGlyphOrder())
+    native_zeros = zero_sources.normal_outlines()
     for g in order:
+        if g in zero_sources.names:
+            for w in WEIGHTS:
+                masters[w][g] = native_zeros[w][g]
+            kinds['noto'] += 1
+            continue
         r = read(R, g)
         masters[400][g] = r
         if not r.contours and not r.components:
@@ -1093,117 +1103,17 @@ def build_style(lisR, lisB, notoVF, italic, tmp, notoMath=None, masters_dir=None
         kinds['embolden'] += 1
     log(f'[{style}] glyph sources: {kinds}')
 
-    # --- condensed masters: Noto's own where the glyph is Noto's; elsewhere the weight's master squeezed
-    # to Noto's width at that weight, its stems then brought back to Noto's condensed stems (horizontally)
-    condensed = {w: {} for w in WEIGHTS}
-    noto_glyphs = set()
-    synthetic = 0
-    for g in order:
-        r = masters[400][g]
-        if g in vnames:
-            v = read(V, g)
-            if structure(v) == structure(r) and (v.contours == r.contours if r.contours else [c[:3] for c in v.components] == [c[:3] for c in r.components]):
-                noto_glyphs.add(g)
-    for w in WEIGHTS:
-        k, sx = kC[w], (sC[w] - kC[w] * s[w]) / 2
-        for g in order:
-            if g in noto_glyphs:
-                condensed[w][g] = read(notoC[w], g)
-                continue
-            m = masters[w][g]
-            if not m.contours and not m.components:
-                o = m.copy()
-                o.adv = notoC[w]['hmtx'][g][0] if g in vnames else m.adv * k
-                condensed[w][g] = o
-                continue
-            if m.components:
-                condensed[w][g] = Outline(components=[(c[0], c[1] * k, c[2], c[3]) for c in m.components], adv=m.adv * k + 2 * sx)
-                continue
-            squeezed = Outline([[(p[0] * k, p[1], p[2]) for p in c] for c in m.contours], adv=m.adv * k)
-            f = 1.0
-            o = embolden(squeezed, sx, 0)
-            while not sane(squeezed, o) and f > 1 / 128:
-                f *= 0.75
-                o = embolden(squeezed, sx * f, 0)
-            condensed[w][g] = o if sane(squeezed, o) else squeezed
-            if w == 400:
-                synthetic += 1
-    log(f'[{style}] condensed: {len(noto_glyphs)} glyphs Noto\'s, {synthetic} squeezed')
-
-    # --- grade at every weight/width corner, bounded by valid weight drawings.
-    # Sharing Regular's delta removed more ink than Thin contained. Complete
-    # corners encode the interactions and grade saturates at Thin and Black.
-    def graded(glyphs, weight, gv):
-        target = max(WEIGHTS[0], min(WEIGHTS[-1], weight + gv))
-        lo = max(w for w in WEIGHTS if w <= target)
-        hi = min(w for w in WEIGHTS if w >= target)
-        fraction = 0 if lo == hi else (mapped_weight(target) - mapped_weight(lo)) / (mapped_weight(hi) - mapped_weight(lo))
-        for g in order:
-            candidate = glyphs[lo][g] if lo == hi else lerp(glyphs[lo][g], glyphs[hi][g], fraction)
-            yield g, grade_outline(glyphs[weight][g], candidate)
-
-    # --- master fonts
-    for t in ('fpgm', 'prep', 'cvt ', 'hdmx', 'LTSH', 'VDMX', 'DSIG', 'STAT'):
-        if t in R:
-            del R[t]
-    paths = {}
-    for wd, outlines, positions in ((100, masters, noto), (WDTH_MIN, condensed, notoC)):
-        for w in WEIGHTS:
-            # Width scaling is independent of grade, including the added math
-            # kerning; changing grade never changes a shaped line's advance.
-            width_scale = 1 if wd == 100 else kC[w]
-            for gv in (0, GRAD_MIN, GRAD_MAX):
-                f = copy.deepcopy(R)
-                glyphs = outlines[w].items() if gv == 0 else graded(outlines, w, gv)
-                for g, outline in glyphs:
-                    write(f, g, outline)
-                position_master(f, R, positions[w], width_scale)
-                refresh_math_metrics(f, R)
-                # Imported Noto coverage order follows its own glyph IDs. Sort
-                # coverage and parallel records together for Anodyne's order.
-                reorderGlyphs(f, f.getGlyphOrder())
-                f['maxp'].recalc(f)
-                p = os.path.join(tmp, f'{style}-{w}-{wd}-{gv}.ttf')
-                f.save(p)
-                paths[(w, wd, gv)] = p
-    log(f'[{style}] {len(paths)} masters written')
-    validate_master_compatibility(paths.values())
-    # Free the drawings before varLib loads the complete grid.
-    for d in (masters, condensed, noto, notoC):
-        d.clear()
-    V = None
-    import gc
-    gc.collect()
-
-    ds = DesignSpaceDocument()
-    wa = AxisDescriptor(); wa.tag, wa.name, wa.minimum, wa.default, wa.maximum = 'wght', 'Weight', 100, 400, 900
-    # Noto Sans's avar (user → design): the masters sit where Noto's do
-    wa.map = WEIGHT_MAP
-    da = AxisDescriptor(); da.tag, da.name, da.minimum, da.default, da.maximum = 'wdth', 'Width', WDTH_MIN, 100, 100
-    da.map = WDTH_MAP
-    ga = AxisDescriptor(); ga.tag, ga.name, ga.minimum, ga.default, ga.maximum = 'GRAD', 'Grade', GRAD_MIN, 0, GRAD_MAX
-    ds.addAxis(wa); ds.addAxis(da); ds.addAxis(ga)
-    design, designW = dict(wa.map), dict(WDTH_MAP)
-    for (w, wd, gv), p in paths.items():
-        sd = SourceDescriptor(); sd.path = p; sd.location = {'Weight': design[w], 'Width': designW[wd], 'Grade': gv}
-        sd.copyInfo = sd.copyLib = sd.copyFeatures = sd.copyGroups = (w, wd, gv) == (400, 100, 0)
-        ds.addSource(sd)
-    for wd, wn in WIDTHS:
-        for wv, nm in INSTANCES:
-            inst = InstanceDescriptor(); inst.familyName = FAMILY
-            parts = [wn, '' if nm == 'Regular' and (wn or italic) else nm, 'Italic' if italic else '']
-            inst.styleName = ' '.join(x for x in parts if x) or 'Regular'
-            inst.location = {'Weight': design[wv], 'Width': designW[wd], 'Grade': 0}
-            ds.addInstance(inst)
-    if masters_dir:
-        import masters as editable_masters
-        editable_masters.export_designspace(ds, os.path.join(masters_dir, style), math_regular=R, math_bold=B)
-    if prepare_only:
-        return None, R, B
-    log(f'[{style}] varLib.build')
-    vf, model, master_paths = varLib.build(ds, exclude=['MVAR'], optimize=True)
-    add_math_variations(vf, model, master_paths)
-    return vf, R, B
+    from master_grid import build_grid, quantize_anchors
+    quantize_anchors(masters)
+    import mathletters
+    repaired_math = mathletters.apply_to_normal_anchors(masters, R, noto, notoC=notoC)
+    quantize_anchors(masters)
+    import greekstyles
+    greekstyles.apply_to_normal_anchors(masters, R, B, noto, notoC)
+    return build_grid(masters, R, B, noto, notoC, italic, tmp,
+                      masters_dir=masters_dir, prepare_only=prepare_only,
+                      zero_sources=zero_sources,
+                      forced_width_names=repaired_math.forced_width_names)
 
 
 # ------------------------------------------------------------------ names, STAT, statics

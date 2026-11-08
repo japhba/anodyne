@@ -32,7 +32,7 @@ await writeFile(new URL('../assets/vendor/MathJax-NOTICE.txt', import.meta.url),
   'MathJax 4.1.3 — https://github.com/mathjax/MathJax-src\n\n' +
   Array.from(notices).sort().join('\n') + '\n\n' +
   'Licensed under the Apache License, Version 2.0. See MathJax-LICENSE.txt.\n' +
-  'This distribution bundles the base and AMS TeX input packages and the MathML\n' +
+  'This distribution bundles the base, AMS and boldsymbol TeX input packages and the MathML\n' +
   'serializer. Anodyne adds a bounded TeX-to-MathML wrapper and renders the\n' +
   'result with the browser’s native MathML engine. No MathJax font assets or\n' +
   'HTML/SVG output engines are included.\n');

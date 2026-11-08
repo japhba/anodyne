@@ -77,7 +77,7 @@ async function main() {
       await page.waitForFunction(() => document.getElementById('math-editor-status').dataset.error === 'true');
       assert.equal(await page.locator('#math-render').innerHTML(), lastGood);
     }
-    for (const preset of ['sets', 'quantum', 'delimiters', 'calculus']) {
+    for (const preset of ['sets', 'quantum', 'delimiters', 'calculus', 'fullfont']) {
       await page.locator('#math-preset').selectOption(preset);
       await page.waitForFunction(() => document.getElementById('math-editor-status').dataset.error === 'false');
       assert.equal(await page.locator('#math-render math').count(), 1);
@@ -90,6 +90,17 @@ async function main() {
         const after = await page.locator('#math-render').screenshot({path: path.join(output, 'math-tex-chancery.png')});
         assert.equal(before.equals(after), false, 'Chancery must change actual mathcal glyphs produced from TeX');
         await page.locator('[data-math-feature="ss01"]').click();
+      }
+      if (preset === 'fullfont') {
+        assert.match(await page.locator('#math-render').textContent(), /Res/);
+        assert.ok(await page.locator('#math-render mfrac').count() >= 6);
+        assert.ok(await page.locator('#math-render msqrt, #math-render mroot').count() >= 2);
+        assert.ok(await page.locator('#math-render mover').count() >= 24);
+        assert.deepEqual(await page.locator('#math-render [data-anodyne-greek-style]').evaluateAll(nodes =>
+          Array.from(new Set(nodes.map(node => node.dataset.anodyneGreekStyle))).sort()),
+          ['bold-fraktur', 'bold-script', 'double-struck', 'fraktur', 'monospace', 'script']);
+        await page.evaluate(() => document.fonts.ready);
+        await page.locator('#math-render').screenshot({path: path.join(output, 'math-full-font-preview.png')});
       }
     }
     await page.locator('#math-tex').fill(String.raw`\mathcal{A}+\mathcal{a}`);

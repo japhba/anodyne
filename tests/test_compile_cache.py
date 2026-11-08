@@ -61,6 +61,15 @@ class CompileCacheTests(unittest.TestCase):
         with patch.object(pipeline, 'dependency_versions', return_value={'fonttools': 'future version'}):
             self.assertNotEqual(self.key(), original)
 
+    def test_greek_web_contract_changes_invalidate_key(self):
+        assets = self.root / 'assets'
+        assets.mkdir()
+        contract = assets / 'greek-math-styles.json'
+        contract.write_text('{"styles": {}}')
+        original = self.key()
+        contract.write_text('{"styles": {"script": {"tag": "ss08"}}}')
+        self.assertNotEqual(self.key(), original)
+
     def test_corrupted_output_is_not_reused(self):
         output = self.root / 'font.ttf'
         output.write_bytes(b'font output')

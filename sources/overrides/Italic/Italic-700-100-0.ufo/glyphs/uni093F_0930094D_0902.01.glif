@@ -69,6 +69,8 @@
   </outline>
   <lib>
     <dict>
+      <key>com.overlyx.anodyne.gridMigration</key>
+      <string>0.500 shared integer-anchor width/grade derivation; original topology repair retained.</string>
       <key>com.overlyx.anodyne.repair</key>
       <string>Original Regular topology retained after rejecting an incompatible Bold fit; all weight/width/grade corners regenerated with the canonical fallback.</string>
     </dict>

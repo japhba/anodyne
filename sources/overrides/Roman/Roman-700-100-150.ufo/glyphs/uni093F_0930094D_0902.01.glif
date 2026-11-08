@@ -17,31 +17,31 @@
       <point x="164" y="931"/>
       <point x="255" y="931" type="qcurve"/>
       <point x="313" y="931"/>
-      <point x="412" y="890"/>
-      <point x="454" y="850" type="qcurve"/>
+      <point x="413" y="890"/>
+      <point x="455" y="850" type="qcurve"/>
       <point x="469" y="836"/>
       <point x="428" y="867" type="qcurve"/>
       <point x="422" y="856"/>
       <point x="461" y="889" type="qcurve"/>
       <point x="511" y="931"/>
       <point x="593" y="931" type="qcurve"/>
-      <point x="618" y="931"/>
+      <point x="619" y="931"/>
       <point x="665" y="923"/>
-      <point x="718" y="908" type="qcurve"/>
+      <point x="719" y="908" type="qcurve"/>
       <point x="694" y="777" type="line"/>
       <point x="638" y="791"/>
       <point x="613" y="794"/>
       <point x="602" y="794" type="qcurve"/>
-      <point x="578" y="794"/>
+      <point x="579" y="794"/>
       <point x="561" y="770"/>
       <point x="561" y="744" type="qcurve"/>
       <point x="561" y="717"/>
-      <point x="577" y="663"/>
+      <point x="578" y="663"/>
       <point x="626" y="580" type="qcurve"/>
       <point x="446" y="580" type="line"/>
-      <point x="408" y="668"/>
+      <point x="409" y="668"/>
       <point x="352" y="752"/>
-      <point x="295" y="790"/>
+      <point x="296" y="790"/>
       <point x="265" y="790" type="qcurve"/>
       <point x="236" y="790"/>
       <point x="208" y="755"/>
@@ -57,18 +57,20 @@
     <contour>
       <point x="583" y="811"/>
       <point x="654" y="811"/>
-      <point x="706" y="763"/>
-      <point x="706" y="725" type="qcurve"/>
-      <point x="706" y="689"/>
+      <point x="707" y="762"/>
+      <point x="707" y="725" type="qcurve"/>
+      <point x="707" y="689"/>
       <point x="655" y="639"/>
       <point x="582" y="639"/>
       <point x="531" y="689"/>
       <point x="531" y="725" type="qcurve"/>
-      <point x="531" y="763"/>
+      <point x="531" y="762"/>
     </contour>
   </outline>
   <lib>
     <dict>
+      <key>com.overlyx.anodyne.gridMigration</key>
+      <string>0.500 shared integer-anchor width/grade derivation; original topology repair retained.</string>
       <key>com.overlyx.anodyne.repair</key>
       <string>Original Regular topology retained after rejecting an incompatible Bold fit; all weight/width/grade corners regenerated with the canonical fallback.</string>
     </dict>

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import importlib.metadata
 import json
@@ -17,11 +18,12 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'sources'))
 COMPILER_MODULES = ('build.py', 'masters.py', 'metadata.py', 'mathfeatures.py',
                     'delimgen.py', 'mathtune.py', 'pipeline.py', 'instance.py', 'mathweb.py',
-                    'layout_fixes.py', 'layout-fixes.json')
+                    'layout_fixes.py', 'layout-fixes.json', 'master_grid.py', 'condense.py', 'greekstyles.py', 'greek_positioning.py', 'mathletters.py', 'zero.py')
 
 
 def signature():
-    files = ['source-lock.json', 'build.py', 'masters.py', 'delimgen.py', 'mathtune.py', 'mathfeatures.py']
+    files = ['source-lock.json', 'build.py', 'masters.py', 'delimgen.py', 'mathtune.py', 'mathfeatures.py',
+             'master_grid.py', 'condense.py', 'greekstyles.py', 'greek_positioning.py', 'mathletters.py', 'zero.py']
     return {name: hashlib.sha256((ROOT / 'sources' / name).read_bytes()).hexdigest()
             for name in files if (ROOT / 'sources' / name).exists()}
 
@@ -47,6 +49,90 @@ def prepared_source_hashes(folder):
             if path.is_file() and path.suffix in ('.ufoz', '.designspace')}
 
 
+def effective_preparation_inputs(manifest):
+    """Follow recorded source migrations without rewriting preparation history."""
+    effective = manifest['inputs']
+    migrations = manifest.get('source_migrations', [])
+    if not migrations:
+        return effective
+    previous_sources = manifest.get('origin_source_files', manifest['source_files'])
+    for migration in migrations:
+        if migration['from_inputs'] != effective or migration['source_files_before'] != previous_sources:
+            raise RuntimeError('Source migration history is not a continuous input/source hash chain')
+        if migration.get('verification', {}).get('status') != 'passed':
+            raise RuntimeError('Source migration lacks successful validation evidence')
+        effective = migration['to_inputs']
+        previous_sources = migration['source_files_after']
+    if migrations and previous_sources != manifest['source_files']:
+        raise RuntimeError('Current source checksum record differs from its migration history')
+    return effective
+
+
+def record_source_migration(candidate, baseline, *, description, verification, evidence_files=()):
+    """Record a validated candidate derived from preserved, unchanged sources.
+
+    The caller performs the drawing, native-source and compatibility checks and
+    supplies their concrete results. This function independently checks source
+    preservation, complete candidate paths and the checksum lineage. It never
+    labels a migrated project as a fresh contour-matching preparation.
+    """
+    from fontTools.designspaceLib import DesignSpaceDocument
+    candidate = Path(candidate).resolve()
+    baseline = Path(baseline).resolve()
+    if baseline.is_dir():
+        original = baseline
+        snapshot = {'prepared_manifest': json.loads((baseline / 'preparation.json').read_text())}
+    else:
+        snapshot = json.loads(baseline.read_text())
+        original = Path(snapshot.get('source_root', ROOT / 'build/masters')).resolve()
+    previous = snapshot.get('prepared_manifest', snapshot)
+    if candidate == original:
+        raise ValueError('Migrate into a separate candidate directory; preserve the original sources')
+    before = prepared_source_hashes(original)
+    if before != previous['source_files']:
+        raise RuntimeError('Original sources have unrecorded edits; migration must preserve and inspect them first')
+    from_inputs = effective_preparation_inputs(previous)
+    if verification.get('status') != 'passed' or not description.strip():
+        raise ValueError('A source migration requires a description and successful validation evidence')
+    after = prepared_source_hashes(candidate)
+    if set(after) != set(before):
+        raise RuntimeError('Candidate must preserve the complete source/reference file set')
+    for style in ('Roman', 'Italic'):
+        document = DesignSpaceDocument.fromfile(candidate / style / f'Anodyne-{style}.designspace')
+        if len(document.sources) != 24 or len({source.name for source in document.sources}) != 24:
+            raise RuntimeError(f'{style}: expected 24 uniquely named compatible source masters')
+        for source in document.sources:
+            path = Path(source.path).resolve()
+            if not path.is_relative_to(candidate) or not path.is_file():
+                raise RuntimeError(f'{style}: candidate designspace refers outside its source project: {path}')
+    evidence = {}
+    evidence_dir = candidate / 'migration-evidence' / f'{len(previous.get("source_migrations", [])) + 1:03d}'
+    for index, path in enumerate(map(Path, evidence_files)):
+        evidence_dir.mkdir(parents=True, exist_ok=True)
+        destination = evidence_dir / f'{index:02d}-{path.name}'
+        if destination.resolve() != path.resolve():
+            shutil.copyfile(path, destination)
+        evidence[str(destination.relative_to(candidate))] = source_digest(destination)
+    migration = {
+        'description': description, 'from_inputs': from_inputs, 'to_inputs': signature(),
+        'source_files_before': before, 'source_files_after': after,
+        'verification': copy.deepcopy(verification), 'evidence_files': evidence,
+        'compiler_sources': compiler_fingerprint(),
+        'overrides_before_sha256': snapshot.get('override_sha256'),
+        'overrides_after_sha256': source_digest(ROOT / 'sources/overrides'),
+    }
+    manifest = copy.deepcopy(previous)
+    manifest.setdefault('origin_source_files', copy.deepcopy(previous['source_files']))
+    manifest.setdefault('source_migrations', []).append(migration)
+    manifest['source_files'] = copy.deepcopy(after)
+    manifest['description'] = 'Compatible editable sources with explicit, validated migration history; original preparation inputs are retained.'
+    effective_preparation_inputs(manifest)
+    temporary = candidate / 'preparation.json.tmp'
+    temporary.write_text(json.dumps(manifest, indent=2, sort_keys=True) + '\n')
+    temporary.replace(candidate / 'preparation.json')
+    return manifest
+
+
 def run(*args):
     print('+', ' '.join(map(str, args)), flush=True)
     subprocess.run(list(map(str, args)), cwd=ROOT, check=True)
@@ -57,7 +143,7 @@ def prepare(folder, force=False):
     manifest = folder / 'preparation.json'
     current = signature()
     previous = json.loads(manifest.read_text()) if manifest.exists() else None
-    if previous is not None and previous['inputs'] == current and not force:
+    if previous is not None and effective_preparation_inputs(previous) == current and not force:
         print('Compatible source masters are current; preserving source edits.', flush=True)
         return
     if folder.exists() and any(folder.rglob('*.ufo')):
@@ -109,8 +195,12 @@ def package_math_web(flat, destination):
 
 
 def compiler_fingerprint():
-    return {name: source_digest(ROOT / 'sources' / name) for name in COMPILER_MODULES
-            if (ROOT / 'sources' / name).exists()}
+    result = {name: source_digest(ROOT / 'sources' / name) for name in COMPILER_MODULES
+              if (ROOT / 'sources' / name).exists()}
+    contract = ROOT / 'assets/greek-math-styles.json'
+    if contract.exists():
+        result['assets/greek-math-styles.json'] = source_digest(contract)
+    return result
 
 
 def dependency_versions():
@@ -229,7 +319,8 @@ def compile_release(folder, dist):
             'source_preparation': json.loads((folder / 'preparation.json').read_text()),
             'compiler_sources': {str(path.relative_to(ROOT)): source_digest(path)
                                  for path in sorted((ROOT / 'sources').rglob('*.py'))
-                                 if '__pycache__' not in path.parts},
+                                 if '__pycache__' not in path.parts}
+                                | {'assets/greek-math-styles.json': source_digest(ROOT / 'assets/greek-math-styles.json')},
             'editable_sources': source_hashes,
             'tracked_overrides': source_digest(ROOT / 'sources/overrides'),
             'dependencies': packages, 'files': hashes}
@@ -242,6 +333,7 @@ def source_archive(folder, destination):
     destination.parent.mkdir(parents=True, exist_ok=True)
     paths = list((ROOT / 'sources').rglob('*')) + list(folder.rglob('*'))
     paths += [ROOT / p for p in ('requirements.in', 'requirements.lock', 'requirements-qa.lock', 'requirements-qa-build.lock', 'Makefile', 'OFL.txt', 'README.md')]
+    paths += [ROOT / 'assets/greek-math-styles.json']
     with zipfile.ZipFile(destination, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(paths):
             if not path.is_file() or '__pycache__' in path.parts:

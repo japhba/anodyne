@@ -4,7 +4,9 @@
   "scripts": {
     "build:tex": "node sources/build-tex.mjs",
     "test:browser": "node tests/browser.cjs",
-    "test:math-browser": "node tests/math-browser.cjs"
+    "test:math-browser": "node tests/math-browser.cjs",
+    "test:greek-converter": "node tests/greek-converter.cjs",
+    "test:greek-browser": "node tests/greek-browser.cjs"
   },
   "devDependencies": {
     "@mathjax/src": "4.1.3",

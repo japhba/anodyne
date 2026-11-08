@@ -80,12 +80,51 @@ the source lock for drawing work. `make prepare` reuses current preparation;
 explicit refresh with `pipeline.py prepare --force` refuses to overwrite
 unpacked edits.
 
+`mathletters.py` handles mathematical letterlikes whose imported weight anchors
+have identical ink, including the historical symbols outside U+1D400–1D7FF.
+It preserves Regular and existing varying optical drawings. Compatible local
+stroke changes are calibrated against varying script, fraktur and double-struck
+peers, with clearance limits for counters and joins. Responsive ordinary-letter
+width references also prevent static upstream letterlike glyphs from bypassing
+condensation. Greek bodies and their accented composites are regenerated from
+the repaired integer donors. These derived masters remain editable starting
+points; the migration ledger records their actual source and validation hashes.
+
+Compatible source migrations retain their original `preparation.json` inputs.
+The `source_migrations` ledger records the previous and current source hashes,
+generator hashes, validation results and copied evidence. A migration is
+accepted only after the preserved originals and the complete candidate
+designspaces have been checked. It is not recorded as a fresh upstream import.
+The image generators retain separate proof provenance: `images/math-source.json`,
+`images/greek-math-styles.json` and the specimen JSON sidecars identify the actual
+font hashes used for rendering. `make specimen FONTS=build/dist/fonts` reproduces
+the text, mathematical and Greek specimens with the documented rendering tools.
+
 ## Text, math and arbitrary instances
 
 The staged distribution contains the complete variable TTFs, four named static
 math faces, the text-only Unicode-range WOFF2 subsets, and full variable
 `mathwebfonts/` WOFF2s retaining MATH and variation stores for MathML. The full
 math webfonts intentionally cost more bandwidth than the text subsets.
+Small adapter fonts in the same directory expose upright integrals, chancery
+capitals and the seven named Greek alphabet features to native MathML. The Greek
+adapters keep Greek Unicode characters and mathematical accent data; Latin and
+other symbols fall back to the full `Anodyne Math` family. For example,
+`\mathcal{\alpha\Gamma}`, `\mathfrak{\alpha\Gamma}`,
+`\mathbb{\alpha\Gamma}` and `\mathtt{\alpha\Gamma}` select the corresponding
+Greek drawings in the demo's converter. `\boldsymbol{\mathcal{...}}` and
+`\mathbffrak{...}` select bold script and bold fraktur. With the chancery switch
+enabled, regular Greek script uses its chancery alternate. These alphabets are
+OpenType alternatives, since Unicode has no script or fraktur Greek blocks.
+The browser normalizes canonically equivalent Greek accents and uses
+`mathvariant="normal"` with the selected adapter family to retain that notation.
+Combining marks without a precomposed form remain in the same Greek adapter
+font. Native Greek mark classes are calibrated to each mathematical drawing's
+bounds; missing source classes use case-matched alpha anchors and the explicit
+symbol donors documented in `greek_positioning.py`. Existing native anchors
+are retained, and new anchors vary with the actual source masters. Above marks
+on mathematical and styled Greek align horizontally to each master's authored
+MATH top-accent attachment, including narrow iota and shared Latin/Greek forms.
 
 ```sh
 make instance AXES='--weight 550 --width 75 --grade 50'

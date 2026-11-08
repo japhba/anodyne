@@ -34,6 +34,8 @@ jobs:
           cp -a build/dist/fonts/. fonts/
           npm run test:browser
           npm run test:math-browser
+          npm run test:greek-converter
+          npm run test:greek-browser
       - name: Bundle editable sources
         run: make sources
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

@@ -4,7 +4,7 @@ export PATH := $(abspath $(VENV))/bin:$(PATH)
 FONTS ?= fonts
 MASTERS ?= build/masters
 
-.PHONY: setup qa-setup fetch prepare build release sources package edit check qa instance proof
+.PHONY: setup qa-setup fetch prepare build release sources package edit check qa instance proof specimen
 
 setup: $(VENV)/.installed
 
@@ -54,3 +54,8 @@ instance: setup
 
 proof: setup
 	$(PYTHON) sources/proof.py --fonts $(FONTS)
+
+specimen: qa-setup
+	$(PYTHON) sources/render_text_specimen.py --fonts $(FONTS)
+	$(PYTHON) sources/render_specimen.py --fonts $(FONTS)
+	$(PYTHON) sources/render_greek_specimen.py --fonts $(FONTS)

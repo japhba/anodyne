@@ -5,13 +5,33 @@ import {browserAdaptor} from '@mathjax/src/js/adaptors/browserAdaptor.js';
 import {RegisterHTMLHandler} from '@mathjax/src/js/handlers/html.js';
 import {STATE} from '@mathjax/src/js/core/MathItem.js';
 import {SerializedMmlVisitor} from '@mathjax/src/js/core/MmlTree/SerializedMmlVisitor.js';
+import {Configuration} from '@mathjax/src/js/input/tex/Configuration.js';
+import {createBoldToken} from '@mathjax/src/js/input/tex/boldsymbol/BoldsymbolConfiguration.js';
 import '@mathjax/src/js/input/tex/base/BaseConfiguration.js';
 import '@mathjax/src/js/input/tex/ams/AmsConfiguration.js';
 import variants from '../assets/math-variants.json';
+import {greekMathSupport} from './greek-math.js';
+
+const greekMath = greekMathSupport(variants);
+
+// TeX traditionally limits font commands on lower-case Greek. Anodyne provides
+// those drawings explicitly, so retain the parser's selected alphabet while
+// token nodes are created. This also covers literal accented Greek and the
+// Greek mathematical symbols, without inspecting or rewriting TeX strings.
+Configuration.create('anodyne-greek', {
+  priority: 10,
+  nodes: {token(factory, kind, def, text) {
+    const font = factory.configuration.parser.stack.env.font;
+    if (kind === 'mi' && font && /[\p{Script=Greek}∂∇]/u.test(text)) {
+      def = {...def, mathvariant: font};
+    }
+    return createBoldToken(factory, kind, def, text);
+  }},
+});
 
 RegisterHTMLHandler(browserAdaptor());
 const input = new TeX({
-  packages: ['base', 'ams'],
+  packages: ['base', 'ams', 'boldsymbol', 'anodyne-greek'],
   maxBuffer: 12000,
   maxMacros: 1000,
   formatError(_jax, error) { throw error; },
@@ -31,21 +51,21 @@ async function tex2mmlPromise(source) {
 }
 
 function normalizeMathVariants(math) {
+  greekMath.combineMarks(math);
   for (const token of math.querySelectorAll('mi, mn, mo, mtext')) {
     const declared = token.closest('[mathvariant]');
     const variant = declared && declared.getAttribute('mathvariant');
     const alphabet = variants.styles[variant];
     if (!alphabet) continue;
-    token.textContent = Array.from(token.textContent, character => {
-      const base = variants.bases[character] || character;
-      return alphabet[base] || character;
-    }).join('');
+    greekMath.rememberStyle(token, variant);
+    token.textContent = Array.from(token.textContent, character => greekMath.mapCharacter(character, variant, alphabet)).join('');
     // Preserve the selected literal Unicode alphabet instead of asking the
     // browser to interpret unsupported legacy MathML mathvariant values again.
     token.setAttribute('mathvariant', 'normal');
   }
-  return math;
+  return greekMath.applyStyles(math);
 }
 
-window.AnodyneTeX = Object.freeze({version: '4.1.3', tex2mmlPromise, normalizeMathVariants});
+window.AnodyneTeX = Object.freeze({version: '4.1.3', tex2mmlPromise, normalizeMathVariants,
+  applyGreekMathStyles: greekMath.applyStyles, greekStyles: greekMath.styles});
 window.dispatchEvent(new CustomEvent('anodyne-tex-ready'));

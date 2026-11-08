@@ -1,0 +1,29 @@
+{
+  "attribution": {
+    "adaptation_license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "author": "Henri Menke",
+    "changes": "All mathematical test expressions retained. The explanatory wording and layout are new; added Anodyne structures and style comparisons.",
+    "original_date": "2018-04-06",
+    "overlyx_preview": "https://github.com/japhba/overlyx/blob/90cd4e50844dbc713d9ce0345900deec242d6ed8/packages/client/src/app/Settings.tsx#L155",
+    "source": "https://tex.stackexchange.com/q/425098",
+    "source_license": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "title": "Which OpenType math fonts are available?"
+  },
+  "dpi": 300,
+  "embedded_fonts": [
+    "Anodyne-Bold",
+    "Anodyne-Regular"
+  ],
+  "font_sha256": {
+    "Anodyne-Bold.ttf": "491831640da8a6bc6fae940703f69ae55e0b1fe7ed6933a999c3d78377b676e8",
+    "Anodyne-Regular.ttf": "1646945dc3810447f4ab3b8dc9fb0f3f172baf3956b62ca6881c417f3c7c30de"
+  },
+  "outputs": {
+    "math.pdf": "6e1f1bec49aec35275406b0845fd48841aea01eae137577cd99446dc0ddabb2c",
+    "math.png": "848926f7bc55c84d1bde485977d5d60b251c80149bacb2177cc53157c6a9520b",
+    "math.svg": "3c88fbfdc8089f569be4768564ee4952e351b56b8172318ca36d7a59a5b382ef"
+  },
+  "source_date_epoch": 1794050400,
+  "template_sha256": "be9c3d20d00094dfeabada9ea674cd7a0aaf62c966dd2a79d0dccf419edcf281",
+  "version": "0.500"
+}

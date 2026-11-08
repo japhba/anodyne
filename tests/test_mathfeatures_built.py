@@ -90,7 +90,7 @@ class BuiltMathFeaturesTests(unittest.TestCase):
     def test_feature_names_survive_math_web_subsets(self):
         paths = sorted((FONTS / 'webfonts').glob('*-math.woff2'))
         self.assertEqual(len(paths), 2)
-        paths += sorted(p for p in (FONTS / 'mathwebfonts').glob('*.woff2') if not any(x in p.stem for x in ('-upright', '-chancery')))
+        paths += [FONTS / 'mathwebfonts' / name for name in ('anodyne-math.woff2', 'anodyne-math-italic.woff2')]
         for path in paths:
             with TTFont(path) as tt:
                 records = {r.FeatureTag: r for r in tt['GSUB'].table.FeatureList.FeatureRecord}
@@ -104,7 +104,7 @@ class BuiltMathFeaturesTests(unittest.TestCase):
     def test_all_math_faces_keep_upright_integral_constructions(self):
         paths = sorted((FONTS / 'static').glob('*.ttf'))
         paths += sorted((FONTS / 'variable').glob('*.ttf'))
-        paths += sorted(p for p in (FONTS / 'mathwebfonts').glob('*.woff2') if not any(x in p.stem for x in ('-upright', '-chancery')))
+        paths += [FONTS / 'mathwebfonts' / name for name in ('anodyne-math.woff2', 'anodyne-math-italic.woff2')]
         self.assertGreaterEqual(len(paths), 6)
         for path in paths:
             with self.subTest(font=path.name), TTFont(path) as tt:

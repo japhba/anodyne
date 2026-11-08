@@ -32,7 +32,8 @@
       "source_revision": "6642e5b5783d4e42eb6f447e6215138662b8e53d",
       "reason": "Restore a common original Regular topology after rejecting an incompatible Regular/Bold fit. The early bootstrap kept a refitted Regular even when correspondence was rejected, so equal point counts concealed different on/off-curve flags.",
       "drawing_method": "Canonical bounded emboldening fallback, followed by the same condensed and grade construction used by the generator. These overrides make already prepared sources match the corrected generator without rerunning all matching.",
-      "validation": "Every glyph in all 24 masters of both styles passed the full contour, on-curve and component compatibility gate after applying the repaired GLIFs. Each repaired GLIF also records the migration reason in its glyph lib."
+      "validation": "Every glyph in all 24 masters of both styles passed the full contour, on-curve and component compatibility gate after applying the repaired GLIFs. Each repaired GLIF also records the migration reason in its glyph lib.",
+      "grid_migration": "0.500: all 48 drawings regenerated from the same integer anchors with the shared calibrated condensed/grade grid; the three original topology repairs and their provenance remain."
     }
   ]
 }

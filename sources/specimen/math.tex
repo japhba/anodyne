@@ -1,0 +1,151 @@
+% Anodyne mathematical specimen, compiled by ../render_specimen.py.
+% Mathematical test expressions: Henri Menke, TeX–LaTeX Stack Exchange,
+% "Which OpenType math fonts are available?"
+% https://tex.stackexchange.com/q/425098 (2018; CC BY-SA 3.0).
+% Also follows OverLyX's Settings.tsx preview and its added accent row.
+% The explanatory wording and page design are new. This adapted specimen
+% source/layout is CC BY-SA 4.0; the Anodyne font software remains SIL OFL 1.1.
+\documentclass[border=22pt]{standalone}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{unicode-math}
+\usepackage{hyperref}
+\pdfvariable suppressoptionalinfo 767\relax
+\definecolor{ink}{HTML}{15343A}
+\definecolor{muted}{HTML}{637174}
+\definecolor{rule}{HTML}{C9D5D5}
+\definecolor{accent}{HTML}{007C82}
+\hypersetup{hidelinks}
+\urlstyle{same}
+\tracinglostchars=3
+\setmainfont{Anodyne-Regular.ttf}[
+  Path={@@FONT_DIRECTORY@@/},
+  BoldFont=Anodyne-Bold.ttf,
+  ItalicFont=Anodyne-Regular.ttf,
+  BoldItalicFont=Anodyne-Bold.ttf]
+\setmathfont{Anodyne-Regular.ttf}[Path={@@FONT_DIRECTORY@@/}]
+\setmathfont{Anodyne-Bold.ttf}[Path={@@FONT_DIRECTORY@@/},version=bold]
+\setmathfont{Anodyne-Regular.ttf}[
+  Path={@@FONT_DIRECTORY@@/},version=choices,
+  StylisticSet={2,3,4,5},RawFeature={+cv01,+cv02}]
+\setmathfont{Anodyne-Regular.ttf}[
+  Path={@@FONT_DIRECTORY@@/},version=greekscript,StylisticSet=8]
+\DeclareMathOperator\Res{Res}
+\newcommand*\diff{\mathop{}\!\symup{d}}
+\newcommand*\parttitle[2]{\par\vspace{13pt}{\color{rule}\hrule height .6pt}\vspace{9pt}
+  {\color{accent}\fontsize{9}{12}\selectfont #1\quad}
+  {\bfseries\fontsize{13}{16}\selectfont #2}\par\vspace{6pt}}
+\setlength\parindent{0pt}
+\setlength\parskip{5pt}
+\setlength\abovedisplayskip{9pt}
+\setlength\belowdisplayskip{9pt}
+\setlength\abovedisplayshortskip{6pt}
+\setlength\belowdisplayshortskip{6pt}
+\begin{document}
+\begin{minipage}{590pt}
+\color{ink}\fontsize{11}{15}\selectfont
+{\bfseries\fontsize{36}{40}\selectfont Anodyne}
+\hfill {\color{muted}\fontsize{9}{12}\selectfont @@VERSION@@\quad /\quad MATH SPECIMEN}
+\par\vspace{2pt}
+{\fontsize{15}{19}\selectfont Mathematics, from a line of text to a page of notation.}
+\par\vspace{3pt}
+{\color{muted}The complete Stack Exchange / OverLyX test expressions, with Anodyne's roots,
+delimiters, mathematical alphabets and named stylistic choices.}
+
+\parttitle{01}{Complex analysis}
+{\bfseries Residue-theorem specimen.}
+Suppose $f$ is holomorphic throughout $G$ apart from finitely many isolated
+singularities $a_1,a_2,\dots,a_m$. A rectifiable closed path $\gamma$ avoids
+these points and is null-homologous, $\gamma\approx0$, in $G$. The test deliberately nests a bold
+letter and a double-struck space inside the exponent:
+\[
+  \frac{1}{2\pi i}\int\limits_\gamma
+  f\Bigl(x^{\mathbf{N}\in\mathbb{C}^{N\times10}}\Bigr)
+  =\sum_{k=1}^{m}n(\gamma;a_k)\Res(f;a_k)\,.
+\]
+{\bfseries Maximum modulus.}
+On a bounded domain $G\subset\mathbb{C}$, let $f$ extend continuously to the
+closure $G^-$ and be holomorphic inside. Its maximum occurs on the boundary:
+\[
+  \max\{\,|f(z)|:z\in G^-\,\}
+  =\max\{\,|f(z)|:z\in\partial G\,\}\,.
+\]
+
+\parttitle{02}{Large operators, in text and on display}
+At text size,
+$\iiint\limits_Q f(x,y,z)\diff x\diff y\diff z$
+and $\prod_{\gamma\in\Gamma_{\bar C}}\partial(\tilde X_\gamma)$
+stay part of the sentence. A display brings out the larger drawings:
+\[
+  \iiiint\limits_Q f(w,x,y,z)\diff w\diff x\diff y\diff z
+  \leq\oint_{\partial Q}f'\Biggl(\max\Biggl\{
+  \frac{\Vert w\Vert}{\vert w^2+x^2\vert};\quad
+  \frac{\Vert z\Vert}{\vert y^2+z^2\vert};\quad
+  \frac{\Vert w\oplus z\Vert}{\vert x\oplus y\vert}
+  \Biggr\}\Biggr)\,.
+\]
+
+\parttitle{03}{Accents and mathematical alphabets}
+\[
+ \hat a\quad\tilde b\quad\bar c\quad\vec v\quad\dot x\quad\ddot y\quad
+ \breve u\quad\check z\quad\acute e\quad\grave e\qquad
+ \hat A\quad\tilde N\quad\bar X\quad\dot\Phi
+\]
+\[
+ \widehat{xyz}\quad\widetilde{abc}\quad\overline{z+w}\qquad
+ a\ne b\quad x\not<y\quad\varepsilon\ne\epsilon\quad\varphi\ne\phi
+\]
+\[
+ \mathcal{ABCL}\qquad\mathbb{RNC}\qquad\mathfrak g\qquad
+ \boldsymbol\alpha\cdot\mathbf v\qquad\symbfsf{ABCxyz}\qquad\symtt{01Il}
+\]
+{\color{muted}\fontsize{9}{12}\selectfont Greek roundhand, with accents attached by the font's MATH data:}
+\begingroup\mathversion{greekscript}
+\[
+ \hat\iota\quad\ddot\iota\qquad
+ \hat\lambda\quad\ddot\lambda\qquad
+ \hat\rho\quad\ddot\rho\qquad
+ \alpha+\Gamma+\varepsilon+\varphi
+\]
+\endgroup
+
+\parttitle{04}{Fractions, roots and growing delimiters}
+\[
+ \sum_{k=1}^{n}\frac{\alpha_k x^{2k}}{\sqrt{1+\beta_k^2}}
+ \leq\int_{-\infty}^{\infty}
+ \left|\frac{\partial\Phi}{\partial t}\right|\diff t
+\]
+\[
+ \left\{\left[\begin{matrix}a_1&b_1\\a_2&b_2\\a_3&b_3\end{matrix}\right]
+ \prod_{i=1}^{m}\lambda_i\right\}^{1/m}
+ \qquad\sqrt[3]{\hbar+\varepsilon}\qquad
+ f^{a^b}_{i_j}+\overbrace{a+b+c}^{n}
+\]
+
+\parttitle{05}{Six choices, one consistent style}
+{\color{muted}\fontsize{9}{12}\selectfont
+Default above; upright integrals, slanted inequalities, compact sets, vertical
+negations, oval empty set and lowered-bar $\hbar$ below.}
+\[
+ \int_0^1 x^2\diff x\qquad a\leq b\qquad x\in A\qquad A\ne B\qquad
+ A\cap B=\varnothing\qquad E=\hbar\omega
+\]
+\begingroup\mathversion{choices}\color{accent}
+\[
+ \int_0^1 x^2\diff x\qquad a\leq b\qquad x\in A\qquad A\ne B\qquad
+ A\cap B=\varnothing\qquad E=\hbar\omega
+\]
+\endgroup
+\vspace{7pt}
+{\color{rule}\hrule height .6pt}\vspace{7pt}
+{\color{muted}\fontsize{8}{11}\selectfont
+Mathematical test expressions adapted from Henri Menke,
+\href{https://tex.stackexchange.com/q/425098}{Which OpenType math fonts are available?}
+(TeX--LaTeX Stack Exchange, 2018;
+\href{https://creativecommons.org/licenses/by-sa/3.0/}{CC BY-SA 3.0}), as used by OverLyX.
+Explanatory wording and layout changed; Anodyne examples added.
+Source: \url{https://tex.stackexchange.com/q/425098}.
+Adapted specimen: \url{https://creativecommons.org/licenses/by-sa/4.0/}.
+Typeset with LuaLaTeX and unicode-math. Font software: SIL OFL 1.1.}
+\end{minipage}
+\end{document}

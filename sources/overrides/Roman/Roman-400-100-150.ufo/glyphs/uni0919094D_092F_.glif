@@ -3,13 +3,13 @@
   <advance width="1190"/>
   <outline>
     <contour>
-      <point x="238" y="200"/>
+      <point x="238" y="199"/>
       <point x="209" y="187" type="qcurve"/>
       <point x="160" y="218"/>
       <point x="90" y="295"/>
       <point x="90" y="348" type="qcurve"/>
-      <point x="90" y="411"/>
-      <point x="173" y="475"/>
+      <point x="90" y="412"/>
+      <point x="174" y="475"/>
       <point x="255" y="475" type="qcurve"/>
       <point x="356" y="475" type="line"/>
       <point x="356" y="540" type="line"/>
@@ -26,11 +26,11 @@
       <point x="932" y="55"/>
       <point x="882" y="55" type="qcurve"/>
       <point x="828" y="55"/>
-      <point x="736" y="101"/>
+      <point x="735" y="101"/>
       <point x="673" y="192"/>
-      <point x="659" y="270" type="qcurve"/>
+      <point x="659" y="271" type="qcurve"/>
       <point x="742" y="287"/>
-      <point x="806" y="323"/>
+      <point x="806" y="322"/>
       <point x="806" y="342" type="qcurve"/>
       <point x="806" y="361"/>
       <point x="783" y="378"/>
@@ -40,12 +40,12 @@
       <point x="222" y="383"/>
       <point x="197" y="362"/>
       <point x="197" y="342" type="qcurve"/>
-      <point x="197" y="326"/>
+      <point x="197" y="327"/>
       <point x="217" y="296"/>
       <point x="226" y="288" type="qcurve"/>
       <point x="243" y="295"/>
       <point x="300" y="305"/>
-      <point x="330" y="305" type="qcurve"/>
+      <point x="329" y="305" type="qcurve"/>
       <point x="414" y="305"/>
       <point x="506" y="224"/>
       <point x="506" y="154" type="qcurve"/>
@@ -56,7 +56,7 @@
       <point x="214" y="-11"/>
       <point x="77" y="58"/>
       <point x="15" y="118" type="qcurve"/>
-      <point x="81" y="202" type="line"/>
+      <point x="82" y="202" type="line"/>
       <point x="143" y="139"/>
       <point x="243" y="85"/>
       <point x="299" y="85" type="qcurve"/>
@@ -71,22 +71,22 @@
     <contour>
       <point x="435" y="562" type="line"/>
       <point x="435" y="453" type="line"/>
-      <point x="728" y="453" type="line"/>
+      <point x="727" y="453" type="line"/>
       <point x="777" y="453"/>
       <point x="847" y="430"/>
       <point x="884" y="381"/>
       <point x="884" y="340" type="qcurve"/>
-      <point x="884" y="307"/>
-      <point x="855" y="264"/>
+      <point x="884" y="308"/>
+      <point x="854" y="264"/>
       <point x="822" y="247" type="qcurve"/>
       <point x="797" y="235"/>
       <point x="749" y="218" type="qcurve"/>
       <point x="775" y="167"/>
       <point x="801" y="149" type="qcurve"/>
       <point x="836" y="127"/>
-      <point x="888" y="127" type="qcurve"/>
+      <point x="887" y="127" type="qcurve"/>
       <point x="940" y="127"/>
-      <point x="981" y="151" type="qcurve"/>
+      <point x="981" y="150" type="qcurve"/>
       <point x="1001" y="162"/>
       <point x="1023" y="179" type="qcurve"/>
       <point x="1023" y="562" type="line"/>
@@ -106,6 +106,8 @@
   </outline>
   <lib>
     <dict>
+      <key>com.overlyx.anodyne.gridMigration</key>
+      <string>0.500 shared integer-anchor width/grade derivation; original topology repair retained.</string>
       <key>com.overlyx.anodyne.repair</key>
       <string>Original Regular topology retained after rejecting an incompatible Bold fit; all weight/width/grade corners regenerated with the canonical fallback.</string>
     </dict>

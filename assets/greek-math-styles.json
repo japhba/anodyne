@@ -1,0 +1,54 @@
+{
+  "source": "Anodyne Greek OpenType features; characters retain their Greek Unicode semantics",
+  "greek_ranges": [
+    [
+      880,
+      1023
+    ],
+    [
+      7936,
+      8191
+    ]
+  ],
+  "extra_codepoints": [
+    8706,
+    8711
+  ],
+  "styles": {
+    "script": {
+      "tag": "ss08",
+      "family": "Anodyne Greek Script",
+      "suffix": "greek-script"
+    },
+    "bold-script": {
+      "tag": "ss09",
+      "family": "Anodyne Greek Bold Script",
+      "suffix": "greek-bold-script"
+    },
+    "fraktur": {
+      "tag": "ss10",
+      "family": "Anodyne Greek Fraktur",
+      "suffix": "greek-fraktur"
+    },
+    "bold-fraktur": {
+      "tag": "ss11",
+      "family": "Anodyne Greek Bold Fraktur",
+      "suffix": "greek-bold-fraktur"
+    },
+    "double-struck": {
+      "tag": "ss12",
+      "family": "Anodyne Greek Double Struck",
+      "suffix": "greek-double-struck"
+    },
+    "monospace": {
+      "tag": "ss13",
+      "family": "Anodyne Greek Monospace",
+      "suffix": "greek-monospace"
+    },
+    "chancery": {
+      "tag": "ss14",
+      "family": "Anodyne Greek Chancery",
+      "suffix": "greek-chancery"
+    }
+  }
+}
